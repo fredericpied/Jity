@@ -28,28 +28,12 @@ import java.util.ArrayList;
 
 import org.jity.server.protocol.Response;
 
-/**
- * Server commande to find something to launch for a client
- * @author 09344A
- *
- */
-public class FindLaunching implements Instruction {
+public interface Instruction {
 
-	public Response launch(ArrayList<String> parameters) {
-		Response response = new Response();
-				
-		try {
-			
-			// do the job
-			
-			response.setInstructionResult("OK");
-
-		} catch (Exception e) {
-			response.setException(e);
-		}
-		
-		
-		return response;
-	}
-	
+	/**
+	 * Launch the requested instruction whith parameters and return response
+	 * @param parameters
+	 * @return
+	 */
+	public Response launch(ArrayList<String> parameters);
 }

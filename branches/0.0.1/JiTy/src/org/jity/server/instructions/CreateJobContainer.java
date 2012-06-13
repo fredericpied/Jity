@@ -24,6 +24,26 @@
  */
 package org.jity.server.instructions;
 
-public class CreateJobContainer {
+import java.util.ArrayList;
 
+import org.jity.server.protocol.Response;
+
+public class CreateJobContainer implements Instruction {
+	
+	public Response launch(ArrayList<String> parameters) {
+		Response response = new Response();
+				
+		try {
+			
+			// do the job
+			
+			response.setInstructionResult("OK");
+
+		} catch (Exception e) {
+			response.setException(e);
+		}
+		
+		
+		return response;
+	}
 }

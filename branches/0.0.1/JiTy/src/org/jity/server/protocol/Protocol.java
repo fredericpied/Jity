@@ -45,9 +45,9 @@ public abstract class Protocol {
 		Response response = null;
 		
 		if (request.getInstructionName().equals("FINDLAUNCHING")) {
-			response = FindLaunching.launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new FindLaunching().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
-			response = ShutdownServer.launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new ShutdownServer().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else {
 			throw new ProtocolException("Incorrect instruction name ("+request.getInstructionName()+")");
 		}
@@ -94,7 +94,5 @@ public abstract class Protocol {
 		return request;
 	}
 	
-	
-	
-	
+		
 }
