@@ -21,10 +21,11 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server;
+ */package org.jity.planifDaemon;
 
 import java.util.Calendar;
 import org.apache.log4j.Logger;
+import org.jity.server.ServerConfig;
 
 public class ServerDaemon implements Runnable {
 
@@ -34,9 +35,9 @@ public class ServerDaemon implements Runnable {
     volatile boolean shouldStop = false;
 
     /**
-     * Start the engine in a Thread.
+     * Start the planifDaemon in a Thread.
      */
-    public synchronized void startEngine() {
+    public synchronized void startPlanifDaemon() {
         if (runner == null) {
             runner = new Thread(this);
             runner.start();
@@ -44,9 +45,9 @@ public class ServerDaemon implements Runnable {
     }
 
     /**
-     * Stop current engin if running.
+     * Stop current planifDaemon if running.
      */
-    public synchronized void stopEngine() {
+    public synchronized void stopPlanifDaemon() {
         if (runner != null) {
             shouldStop = true;
             runner.interrupt();
