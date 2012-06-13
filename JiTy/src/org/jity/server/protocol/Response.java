@@ -65,7 +65,11 @@ public class Response extends Datagram {
 		this.exceptionMessage = exceptionMessage;
 	}
 
-	public void parseException(Exception e) {
+	/**
+	 * Parse an Exception to format Response
+	 * @param e
+	 */
+	public void setException(Exception e) {
 		this.setInstructionResult("KO");
 		this.setExceptionName(e.getClass().getName());
 		this.setExceptionMessage(e.getMessage());

@@ -28,16 +28,17 @@ import java.util.ArrayList;
 
 import org.jity.server.Server;
 import org.jity.server.ServerException;
+import org.jity.server.instructions.Instruction;
 import org.jity.server.protocol.Response;
 
 /**
- * Server command to shutdown the OJS server
+ * Server command to shutdown the JiTy server
  * @author 09344A
  *
  */
-public abstract class ShutdownServer {
+public class ShutdownServer implements Instruction {
 
-	public static Response launch(ArrayList<String> parameters) {
+	public Response launch(ArrayList<String> parameters) {
 		Response response = new Response();
 		
 		try {
@@ -45,7 +46,7 @@ public abstract class ShutdownServer {
 			response.setInstructionResult("OK");
 
 		} catch (ServerException e) {
-			response.parseException(e);
+			response.setException(e);
 		}
 
 		return response;
