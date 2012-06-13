@@ -16,6 +16,11 @@ public class Job {
 	private String description;
 
 	/**
+	 * Command to exécute on execMachine
+	 */
+	private String command;
+	
+	/**
 	 * Execution status of the job: "WAITING", "EXECUTING", "FAILED", "SUCCESS"
 	 */
 	private int status;
@@ -38,5 +43,8 @@ public class Job {
 	
 	private ExecMachine execMachine;
 	
-	private ExecUser execUser;
+	/**
+	 * Local user on the execMachine use to exécute job command
+	 */
+	private String execUser;
 }
