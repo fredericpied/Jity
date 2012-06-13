@@ -45,13 +45,15 @@ public class Job {
 	private String command;
 	
 	/**
-	 * Execution status of the job: "WAITING", "EXECUTING", "FAILED", "SUCCESS"
+	 * Execution status of the job: "WAITING", "NOT_PLANED", "EXECUTING", "FAILED", "SUCCESS"
 	 */
 	private int status;
+	private static final int NOT_PLANNED_STATUS = 0;
 	private static final int WAITING_STATUS = 1;
 	private static final int EXECUTING_STATUS = 2;
 	private static final int FAILED_STATUS = 3;
 	private static final int SUCCESSED_STATUS = 4;
+	
 	
 	/**
 	 * If false, the execution of this job is not permitted
@@ -62,9 +64,7 @@ public class Job {
 	 * Execution constraints of this job: All must be validate for the job to start.
 	 */
 	private ArrayList<ExecConstraint> execConstraints = new ArrayList<ExecConstraint>();
-	
-	private JobContainer jobContainer;
-	
+
 	private ExecMachine execMachine;
 	
 	/**

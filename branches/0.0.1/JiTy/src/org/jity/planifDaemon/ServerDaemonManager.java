@@ -21,7 +21,7 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server;
+ */package org.jity.planifDaemon;
 
 import org.apache.log4j.Logger;
 
@@ -57,7 +57,7 @@ public class ServerDaemonManager extends Thread {
     public void startEngine() {
         if (!isEngineRunning()) {
             setDaemon(new ServerDaemon());
-            getDaemon().startEngine();
+            getDaemon().startPlanifDaemon();
             setEngineRunning(true);
         }
     }
@@ -67,7 +67,7 @@ public class ServerDaemonManager extends Thread {
      */
     public void shutdownEngine() {
         if (isEngineRunning()) {
-            getDaemon().stopEngine();
+            getDaemon().stopPlanifDaemon();
             setEngineRunning(false);
         }
     }

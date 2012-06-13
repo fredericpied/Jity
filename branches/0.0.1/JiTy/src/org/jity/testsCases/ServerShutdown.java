@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server;
+package org.jity.testsCases;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
+import org.jity.server.ServerConfig;
 import org.jity.server.protocol.Request;
 
 /**
