@@ -33,4 +33,6 @@ public class ExecMachine {
 	private String description;
 	
 	private String hostname;
+	
+	private int port; 
 }
