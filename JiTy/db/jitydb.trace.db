@@ -1,0 +1,23 @@
+06-19 20:42:50 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Constraint "FK75147B60E6D90048" not found; SQL statement:
+alter table EXEC_STATUS drop constraint FK75147B60E6D90048 [90057-167]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:329)
+	at org.h2.message.DbException.get(DbException.java:169)
+	at org.h2.message.DbException.get(DbException.java:146)
+	at org.h2.command.ddl.AlterTableDropConstraint.update(AlterTableDropConstraint.java:40)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:75)
+	at org.h2.command.Command.executeUpdate(Command.java:230)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:125)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:110)
+	at org.hibernate.tool.hbm2ddl.DatabaseExporter.export(DatabaseExporter.java:64)
+	at org.hibernate.tool.hbm2ddl.SchemaExport.perform(SchemaExport.java:418)
+	at org.hibernate.tool.hbm2ddl.SchemaExport.execute(SchemaExport.java:372)
+	at org.hibernate.tool.hbm2ddl.SchemaExport.create(SchemaExport.java:304)
+	at org.hibernate.tool.hbm2ddl.SchemaExport.create(SchemaExport.java:293)
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:492)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:1744)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:1782)
+	at org.jity.server.database.Database.main(Database.java:42)
+06-19 21:28:36 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Table "DATE_CONSTRAINT" not found; SQL statement:
+alter table DATE_CONSTRAINT drop constraint FKDFE7770E28715A0C [42102-167]
