@@ -25,6 +25,8 @@
 package org.jity.server;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.jity.server.database.Database;
 
 import java.io.*;
 import java.net.*;
@@ -39,6 +41,8 @@ public class Server {
     
     private ServerSocket listenSocket;
     
+    private Database database;
+    
     private Server() { }
 
     public static Server getInstance() {
@@ -50,7 +54,7 @@ public class Server {
 
     public void startServer() throws ServerException {
         Socket client = null;
-
+        
         int serverPort = ServerConfig.getInstance().getSERVER_PORT();
         try {
             listenSocket = new ServerSocket(serverPort);
@@ -89,7 +93,10 @@ public class Server {
         logger.info("Shutdown of server asked.");
         
         try {
+        	logger.info("Closing Network socket.");
             listenSocket.close();
+        	logger.info("Closing Database session.");
+            database.terminateSession();
         } catch (IOException e) {
             throw new ServerException("Shutdown of server failed.");
         }
@@ -97,13 +104,13 @@ public class Server {
     }
     
 
-//    public static void initDbConnection() throws HibernateException {
-//        Session sess = null;
-//        logger.info("Init of DB connection...");
-//        sess = HibernateUtil.getSession();
-//        sess.close();
-//        logger.info("Connection to database: OK");
-//    }
+    public void initDbConnection() {
+    	this.database = new Database();
+        logger.info("Init of DB connection...");
+    	Session sess = this.database.getSession();
+        sess.close();
+        logger.info("Connection to database: OK");
+    }
     
     public static void main(String[] args) {
     	
@@ -133,14 +140,9 @@ public class Server {
         }
             
             
-//            
-//        // Init database connection
-//        try {
-//            Main.initDbConnection();
-//        } catch (HibernateException e) {
-//            logger.error("Failed to init database.");
-//            System.exit(2);
-//        }
+            
+        // Init database connection
+        server.initDbConnection();
         
         logger.info("Starting the server ...");
         try {
