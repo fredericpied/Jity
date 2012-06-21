@@ -41,8 +41,6 @@ public class Server {
     
     private ServerSocket listenSocket;
     
-    private Database database;
-    
     private Server() { }
 
     public static Server getInstance() {
@@ -96,7 +94,7 @@ public class Server {
         	logger.info("Closing Network socket.");
             listenSocket.close();
         	logger.info("Closing Database session.");
-            database.terminateSession();
+            Database.terminateSessionFactory();
         } catch (IOException e) {
             throw new ServerException("Shutdown of server failed.");
         }
@@ -105,9 +103,8 @@ public class Server {
     
 
     public void initDbConnection() {
-    	this.database = new Database();
-        logger.info("Init of DB connection...");
-    	Session sess = this.database.getSession();
+    	logger.info("Init of DB connection...");
+    	Session sess = Database.getSessionFactory().openSession();
         sess.close();
         logger.info("Connection to database: OK");
     }

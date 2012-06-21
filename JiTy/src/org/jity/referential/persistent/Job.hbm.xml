@@ -41,7 +41,8 @@
         <property name="port" column="PORT"/>
         <property name="userName" column="USER_NAME"/>
         <property name="commandPath" column="COMMAND_PATH"/>
-		<property name="isActived" column="IS_ACTIVED"/>  
+		<property name="isActived" column="IS_ACTIVED"/>
+		<many-to-one name="dateConstraint" not-null="true" column="DATE_CONSTRAINT_ID" cascade="all"/>  
     </class>
 
 </hibernate-mapping>

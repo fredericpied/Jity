@@ -1,10 +1,5 @@
 package org.jity.referential.persistent;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.GenericGenerator;
-
 public class Calendar {
 	private long id;
 	private String name;

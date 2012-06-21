@@ -22,29 +22,23 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateConstraint;
+package org.jity.referential.dateCalc;
 
-import java.util.Date;
+public class DateException extends Exception {
 
-import org.jity.referential.ExecConstraint;
-
-/**
- * Represents an planification constraint. 
- * The constraint est validated when the planification rule is true and the minimal start time
- * in current valid day is over
- * @author 09344a
- *
- */
-public class DateConstraint extends ExecConstraint {
-	
-	/**
-	 * Planification rules
+    /**
+	 * 
 	 */
-	private PlanifRule planifRule;
-	
+	private static final long serialVersionUID = 1034270238243994342L;
+
 	/**
-	 * Minimal start time in the day ("HH:MM")
-	 */
-	private String minStartTime;
-	
+     * Constructs a ServerException with the specified detail message. A detail
+     * message is a String that describes this particular exception.
+     * @param msg the detail message
+     * @param nested the exception or error that caused this exception to be
+     *            thrown.
+     */
+    public DateException(String msg) {
+        super(msg);
+    }
 }

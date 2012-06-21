@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.testsCases;
+package org.jity.tests;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateConstraint;
+package org.jity.referential.dateCalc;
 
 import java.util.Date;
 
