@@ -1,9 +1,7 @@
 package org.jity.referential.persistent;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.Session;
+import org.jity.server.database.Database;
 
 public class Job {
 
@@ -15,7 +13,6 @@ public class Job {
 	private String userName;
 	private String commandPath;
 	private boolean isActived;
-	
 	private DateConstraint dateConstraint;
 
 	public Job() {
@@ -84,7 +81,34 @@ public class Job {
 	public void setIsActived(boolean isActived) {
 		this.isActived = isActived;
 	}
+	
+	public DateConstraint getDateConstraint() {
+		return dateConstraint;
+	}
 
+	public void setDateConstraint(DateConstraint dateConstraint) {
+		this.dateConstraint = dateConstraint;
+	}
+
+	public static void insert(Job job) {
+		Session sess = Database.getSessionFactory().openSession();
+        sess.beginTransaction();
+	    sess.save(job);
+        sess.getTransaction().commit();
+	}
 	
+	public static void update(Job job) {
+		Session sess = Database.getSessionFactory().openSession();
+        sess.beginTransaction();
+        sess.update(job);
+        sess.getTransaction().commit();
+	}
 	
+	public static void delete(Job job) {
+		Session sess = Database.getSessionFactory().openSession();
+        sess.beginTransaction();
+        sess.delete(job);
+        sess.getTransaction().commit();
+	}
+
 }
