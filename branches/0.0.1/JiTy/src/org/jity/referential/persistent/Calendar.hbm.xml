@@ -37,7 +37,7 @@
         </id>
         <property name="name" column="NAME"/>
         <property name="description" column="DESCRIPTION"/>
-        <property name="year" column="YEAR"/>    
+        <property name="year" column="YEAR"></property>    
         <property name="openDays" column="OPEN_DAYS"/>
     </class>
 

@@ -21,20 +21,23 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */
-package org.jity.server.instructions;
+ */package org.jity.server;
 
-import java.util.ArrayList;
+public class ServerSideClientException extends Exception {
 
-import org.jity.server.protocol.Response;
-
-public interface Instruction {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1034270238243994342L;
 
 	/**
-	 * Launch the requested instruction whith parameters (String tab) and return response
-	 * @param parameters
-	 * @return
-	 */
-	public Response launch(ArrayList<String> parameters);
-		
+     * Constructs a ServerException with the specified detail message. A detail
+     * message is a String that describes this particular exception.
+     * @param msg the detail message
+     * @param nested the exception or error that caused this exception to be
+     *            thrown.
+     */
+    public ServerSideClientException(String msg) {
+        super(msg);
+    }
 }

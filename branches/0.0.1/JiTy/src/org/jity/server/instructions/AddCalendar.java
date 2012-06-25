@@ -26,36 +26,47 @@ package org.jity.server.instructions;
 
 import java.util.ArrayList;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.jity.common.XMLUtil;
+import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
+import org.jity.server.database.Database;
 import org.jity.server.instructions.Instruction;
 import org.jity.server.protocol.Response;
 
 /**
  * Server command to create à new calendar
+ * 
  * @author 09344A
- *
+ * 
  */
 public class AddCalendar implements Instruction {
 
 	public Response launch(ArrayList<String> parameters) {
 		Response response = new Response();
-		
-//		try {
 
-		
+		try {
+
+			Calendar calendar = (Calendar) XMLUtil.XMLStringToObject(parameters
+					.get(0));
+
+			Session session = Database.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			session.save(calendar);
 			
-			
-			
-			
+			transaction.commit();
+			session.close();
+
 			response.setInstructionResult("OK");
 
-//		} catch (ServerException e) {
-//			response.setException(e);
-//		}
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }

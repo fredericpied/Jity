@@ -42,7 +42,7 @@ public class ShutdownServer implements Instruction {
 		Response response = new Response();
 		
 		try {
-			Server.getInstance().shutdownServer();
+			Server.getInstance().stopServerDaemon();
 			response.setInstructionResult("OK");
 
 		} catch (ServerException e) {
