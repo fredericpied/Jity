@@ -22,37 +22,39 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.protocol;
+package org.jity.server.instructions;
 
-public class Request extends Datagram {
-	
-	/**
-	 * Instruction to execute by the server side
-	 */
-	public String instructionName;
-	
-	/**
-	 * Parameters for the instruction 
-	 */
-	public String instructionParameters;
-	
-	
-	
-	public String getInstructionName() {
-		return instructionName;
-	}
-	
-	public String getInstructionParameters() {
-		return instructionParameters;
-	}
+import java.util.ArrayList;
 
-	public void setInstructionName(String instructionName) {
-		this.instructionName = instructionName;
-	}
+import org.jity.server.Server;
+import org.jity.server.ServerException;
+import org.jity.server.instructions.Instruction;
+import org.jity.server.protocol.Response;
 
-	public void setInstructionParameters(String instructionParameters) {
-		this.instructionParameters = instructionParameters;
+/**
+ * Server command to create à new calendar
+ * @author 09344A
+ *
+ */
+public class UpdateCalendar implements Instruction {
+
+	public Response launch(ArrayList<String> parameters) {
+		Response response = new Response();
+		
+//		try {
+
+			
+			
+			
+			
+			response.setInstructionResult("OK");
+
+//		} catch (ServerException e) {
+//			response.setException(e);
+//		}
+
+		return response;
 	}
 	
-	
+
 }

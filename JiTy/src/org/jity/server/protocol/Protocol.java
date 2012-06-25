@@ -26,7 +26,10 @@ package org.jity.server.protocol;
 
 import org.jity.common.ListUtil;
 import org.jity.common.XMLUtil;
+import org.jity.server.instructions.AddCalendar;
+import org.jity.server.instructions.DeleteCalendar;
 import org.jity.server.instructions.FindLaunching;
+import org.jity.server.instructions.UpdateCalendar;
 import org.jity.server.instructions.admin.ShutdownServer;
 
 public abstract class Protocol {
@@ -48,10 +51,16 @@ public abstract class Protocol {
 			response = new FindLaunching().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
+			response = new AddCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+		} else if (request.getInstructionName().equals("DELETECALENDAR")) {
+			response = new DeleteCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+		} else if (request.getInstructionName().equals("UPDATECALENDAR")) {
+			response = new UpdateCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else {
 			throw new ProtocolException("Incorrect instruction name ("+request.getInstructionName()+")");
 		}
-						
+
 		return response.getXML();
 	}
 	
