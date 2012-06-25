@@ -15,7 +15,8 @@ public class Database {
 	}
 	
 	public static void terminateSessionFactory() {
-		sessionFactory.close();
+		if (sessionFactory != null) sessionFactory.close();
+		sessionFactory = null;
 	}
 
 }

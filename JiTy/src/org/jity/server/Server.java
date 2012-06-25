@@ -31,7 +31,6 @@ import org.jity.server.database.Database;
 import java.io.*;
 import java.net.*;
 
-
 public class Server implements Runnable {
 	private static final Logger logger = Logger.getLogger(Server.class);
 
@@ -40,10 +39,6 @@ public class Server implements Runnable {
     private ServerSocket listenSocket;
     
     private Thread daemon = null;
-    
-    private boolean shouldStop = false;
-    
-    private Server() { }
 
     public static Server getInstance() {
         if (instance == null) {
@@ -91,7 +86,7 @@ public class Server implements Runnable {
         	throw new ServerException("Failed to read configuration file ("+e.getMessage()+").");
         }
     }
-        
+
     public void run() {
         Socket client = null;
         
@@ -122,6 +117,7 @@ public class Server implements Runnable {
         
         
         try {
+        	
             while (true) {
                 client = listenSocket.accept();
                 try {
@@ -147,14 +143,15 @@ public class Server implements Runnable {
         }
     }
 
-    public void shutdownServer() throws ServerException {
+    private void shutdownServer() throws ServerException {
         logger.info("Shutdown of server asked.");
         
         try {
-        	logger.info("Closing Network socket.");
-            listenSocket.close();
         	logger.info("Closing Database session.");
             Database.terminateSessionFactory();
+        	logger.info("Closing Network socket.");
+            listenSocket.close();
+
         } catch (IOException e) {
             throw new ServerException("Shutdown of server failed.");
         }
@@ -169,18 +166,5 @@ public class Server implements Runnable {
         logger.info("Connection to database: OK");
     }
     
-    
-    public static void main(String[] args) {
-               
-        try {
-        	Server server = Server.getInstance();
-        	server.startServerDaemon();
-        } catch (ServerException e) {
-            logger.fatal("Failed to start server: " + e.getMessage());
-            System.exit(2);
-        }
-    }
-    
-
 }
 

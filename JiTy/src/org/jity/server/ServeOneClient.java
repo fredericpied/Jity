@@ -24,7 +24,9 @@
  */
 package org.jity.server;
 
-
+/**
+ * Thread launch for every client connexion.
+ */
 import java.io.*;
 import java.net.*;
 import org.apache.log4j.Logger;
@@ -35,24 +37,32 @@ public class ServeOneClient extends Thread {
 	private static final Logger logger = Logger.getLogger(ServeOneClient.class);
 	
     private Socket socket;
-    private BufferedReader lectureReseau;
-    private PrintWriter ecritureReseau;
+    private BufferedReader networkReader;
+    private PrintWriter networkWriter;
 
 
+    /**
+     * Construct the thread and launch it
+     * @param s
+     * @throws IOException
+     */
     public ServeOneClient(Socket s) throws IOException {
         this.socket = s;
-        this.lectureReseau = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.ecritureReseau = new PrintWriter(socket.getOutputStream());
+        this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.networkWriter = new PrintWriter(socket.getOutputStream());
         start();
     }
 
+    
     public void run() {
         String xmlInputData = null;
         String xmlOutputData;
 
         try {
+        	
             while (true) {
-            	xmlInputData = lectureReseau.readLine();
+    
+            	xmlInputData = networkReader.readLine();
                 
             	if (xmlInputData == null) break;
                 
@@ -62,8 +72,8 @@ public class ServeOneClient extends Thread {
             		
             		xmlOutputData = Protocol.executeRequest(xmlInputData);
                     
-                	ecritureReseau.println(xmlOutputData);
-                    ecritureReseau.flush();
+                	networkWriter.println(xmlOutputData);
+                    networkWriter.flush();
 
                     logger.debug("Client data send: " + xmlOutputData);
 

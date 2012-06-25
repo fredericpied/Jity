@@ -54,31 +54,6 @@ public class ServerConfig {
 	 */
 	public int SERVER_POOLING_CYCLE = 10;
 
-	/**
-	 * DB server hostname
-	 */
-	public String DB_SERVER_HOSTNAME;
-
-	/**
-	 * DB server port
-	 */
-	public int DB_SERVER_PORT;
-
-	/**
-	 * DB name
-	 */
-	public String DB_NAME;
-
-	/**
-	 * DB username
-	 */
-	public String DB_USERNAME;
-
-	/**
-	 * DB Password
-	 */
-	public String DB_PASSWORD;
-
 	public static ServerConfig getInstance() {
 		if (instance == null)
 			instance = new ServerConfig();
@@ -104,26 +79,6 @@ public class ServerConfig {
 
 	public static String getXmlFileName() {
 		return XML_FILE_NAME;
-	}
-
-	public String getDB_SERVER_HOSTNAME() {
-		return DB_SERVER_HOSTNAME;
-	}
-
-	public int getDB_SERVER_PORT() {
-		return DB_SERVER_PORT;
-	}
-
-	public String getDB_NAME() {
-		return DB_NAME;
-	}
-
-	public String getDB_USERNAME() {
-		return DB_USERNAME;
-	}
-
-	public String getDB_PASSWORD() {
-		return DB_PASSWORD;
 	}
 
 }
