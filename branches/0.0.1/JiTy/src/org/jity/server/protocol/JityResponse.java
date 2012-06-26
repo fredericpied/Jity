@@ -24,7 +24,7 @@
  */
 package org.jity.server.protocol;
 
-public class Response extends Datagram {
+public class JityResponse extends Datagram {
 
 	/**
 	 * result of the instruction execution "OK" or "KO"

@@ -26,7 +26,7 @@ package org.jity.server.instructions;
 
 import java.util.ArrayList;
 
-import org.jity.server.protocol.Response;
+import org.jity.server.protocol.JityResponse;
 
 /**
  * Server commande to find something to launch for a client
@@ -35,8 +35,8 @@ import org.jity.server.protocol.Response;
  */
 public class FindLaunching implements Instruction {
 
-	public Response launch(ArrayList<String> parameters) {
-		Response response = new Response();
+	public JityResponse launch(ArrayList<String> parameters) {
+		JityResponse response = new JityResponse();
 				
 		try {
 			

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.instructions.Instruction;
-import org.jity.server.protocol.Response;
+import org.jity.server.protocol.JityResponse;
 
 /**
  * Server command to create à new calendar
@@ -38,8 +38,8 @@ import org.jity.server.protocol.Response;
  */
 public class UpdateCalendar implements Instruction {
 
-	public Response launch(ArrayList<String> parameters) {
-		Response response = new Response();
+	public JityResponse launch(ArrayList<String> parameters) {
+		JityResponse response = new JityResponse();
 		
 //		try {
 

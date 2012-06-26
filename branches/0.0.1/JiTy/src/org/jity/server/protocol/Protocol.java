@@ -43,9 +43,9 @@ public abstract class Protocol {
 	 */
 	public static String executeRequest(String xml) throws ProtocolException {
 		
-		Request request = parseRequest(xml);
+		JityRequest request = parseRequest(xml);
 				
-		Response response = null;
+		JityResponse response = null;
 		
 		if (request.getInstructionName().equals("FINDLAUNCHING")) {
 			response = new FindLaunching().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
@@ -71,12 +71,12 @@ public abstract class Protocol {
 	 * @return OJSResponse
 	 * @throws ProtocolException
 	 */
-	public static Response parseResponse(String xml) throws ProtocolException {
+	public static JityResponse parseResponse(String xml) throws ProtocolException {
 		
-		Response response = null;
+		JityResponse response = null;
 		
 		try {
-			response = (Response)XMLUtil.XMLStringToObject(xml);
+			response = (JityResponse)XMLUtil.XMLStringToObject(xml);
 		} catch (Exception e){
 			throw new ProtocolException(e.getMessage());
 		}
@@ -90,12 +90,12 @@ public abstract class Protocol {
 	 * @return OJSRequest
 	 * @throws ProtocolException
 	 */
-	public static Request parseRequest(String xml) throws ProtocolException {
+	public static JityRequest parseRequest(String xml) throws ProtocolException {
 		
-		Request request = null;
+		JityRequest request = null;
 		
 		try {
-			request = (Request)XMLUtil.XMLStringToObject(xml);
+			request = (JityRequest)XMLUtil.XMLStringToObject(xml);
 		} catch (Exception e){
 			throw new ProtocolException(e.getMessage());
 		}

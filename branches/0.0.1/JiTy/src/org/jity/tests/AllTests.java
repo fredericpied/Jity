@@ -7,10 +7,9 @@ public class AllTests extends TestSuite {
 	
 	static public Test suite() {
 		TestSuite suite = new TestSuite();
-		
-		suite.addTestSuite(TestJob.class);
-		
-		
+
+		suite.addTestSuite(TestServer.class);
+		suite.addTestSuite(TestCalendarInstruction.class);
 		
 		return suite;
 	}

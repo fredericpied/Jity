@@ -26,7 +26,7 @@ package org.jity.server.instructions;
 
 import java.util.ArrayList;
 
-import org.jity.server.protocol.Response;
+import org.jity.server.protocol.JityResponse;
 
 public interface Instruction {
 
@@ -35,6 +35,6 @@ public interface Instruction {
 	 * @param parameters
 	 * @return
 	 */
-	public Response launch(ArrayList<String> parameters);
+	public JityResponse launch(ArrayList<String> parameters);
 		
 }
