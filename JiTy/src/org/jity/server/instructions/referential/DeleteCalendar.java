@@ -22,17 +22,22 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions;
+package org.jity.server.instructions.referential;
 
 import java.util.ArrayList;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.jity.common.XMLUtil;
+import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
+import org.jity.server.database.Database;
 import org.jity.server.instructions.Instruction;
 import org.jity.server.protocol.JityResponse;
 
 /**
- * Server command to create à new calendar
+ * Server command to delete a calendar
  * @author 09344A
  *
  */
@@ -40,21 +45,27 @@ public class DeleteCalendar implements Instruction {
 
 	public JityResponse launch(ArrayList<String> parameters) {
 		JityResponse response = new JityResponse();
-		
-//		try {
 
+		try {
+
+			Calendar calendar = (Calendar) XMLUtil.XMLStringToObject(parameters
+					.get(0));
+
+			Session session = Database.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			session.delete(calendar);
 			
-			
-			
-			
+			transaction.commit();
+			session.close();
+
 			response.setInstructionResult("OK");
 
-//		} catch (ServerException e) {
-//			response.setException(e);
-//		}
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }

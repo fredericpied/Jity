@@ -22,39 +22,58 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions;
+package org.jity.server.instructions.referential;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.jity.common.XMLUtil;
+import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
+import org.jity.server.database.DataNotFoundDBException;
+import org.jity.server.database.Database;
+import org.jity.server.database.TooMuchDataDBException;
 import org.jity.server.instructions.Instruction;
 import org.jity.server.protocol.JityResponse;
 
 /**
  * Server command to create à new calendar
+ * 
  * @author 09344A
- *
+ * 
  */
-public class UpdateCalendar implements Instruction {
+public class GetCalendar implements Instruction {
 
 	public JityResponse launch(ArrayList<String> parameters) {
 		JityResponse response = new JityResponse();
-		
-//		try {
 
+		try {
+
+			long id = Long.parseLong(parameters.get(0));
+			String queryFind = "select cal from org.jity.referential.persistent.Calendar cal"
+	                + " where cal.id = '" + id + "'";
+
+			Session session = Database.getSessionFactory().openSession();
+
+			List list = session.createQuery(queryFind).list();
+	        if (list.size() == 0) throw new DataNotFoundDBException(queryFind);
+			if (list.size() > 1) throw new TooMuchDataDBException(queryFind);
 			
+			Calendar calendar = (Calendar)list.get(0);
 			
-			
-			
+			response.setInstructionResult(XMLUtil.objectToXMLString(calendar));
 			response.setInstructionResult("OK");
 
-//		} catch (ServerException e) {
-//			response.setException(e);
-//		}
+			session.close();
+
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }
