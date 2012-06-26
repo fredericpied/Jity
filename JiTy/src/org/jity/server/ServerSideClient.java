@@ -1,3 +1,27 @@
+/**
+ *  JiTy : Open Job Scheduler
+ *  Copyright (C) 2012 
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free
+ *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *  MA 02111-1307, USA
+ *
+ *  For questions, suggestions:
+ *
+ *  http://www.assembla.com/spaces/jity
+ *
+ */
 package org.jity.server;
 
 import java.io.BufferedReader;
@@ -9,8 +33,8 @@ import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
-import org.jity.server.protocol.Request;
-import org.jity.server.protocol.Response;
+import org.jity.server.protocol.JityRequest;
+import org.jity.server.protocol.JityResponse;
 
 public class ServerSideClient {
 	private static final Logger logger = Logger
@@ -43,16 +67,16 @@ public class ServerSideClient {
 			this.sock.close();
 	}
 
-	public Response sendRequest(Request request) {
+	public JityResponse sendRequest(JityRequest request) {
 		String xmlResult = null;
 		this.sout.println(request.getXML());
 		this.sout.flush();
-		Response response = null;
+		JityResponse response = null;
 		
 		try {
 			xmlResult = this.sin.readLine();
 
-			response = (Response) XMLUtil.XMLStringToObject(xmlResult);
+			response = (JityResponse) XMLUtil.XMLStringToObject(xmlResult);
 
 		} catch (IOException e) {
 			if (response != null) response.setException(e);

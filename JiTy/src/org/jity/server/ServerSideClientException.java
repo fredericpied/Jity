@@ -21,7 +21,8 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server;
+ */
+package org.jity.server;
 
 public class ServerSideClientException extends Exception {
 

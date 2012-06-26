@@ -24,7 +24,7 @@
  */
 package org.jity.server.protocol;
 
-public class Request extends Datagram {
+public class JityRequest extends Datagram {
 	
 	/**
 	 * Instruction to execute by the server side
@@ -35,9 +35,7 @@ public class Request extends Datagram {
 	 * Parameters for the instruction 
 	 */
 	public String instructionParameters;
-	
-	
-	
+		
 	public String getInstructionName() {
 		return instructionName;
 	}

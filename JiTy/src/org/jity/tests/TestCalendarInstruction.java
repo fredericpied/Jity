@@ -10,19 +10,20 @@ import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.ServerSideClient;
 import org.jity.server.database.Database;
-import org.jity.server.protocol.Request;
-import org.jity.server.protocol.Response;
+import org.jity.server.protocol.JityRequest;
+import org.jity.server.protocol.JityResponse;
 
 import junit.framework.TestCase;
 
 public class TestCalendarInstruction extends TestCase {
-	private static final Logger logger = Logger
-			.getLogger(TestCalendarInstruction.class);
+	private static final Logger logger = Logger.getLogger(TestCalendarInstruction.class);
 
 	public void setUp() {
-		Server server = Server.getInstance();
 		try {
-			server.startServerDaemon();
+			Server.getInstance().startServerDaemon();
+			
+			TestUtil.waiting(15);
+			
 		} catch (ServerException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -31,11 +32,12 @@ public class TestCalendarInstruction extends TestCase {
 
 	public void tearDown() {
 
-		Server server = Server.getInstance();
 		try {
+			
+			Server.getInstance().stopServerDaemon();
 
-			server.stopServerDaemon();
-
+			TestUtil.waiting(5);
+			
 		} catch (ServerException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -46,15 +48,11 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 
-			// Pause de 15 secondes
-			// Thread.sleep(15 * 1000);
-
 			Calendar calendar = new Calendar();
 			calendar.setName("Calendar1");
-			calendar.setDescription("Calendar1 descritpion");
+			calendar.setDescription("Calendar1 description");
 			calendar.setYear(2012);
-			calendar
-					.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
+			calendar.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
 							+ "OOOOOCCOOOOOCC");
 
 			Session session = Database.getSessionFactory().openSession();
@@ -63,6 +61,7 @@ public class TestCalendarInstruction extends TestCase {
 			session.save(calendar);
 			transaction.commit();
 			session.close();
+			
 			Database.terminateSessionFactory();
 
 		} catch (Exception e) {
@@ -76,12 +75,9 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 
-			// Pause de 15 secondes
-			// Thread.sleep(15 * 1000);
-
 			Calendar calendar = new Calendar();
-			calendar.setName("Calendar1");
-			calendar.setDescription("Calendar1 descritpion");
+			calendar.setName("Calendar2");
+			calendar.setDescription("Calendar2 description");
 			calendar.setYear(2012);
 			calendar
 					.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
@@ -89,12 +85,12 @@ public class TestCalendarInstruction extends TestCase {
 			
 			String xmlCalendar = XMLUtil.objectToXMLString(calendar);
 			
-			Request request = new Request();
+			JityRequest request = new JityRequest();
 			request.setInstructionName("ADDCALENDAR");
 			request.setInstructionParameters(xmlCalendar);
 			
 			ServerSideClient client = new ServerSideClient();
-			Response response = client.sendRequest(request);
+			JityResponse response = client.sendRequest(request);
 			
 			assertEquals(response.getInstructionResult(), "OK");
 
