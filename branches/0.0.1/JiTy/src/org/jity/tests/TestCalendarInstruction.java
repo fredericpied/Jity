@@ -22,7 +22,7 @@ public class TestCalendarInstruction extends TestCase {
 		try {
 			Server.getInstance().startServerDaemon();
 			
-			TestUtil.waiting(15);
+			TestUtil.waiting(10);
 			
 		} catch (ServerException e) {
 			e.printStackTrace();
@@ -91,6 +91,30 @@ public class TestCalendarInstruction extends TestCase {
 			
 			ServerSideClient client = new ServerSideClient();
 			JityResponse response = client.sendRequest(request);
+			
+			assertEquals(response.getInstructionResult(), "OK");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+	}
+	
+	public void testGetCalendar() {
+
+		try {
+			
+			JityRequest request = new JityRequest();
+			request.setInstructionName("GETCALENDAR");
+			request.setInstructionParameters("1");
+			
+			ServerSideClient client = new ServerSideClient();
+			JityResponse response = client.sendRequest(request);
+			
+			if (response.getInstructionResult().equals("KO")) {
+				throw new Exception(response.exceptionMessage);
+			}
 			
 			assertEquals(response.getInstructionResult(), "OK");
 

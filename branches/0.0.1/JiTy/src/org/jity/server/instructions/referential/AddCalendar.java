@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions;
+package org.jity.server.instructions.referential;
 
 import java.util.ArrayList;
 

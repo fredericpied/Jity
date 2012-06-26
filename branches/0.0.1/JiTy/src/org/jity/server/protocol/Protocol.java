@@ -26,11 +26,12 @@ package org.jity.server.protocol;
 
 import org.jity.common.ListUtil;
 import org.jity.common.XMLUtil;
-import org.jity.server.instructions.AddCalendar;
-import org.jity.server.instructions.DeleteCalendar;
 import org.jity.server.instructions.FindLaunching;
-import org.jity.server.instructions.UpdateCalendar;
 import org.jity.server.instructions.admin.ShutdownServer;
+import org.jity.server.instructions.referential.AddCalendar;
+import org.jity.server.instructions.referential.DeleteCalendar;
+import org.jity.server.instructions.referential.GetCalendar;
+import org.jity.server.instructions.referential.UpdateCalendar;
 
 public abstract class Protocol {
 	
@@ -57,8 +58,14 @@ public abstract class Protocol {
 			response = new DeleteCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else if (request.getInstructionName().equals("UPDATECALENDAR")) {
 			response = new UpdateCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+		} else if (request.getInstructionName().equals("GETCALENDAR")) {
+			response = new GetCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
 		} else {
-			throw new ProtocolException("Incorrect instruction name ("+request.getInstructionName()+")");
+			//throw new ProtocolException("Incorrect instruction name ("+request.getInstructionName()+")");
+			response = new JityResponse();
+			response.setInstructionResult("KO");
+			response.setExceptionName("ProtocolException");
+			response.setExceptionMessage("Incorrect instruction name ("+request.getInstructionName()+")");
 		}
 
 		return response.getXML();
