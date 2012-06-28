@@ -69,7 +69,7 @@ public class ServerSideClient {
 
 	public JityResponse sendRequest(JityRequest request) {
 		String xmlResult = null;
-		this.sout.println(request.getXML());
+		this.sout.println(request.toXML());
 		this.sout.flush();
 		JityResponse response = null;
 		

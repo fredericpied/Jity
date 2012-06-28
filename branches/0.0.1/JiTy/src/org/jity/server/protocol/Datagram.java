@@ -41,7 +41,7 @@ public class Datagram {
 	 * Return XML code of the datagram
 	 * @return
 	 */
-	public String getXML() {
+	public String toXML() {
 		return XMLUtil.objectToXMLString(this).replaceAll("\n", "");
 	}
 				

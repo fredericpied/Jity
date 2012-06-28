@@ -27,26 +27,31 @@ package org.jity.server.protocol;
 public class JityResponse extends Datagram {
 
 	/**
-	 * result of the instruction execution "OK" or "KO"
+	 * result of the instruction execution true "OK" or false "KO"
 	 */
-	public String instructionResult;
+	private boolean instructionResultOK;
 
 	/**
 	 * Exception Name (for use in case of instructionResult="KO")
 	 */
-	public String exceptionName;
+	private String exceptionName;
 
 	/**
-	 * Exception message
+	 * Exception message (for use in case of instructionResult="KO")
 	 */
-	public String exceptionMessage;
+	private String exceptionMessage;
 
-	public String getInstructionResult() {
-		return instructionResult;
+	/**
+	 * Output data for the instruction
+	 */
+	private String xmlOutputData;
+
+	public boolean isInstructionResultOK() {
+		return instructionResultOK;
 	}
 
-	public void setInstructionResult(String instructionResult) {
-		this.instructionResult = instructionResult;
+	public void setInstructionResultOK(boolean instructionResultOK) {
+		this.instructionResultOK = instructionResultOK;
 	}
 
 	public String getExceptionName() {
@@ -65,12 +70,21 @@ public class JityResponse extends Datagram {
 		this.exceptionMessage = exceptionMessage;
 	}
 
+	public String getXmlOutputData() {
+		return xmlOutputData;
+	}
+
+	public void setXmlOutputData(String xmlOutputData) {
+		this.xmlOutputData = xmlOutputData;
+	}
+
 	/**
 	 * Parse an Exception to format Response
+	 * 
 	 * @param e
 	 */
 	public void setException(Exception e) {
-		this.setInstructionResult("KO");
+		this.setInstructionResultOK(false);
 		this.setExceptionName(e.getClass().getName());
 		this.setExceptionMessage(e.getMessage());
 	}

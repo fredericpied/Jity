@@ -25,32 +25,31 @@
 package org.jity.server.protocol;
 
 public class JityRequest extends Datagram {
-	
+
 	/**
 	 * Instruction to execute by the server side
 	 */
 	public String instructionName;
-	
+
 	/**
-	 * Parameters for the instruction 
+	 * XMLInputData for the instruction
 	 */
-	public String instructionParameters;
-		
+	public String xmlInputData;
+
 	public String getInstructionName() {
 		return instructionName;
-	}
-	
-	public String getInstructionParameters() {
-		return instructionParameters;
 	}
 
 	public void setInstructionName(String instructionName) {
 		this.instructionName = instructionName;
 	}
 
-	public void setInstructionParameters(String instructionParameters) {
-		this.instructionParameters = instructionParameters;
+	public String getXmlInputData() {
+		return xmlInputData;
 	}
-	
-	
+
+	public void setXmlInputData(String xmlInputData) {
+		this.xmlInputData = xmlInputData;
+	}
+
 }

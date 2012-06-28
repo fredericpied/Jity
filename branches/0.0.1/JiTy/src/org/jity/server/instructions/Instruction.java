@@ -24,17 +24,15 @@
  */
 package org.jity.server.instructions;
 
-import java.util.ArrayList;
-
 import org.jity.server.protocol.JityResponse;
 
 public interface Instruction {
 
 	/**
-	 * Launch the requested instruction whith parameters (String tab) and return response
+	 * Launch the requested instruction whith xml Input Data and return response
 	 * @param parameters
 	 * @return
 	 */
-	public JityResponse launch(ArrayList<String> parameters);
+	public JityResponse launch(String xmlInputData);
 		
 }
