@@ -47,12 +47,12 @@ import org.jity.server.protocol.JityResponse;
  */
 public class GetCalendar implements Instruction {
 
-	public JityResponse launch(ArrayList<String> parameters) {
+	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 
 		try {
 
-			long id = Long.parseLong(parameters.get(0));
+			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
 			String queryFind = "select cal from org.jity.referential.persistent.Calendar cal"
 	                + " where cal.id = '" + id + "'";
 
@@ -62,10 +62,8 @@ public class GetCalendar implements Instruction {
 	        if (list.size() == 0) throw new DataNotFoundDBException(queryFind);
 			if (list.size() > 1) throw new TooMuchDataDBException(queryFind);
 			
-			Calendar calendar = (Calendar)list.get(0);
-			
-			response.setInstructionResult(XMLUtil.objectToXMLString(calendar));
-			response.setInstructionResult("OK");
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			response.setInstructionResultOK(true);
 
 			session.close();
 

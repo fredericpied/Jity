@@ -44,13 +44,12 @@ import org.jity.server.protocol.JityResponse;
  */
 public class AddCalendar implements Instruction {
 
-	public JityResponse launch(ArrayList<String> parameters) {
+	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 
 		try {
 
-			Calendar calendar = (Calendar) XMLUtil.XMLStringToObject(parameters
-					.get(0));
+			Calendar calendar = (Calendar) XMLUtil.XMLStringToObject(xmlInputData);
 
 			Session session = Database.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
@@ -60,7 +59,8 @@ public class AddCalendar implements Instruction {
 			transaction.commit();
 			session.close();
 
-			response.setInstructionResult("OK");
+			response.setInstructionResultOK(true);
+
 
 		} catch (Exception e) {
 			response.setException(e);

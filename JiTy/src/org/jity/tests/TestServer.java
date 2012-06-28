@@ -1,6 +1,7 @@
 package org.jity.tests;
 
 import org.apache.log4j.Logger;
+import org.jity.common.TestUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 

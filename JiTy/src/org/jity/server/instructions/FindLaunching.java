@@ -24,8 +24,6 @@
  */
 package org.jity.server.instructions;
 
-import java.util.ArrayList;
-
 import org.jity.server.protocol.JityResponse;
 
 /**
@@ -35,14 +33,14 @@ import org.jity.server.protocol.JityResponse;
  */
 public class FindLaunching implements Instruction {
 
-	public JityResponse launch(ArrayList<String> parameters) {
+	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 				
 		try {
 			
 			// do the job
 			
-			response.setInstructionResult("OK");
+			response.setInstructionResultOK(true);
 
 		} catch (Exception e) {
 			response.setException(e);

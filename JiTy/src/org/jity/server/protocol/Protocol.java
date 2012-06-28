@@ -24,7 +24,6 @@
  */
 package org.jity.server.protocol;
 
-import org.jity.common.ListUtil;
 import org.jity.common.XMLUtil;
 import org.jity.server.instructions.FindLaunching;
 import org.jity.server.instructions.admin.ShutdownServer;
@@ -49,26 +48,25 @@ public abstract class Protocol {
 		JityResponse response = null;
 		
 		if (request.getInstructionName().equals("FINDLAUNCHING")) {
-			response = new FindLaunching().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new FindLaunching().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
-			response = new ShutdownServer().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new ShutdownServer().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
-			response = new AddCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new AddCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("DELETECALENDAR")) {
-			response = new DeleteCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new DeleteCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("UPDATECALENDAR")) {
-			response = new UpdateCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new UpdateCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("GETCALENDAR")) {
-			response = new GetCalendar().launch(ListUtil.stringToArrayList(request.getInstructionParameters()));
+			response = new GetCalendar().launch(request.getXmlInputData());
 		} else {
-			//throw new ProtocolException("Incorrect instruction name ("+request.getInstructionName()+")");
 			response = new JityResponse();
-			response.setInstructionResult("KO");
+			response.setInstructionResultOK(false);
 			response.setExceptionName("ProtocolException");
 			response.setExceptionMessage("Incorrect instruction name ("+request.getInstructionName()+")");
 		}
 
-		return response.getXML();
+		return response.toXML();
 	}
 	
 	

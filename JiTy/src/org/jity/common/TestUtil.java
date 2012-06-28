@@ -1,4 +1,4 @@
-package org.jity.tests;
+package org.jity.common;
 
 import org.apache.log4j.Logger;
 

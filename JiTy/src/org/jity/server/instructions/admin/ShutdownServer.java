@@ -38,12 +38,12 @@ import org.jity.server.protocol.JityResponse;
  */
 public class ShutdownServer implements Instruction {
 
-	public JityResponse launch(ArrayList<String> parameters) {
+	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
 		try {
 			Server.getInstance().stopServerDaemon();
-			response.setInstructionResult("OK");
+			response.setInstructionResultOK(true);
 
 		} catch (ServerException e) {
 			response.setException(e);

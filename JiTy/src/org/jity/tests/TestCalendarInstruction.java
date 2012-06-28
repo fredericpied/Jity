@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
+import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
@@ -59,6 +60,7 @@ public class TestCalendarInstruction extends TestCase {
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);
+			
 			transaction.commit();
 			session.close();
 			
@@ -87,12 +89,12 @@ public class TestCalendarInstruction extends TestCase {
 			
 			JityRequest request = new JityRequest();
 			request.setInstructionName("ADDCALENDAR");
-			request.setInstructionParameters(xmlCalendar);
+			request.setXmlInputData(xmlCalendar);
 			
 			ServerSideClient client = new ServerSideClient();
 			JityResponse response = client.sendRequest(request);
 			
-			assertEquals(response.getInstructionResult(), "OK");
+			assertTrue(response.isInstructionResultOK());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -105,18 +107,20 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 			
+			Long idCalendar = Long.parseLong("1");
+			
 			JityRequest request = new JityRequest();
 			request.setInstructionName("GETCALENDAR");
-			request.setInstructionParameters("1");
+			request.setXmlInputData(XMLUtil.objectToXMLString(idCalendar));
 			
 			ServerSideClient client = new ServerSideClient();
 			JityResponse response = client.sendRequest(request);
 			
-			if (response.getInstructionResult().equals("KO")) {
-				throw new Exception(response.exceptionMessage);
+			if (!response.isInstructionResultOK()) {
+				throw new Exception(response.getExceptionMessage());
 			}
 			
-			assertEquals(response.getInstructionResult(), "OK");
+			assertTrue(response.isInstructionResultOK());
 
 		} catch (Exception e) {
 			e.printStackTrace();
