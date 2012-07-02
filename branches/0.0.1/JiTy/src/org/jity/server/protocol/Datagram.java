@@ -31,7 +31,7 @@ public class Datagram {
 	/**
 	 * Datagram format version
 	 */
-	public static final int DATAGRAM_VERSION=1;
+	public static final int DATAGRAM_VERSION = 1;
 	
 	public static int getDATAGRAM_VERSION() {
 		return DATAGRAM_VERSION;
