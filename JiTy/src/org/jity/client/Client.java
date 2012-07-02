@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server;
+package org.jity.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,20 +36,20 @@ import org.jity.common.XMLUtil;
 import org.jity.server.protocol.JityRequest;
 import org.jity.server.protocol.JityResponse;
 
-public class ServerSideClient {
+public class Client {
 	private static final Logger logger = Logger
-			.getLogger(ServerSideClient.class);
+			.getLogger(Client.class);
 
 	// Socket used to dialog with the server
 	Socket sock = null;
 	BufferedReader sin;
 	PrintWriter sout;
 
-	ServerSideClient instance = null;
+	Client instance = null;
 
-	public ServerSideClient getInstance() throws ServerSideClientException {
+	public Client getInstance() throws ClientException {
 		if (instance == null)
-			instance = new ServerSideClient();
+			instance = new Client();
 		return instance;
 	}
 
@@ -84,29 +84,32 @@ public class ServerSideClient {
 		
 		return response;
 	}
-	
-	public ServerSideClient() throws ServerSideClientException {
 
+	public Client() throws ClientException {
+		ClientConfig clientConfig = ClientConfig.getInstance();
+		
 		// Load config file
 		try {
-			ServerConfig serverConfig = ServerConfig.getInstance();
+					
 			logger.info("Reading configuration file.");
-			serverConfig.initialize();
+			clientConfig.initialize();
 			logger.info("Configuration File successfully loaded.");
+		
+		
 		} catch (IOException e) {
-			throw new ServerSideClientException(
+			throw new ClientException(
 					"Failed to read configuration file (" + e.getMessage()
 							+ ").");
 		}
 
 		try {
-			this.openConnexion("localhost", ServerConfig.getInstance()
-					.getSERVER_PORT());
+			this.openConnexion(clientConfig.getSERVER_HOSTNAME(),
+					clientConfig.getSERVER_PORT());
 
 		} catch (UnknownHostException e) {
-			throw new ServerSideClientException(e.getMessage());
+			throw new ClientException(e.getMessage());
 		} catch (IOException e) {
-			throw new ServerSideClientException(e.getMessage());
+			throw new ClientException(e.getMessage());
 		}
 
 	}
