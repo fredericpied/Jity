@@ -19,7 +19,7 @@ public class AddCalendar extends CommandLine {
 	private String calendarDescription;
 	private int calendarYear;
 
-	public AddCalendar() {
+	private AddCalendar() {
 		this.setHelpMessage("This command create a new Calendar:" +
 				"\n-n\tCalendar name" +
 				"\n-d\tCalendar description" +
@@ -29,7 +29,7 @@ public class AddCalendar extends CommandLine {
 		this.setMaxArgsNumber(6);
 	}
 	
-	public int launch(String[] args) throws BadArgCLException, ServerSideClientException, InstructionException {
+	private	int launch(String[] args) throws BadArgCLException, ServerSideClientException, InstructionException {
 		int returnCode = 1;
 		
 		this.loadArguments(args);
