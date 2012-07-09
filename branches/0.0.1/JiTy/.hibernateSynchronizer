@@ -1,0 +1,4 @@
+databaseUrl=jdbc:mysql://localhost/jity:8889
+driver=com.mysql.jdbc.Driver
+username=root
+ConfigurationFile=/JiTy/conf/hibernate.cfg.xml

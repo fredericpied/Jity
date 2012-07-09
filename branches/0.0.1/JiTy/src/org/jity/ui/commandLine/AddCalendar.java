@@ -1,9 +1,11 @@
 package org.jity.ui.commandLine;
 
+import java.io.IOException;
+
+import org.jity.client.Client;
+import org.jity.client.ClientException;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Calendar;
-import org.jity.server.ServerSideClient;
-import org.jity.server.ServerSideClientException;
 import org.jity.server.instructions.InstructionException;
 import org.jity.server.protocol.JityRequest;
 import org.jity.server.protocol.JityResponse;
@@ -29,7 +31,7 @@ public class AddCalendar extends CommandLine {
 		this.setMaxArgsNumber(6);
 	}
 	
-	private	int launch(String[] args) throws BadArgCLException, ServerSideClientException, InstructionException {
+	private	int launch(String[] args) throws BadArgCLException, ClientException, InstructionException, IOException {
 		int returnCode = 1;
 		
 		this.loadArguments(args);
@@ -57,10 +59,11 @@ public class AddCalendar extends CommandLine {
 		request.setInstructionName("ADDCALENDAR");
 		request.setXmlInputData(xmlCalendar);
 		
-		ServerSideClient client = new ServerSideClient();
+		Client client = Client.getInstance();
 		JityResponse response = client.sendRequest(request);
 		
 		if (response.isInstructionResultOK()) {
+			client.closeConnection();
 			returnCode = 0;
 		} else {
 			throw new InstructionException(response.getExceptionName()+": "+response.getExceptionMessage());

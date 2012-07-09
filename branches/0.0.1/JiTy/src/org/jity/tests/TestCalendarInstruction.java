@@ -1,15 +1,17 @@
 package org.jity.tests;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
+import org.jity.client.Client;
 import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
-import org.jity.server.ServerSideClient;
 import org.jity.server.database.Database;
 import org.jity.server.protocol.JityRequest;
 import org.jity.server.protocol.JityResponse;
@@ -91,7 +93,7 @@ public class TestCalendarInstruction extends TestCase {
 			request.setInstructionName("ADDCALENDAR");
 			request.setXmlInputData(xmlCalendar);
 			
-			ServerSideClient client = new ServerSideClient();
+			Client client = Client.getInstance();
 			JityResponse response = client.sendRequest(request);
 			
 			assertTrue(response.isInstructionResultOK());
@@ -113,11 +115,15 @@ public class TestCalendarInstruction extends TestCase {
 			request.setInstructionName("GETCALENDAR");
 			request.setXmlInputData(XMLUtil.objectToXMLString(idCalendar));
 			
-			ServerSideClient client = new ServerSideClient();
+			Client client = Client.getInstance();
 			JityResponse response = client.sendRequest(request);
 			
 			if (!response.isInstructionResultOK()) {
 				throw new Exception(response.getExceptionMessage());
+			} else {
+				List list = (List)XMLUtil.XMLStringToObject(response.getXmlOutputData());
+				Calendar calendar = (Calendar) list.get(0);
+				logger.info(calendar.getName()+", "+calendar.getDescription());
 			}
 			
 			assertTrue(response.isInstructionResultOK());

@@ -120,7 +120,7 @@ public class Server implements Runnable {
 	public void run() {
 		Socket client = null;
 
-		logger.info("Open Job Scheduler Server starting process.");
+		logger.info("JiTy Server starting process.");
 
 		// Loading config File
 		try {
@@ -142,7 +142,7 @@ public class Server implements Runnable {
 		try {
 			listenSocket = new ServerSocket(serverPort);
 			logger.info("Server running on port : " + serverPort);
-			logger.info("OpenJobScheduler Server successfully started.");
+			logger.info("JiTy Server successfully started.");
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			System.exit(1);
@@ -172,7 +172,7 @@ public class Server implements Runnable {
 				logger.warn("Failed to close client connection.");
 				logger.debug(e.getMessage());
 			}
-			logger.info("OpenJobScheduler Server shutdowned correctly.");
+			logger.info("JiTy Server shutdowned correctly.");
 		}
 	}
 

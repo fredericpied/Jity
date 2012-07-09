@@ -24,15 +24,10 @@
  */
 package org.jity.server.instructions.referential;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jity.common.XMLUtil;
-import org.jity.referential.persistent.Calendar;
-import org.jity.server.Server;
-import org.jity.server.ServerException;
 import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.Database;
 import org.jity.server.database.TooMuchDataDBException;
