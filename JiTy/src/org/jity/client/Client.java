@@ -41,19 +41,24 @@ public class Client {
 			.getLogger(Client.class);
 
 	// Socket used to dialog with the server
-	Socket sock = null;
-	BufferedReader sin;
-	PrintWriter sout;
+	private Socket sock = null;
+	private BufferedReader sin;
+	private PrintWriter sout;
 
-	Client instance = null;
+	private static Client instance = null;
 
-	public Client getInstance() throws ClientException {
+	/**
+	 * Return the current instance of Client and create one if it's the thirst call
+	 * @return Client
+	 * @throws ClientException
+	 */
+	public static Client getInstance() throws ClientException {
 		if (instance == null)
 			instance = new Client();
 		return instance;
 	}
 
-	private void openConnexion(String host, int port)
+	private void openConnection(String host, int port)
 			throws UnknownHostException, IOException {
 		// open socket
 		sock = new Socket(host, port);
@@ -62,11 +67,20 @@ public class Client {
 		sout = new PrintWriter(sock.getOutputStream());
 	}
 
-	public void closeConnexion() throws IOException {
-		if (this.sock != null)
-			this.sock.close();
+	/**
+	 * Close the connection with the server
+	 * @throws IOException
+	 */
+	public void closeConnection() throws IOException {
+		if (sock != null)
+			sock.close();
 	}
 
+	/**
+	 * Send a request to the Server
+	 * @param request
+	 * @return JiTyResponse
+	 */
 	public JityResponse sendRequest(JityRequest request) {
 		String xmlResult = null;
 		this.sout.println(request.toXML());
@@ -79,13 +93,15 @@ public class Client {
 			response = (JityResponse) XMLUtil.XMLStringToObject(xmlResult);
 
 		} catch (IOException e) {
-			if (response != null) response.setException(e);
+			response = new JityResponse();
+			response.setException(e);
 		}
 		
 		return response;
 	}
 
-	public Client() throws ClientException {
+	
+	private Client() throws ClientException {
 		ClientConfig clientConfig = ClientConfig.getInstance();
 		
 		// Load config file
@@ -103,7 +119,7 @@ public class Client {
 		}
 
 		try {
-			this.openConnexion(clientConfig.getSERVER_HOSTNAME(),
+			this.openConnection(clientConfig.getSERVER_HOSTNAME(),
 					clientConfig.getSERVER_PORT());
 
 		} catch (UnknownHostException e) {

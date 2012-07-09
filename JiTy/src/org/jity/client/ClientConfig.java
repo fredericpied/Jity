@@ -53,13 +53,26 @@ public class ClientConfig {
 	 * Listening port (default 2610)
 	 */
 	public int SERVER_PORT = 2610;
-		
+	
+	/**
+	 * Client name (default "unknown")
+	 */
+	public String CLIENT_NAME = "unknown";
+	
+	/** 
+	 * Client description (default "no description")
+	 */
+	public String CLIENT_DESC = "no description";
+	
 	public static ClientConfig getInstance() {
 		if (instance == null)
 			instance = new ClientConfig();
 		return instance;
 	}
 
+	
+	
+	
 	public void initialize() throws IOException {
 		instance = (ClientConfig) XMLUtil.XMLFileToObject(new File(
 				XML_FILE_NAME));

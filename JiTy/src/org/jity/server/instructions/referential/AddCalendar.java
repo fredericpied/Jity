@@ -33,7 +33,7 @@ import org.jity.server.instructions.Instruction;
 import org.jity.server.protocol.JityResponse;
 
 /**
- * Server command to create à new calendar
+ * Server command to create a new calendar
  * 
  * @author 09344A
  * 
