@@ -22,33 +22,39 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server;
+package org.jity.agent;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.jity.server.database.Database;
+
+import com.thoughtworks.xstream.core.util.Fields;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.*;
 
-public class Server implements Runnable {
-	private static final Logger logger = Logger.getLogger(Server.class);
+/**
+ * The JiTy Agent run on host to execute task
+ * @author Fred
+ *
+ */
+public class Agent implements Runnable {
+	private static final Logger logger = Logger.getLogger(Agent.class);
 
-	private static Server instance = null;
+	private static Agent instance = null;
 
 	private ServerSocket listenSocket;
 
 	private Thread daemon = null;
 
-	public static Server getInstance() {
+	public static Agent getInstance() {
 		if (instance == null) {
-			instance = new Server();
+			instance = new Agent();
 		}
 		return instance;
 	}
 
 	/**
-	 * Return true if JitY Server is running
+	 * Return true if JitY Agent is running
 	 * 
 	 * @return
 	 */
@@ -60,11 +66,11 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * Start the server in a Thread.
+	 * Start the agent in a Thread.
 	 * 
-	 * @throws ServerException
+	 * @throws AgentException
 	 */
-	public synchronized void startServerDaemon() throws ServerException {
+	public synchronized void startAgentDaemon() throws AgentException {
 		if (daemon == null) {
 			daemon = new Thread(this);
 			daemon.start();
@@ -72,17 +78,15 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * Stop current server if running.
+	 * Stop current agent if running.
 	 * 
-	 * @throws ServerException
+	 * @throws AgentException
 	 */
-	public synchronized void stopServerDaemon() throws ServerException {
+	public synchronized void stopAgentDaemon() throws AgentException {
 		if (daemon != null) {
-			logger.info("Shutdown of server asked.");
+			logger.info("Shutdown of agent asked.");
 
 			try {
-				logger.info("Closing Database session.");
-				Database.terminateSessionFactory();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();
@@ -90,67 +94,71 @@ public class Server implements Runnable {
 				daemon.interrupt();
 				daemon = null;
 
-				logger.info("Server successfuly shutdowned");
+				logger.info("Agent successfuly shutdowned.");
 
 			} catch (IOException e) {
-				throw new ServerException("Shutdown of server failed.");
+				throw new AgentException("Shutdown of agent failed.");
 			}
 
 		}
 	}
 
+	public void showConfig() {
+		AgentConfig agentConfig = AgentConfig.getInstance();
+		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
+		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
+		logger.info("HOSTNAME_LIST = "+agentConfig.getHOSTNAME_LIST());
+	}
+	
 	/**
-	 * Loading the server config file
+	 * Loading the agent config file
 	 * 
-	 * @throws ServerException
+	 * @throws AgentException
 	 */
-	private void loadConfigFile() throws ServerException {
+	private void loadConfigFile() throws AgentException {
 		// Load config file
 		try {
-			ServerConfig serverConfig = ServerConfig.getInstance();
+			AgentConfig agentConfig = AgentConfig.getInstance();
 			logger.info("Reading configuration file.");
-			serverConfig.initialize();
+			agentConfig.initialize();
 			logger.info("Configuration File successfully loaded.");
 		} catch (IOException e) {
-			throw new ServerException("Failed to read configuration file ("
+			throw new AgentException("Failed to read configuration file ("
 					+ e.getMessage() + ").");
 		}
 	}
 
 	public void run() {
-		Socket client = null;
+		Socket server = null;
 
-		logger.info("JiTy Server starting process.");
+		logger.info("JiTy Agent starting process.");
 
 		// Loading config File
 		try {
 			this.loadConfigFile();
-		} catch (ServerException e1) {
+		} catch (AgentException e1) {
 			logger.fatal(e1.getMessage());
 			System.exit(1);
 		}
 
-		// Init database connection
-		logger.info("Init of DB connection...");
-		Session sess = Database.getSessionFactory().openSession();
-		sess.close();
-		logger.info("Connection to database: OK");
-
+		this.showConfig();
+		
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
-			logger.info("Starting the server on "+localHostname+"...");
+			logger.info("Starting agent on "+localHostname+"...");
 			
 		} catch (UnknownHostException e1) {
 			logger.warn(e1.getMessage());
-			logger.info("Starting the server...");
+			logger.info("Starting agent...");
 		}
 
-		int serverPort = ServerConfig.getInstance().getSERVER_PORT();
+
+		int agentPort = AgentConfig.getInstance().getAGENT_PORT();
 		try {
-			listenSocket = new ServerSocket(serverPort);
-			logger.info("Server running on port : " + serverPort);
-			logger.info("JiTy Server successfully started.");
+			listenSocket = new ServerSocket(agentPort);
+			logger.info("Agent running on port : " + agentPort);
+			logger.info("JiTy Agent successfully started.");
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			System.exit(1);
@@ -159,13 +167,13 @@ public class Server implements Runnable {
 		try {
 
 			while (true) {
-				client = listenSocket.accept();
+				server = listenSocket.accept();
 				try {
 					logger.info("New connection from "
-							+ client.getInetAddress() + ".");
-					new ServeOneClient(client);
+							+ server.getInetAddress() + ".");
+					new ServeOneLaunchRequest(server);
 				} catch (IOException e) {
-					client.close();
+					server.close();
 				}
 			}
 
@@ -180,7 +188,7 @@ public class Server implements Runnable {
 				logger.warn("Failed to close client connection.");
 				logger.debug(e.getMessage());
 			}
-			logger.info("JiTy Server shutdowned correctly.");
+			logger.info("JiTy Agent shutdowned correctly.");
 		}
 	}
 
