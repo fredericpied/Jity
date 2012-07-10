@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.client;
+package org.jity.UIClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,25 +36,25 @@ import org.jity.common.XMLUtil;
 import org.jity.server.protocol.JityRequest;
 import org.jity.server.protocol.JityResponse;
 
-public class Client {
+public class UIClient {
 	private static final Logger logger = Logger
-			.getLogger(Client.class);
+			.getLogger(UIClient.class);
 
 	// Socket used to dialog with the server
 	private Socket sock = null;
 	private BufferedReader sin;
 	private PrintWriter sout;
 
-	private static Client instance = null;
+	private static UIClient instance = null;
 
 	/**
 	 * Return the current instance of Client and create one if it's the thirst call
 	 * @return Client
-	 * @throws ClientException
+	 * @throws UIClientException
 	 */
-	public static Client getInstance() throws ClientException {
+	public static UIClient getInstance() throws UIClientException {
 		if (instance == null)
-			instance = new Client();
+			instance = new UIClient();
 		return instance;
 	}
 
@@ -101,8 +101,8 @@ public class Client {
 	}
 
 	
-	private Client() throws ClientException {
-		ClientConfig clientConfig = ClientConfig.getInstance();
+	private UIClient() throws UIClientException {
+		UIClientConfig clientConfig = UIClientConfig.getInstance();
 		
 		// Load config file
 		try {
@@ -113,7 +113,7 @@ public class Client {
 		
 		
 		} catch (IOException e) {
-			throw new ClientException(
+			throw new UIClientException(
 					"Failed to read configuration file (" + e.getMessage()
 							+ ").");
 		}
@@ -123,9 +123,9 @@ public class Client {
 					clientConfig.getSERVER_PORT());
 
 		} catch (UnknownHostException e) {
-			throw new ClientException(e.getMessage());
+			throw new UIClientException(e.getMessage());
 		} catch (IOException e) {
-			throw new ClientException(e.getMessage());
+			throw new UIClientException(e.getMessage());
 		}
 
 	}
