@@ -24,8 +24,8 @@
  */
 package org.jity.server.protocol;
 
+import org.jity.agent.instructions.LaunchJob;
 import org.jity.common.XMLUtil;
-import org.jity.server.instructions.FindLaunching;
 import org.jity.server.instructions.admin.ShutdownServer;
 import org.jity.server.instructions.referential.AddCalendar;
 import org.jity.server.instructions.referential.DeleteCalendar;
@@ -47,8 +47,8 @@ public abstract class Protocol {
 				
 		JityResponse response = null;
 		
-		if (request.getInstructionName().equals("FINDLAUNCHING")) {
-			response = new FindLaunching().launch(request.getXmlInputData());
+		if (request.getInstructionName().equals("LAUNCHJOB")) {
+			response = new LaunchJob().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {

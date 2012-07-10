@@ -21,15 +21,15 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.planifDaemon;
+ */package org.jity.planifEngine;
 
 import java.util.Calendar;
 import org.apache.log4j.Logger;
 import org.jity.server.ServerConfig;
 
-public class ServerDaemon implements Runnable {
+public class planifEngineOLD implements Runnable {
 
-	private static final Logger logger = Logger.getLogger(ServerDaemon.class);
+	private static final Logger logger = Logger.getLogger(planifEngineOLD.class);
 
     Thread runner = null;
     volatile boolean shouldStop = false;

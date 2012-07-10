@@ -22,52 +22,52 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server;
+package org.jity.agent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.jity.common.XMLUtil;
 
 /**
- * Server configuration Class
- * 
- * @author 09344A
+ * Agent configuration Class
+ * @author Fred
  * 
  */
-public class ServerConfig {
+public class AgentConfig {
 
-	private static ServerConfig instance = null;
+	private static AgentConfig instance = null;
 
 	/**
 	 * XML File
 	 */
-	private static final String XML_FILE_NAME = "conf/ServerConfig.xml";
+	private static final String XML_FILE_NAME = "conf/AgentConfig.xml";
 
 	/**
-	 * Listening port (default 2610)
-	 */
-	public int SERVER_PORT = 2610;
-	
-	/**
-	 * Job constraints pooling cycle in second (default 10)
-	 */
-	public int SERVER_POOLING_CYCLE = 10;
-
-	/**
-	 * Port to pool agent (default 2611)
+	 * Listening port (default 2611)
 	 */
 	public int AGENT_PORT = 2611;
-
 	
-	public static ServerConfig getInstance() {
+	/**
+	 * Agent description
+	 */
+	public String AGENT_DESC;
+	
+	/**
+	 * List of the server hostname who are autorized to launch task
+	 * on this agent
+	 */
+	public ArrayList<String> HOSTNAME_LIST;
+	
+	public static AgentConfig getInstance() {
 		if (instance == null)
-			instance = new ServerConfig();
+			instance = new AgentConfig();
 		return instance;
 	}
 
 	public void initialize() throws IOException {
-		instance = (ServerConfig) XMLUtil.XMLFileToObject(new File(
+		instance = (AgentConfig) XMLUtil.XMLFileToObject(new File(
 				XML_FILE_NAME));
 	}
 
@@ -75,16 +75,33 @@ public class ServerConfig {
 		XMLUtil.objectToXMLFile(instance, xmlFile);
 	}
 
-	public int getSERVER_PORT() {
-		return SERVER_PORT;
-	}
-
-	public int getSERVER_POOLING_CYCLE() {
-		return SERVER_POOLING_CYCLE;
+	public int getAGENT_PORT() {
+		return AGENT_PORT;
 	}
 
 	public static String getXmlFileName() {
 		return XML_FILE_NAME;
 	}
+
+	public String getAGENT_DESC() {
+		return AGENT_DESC;
+	}
+
+	public void setAGENT_DESC(String aGENTDESC) {
+		AGENT_DESC = aGENTDESC;
+	}
+
+	public ArrayList<String> getHOSTNAME_LIST() {
+		return HOSTNAME_LIST;
+	}
+
+	public void setHOSTNAME_LIST(ArrayList<String> hOSTNAMELIST) {
+		HOSTNAME_LIST = hOSTNAMELIST;
+	}
+
+	public void setAGENT_PORT(int aGENTPORT) {
+		AGENT_PORT = aGENTPORT;
+	}
+	
 
 }

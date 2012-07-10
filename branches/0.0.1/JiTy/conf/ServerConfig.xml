@@ -1,4 +1,5 @@
 <org.jity.server.ServerConfig>
   <SERVER__PORT>2610</SERVER__PORT>
   <SERVER__POOLING__CYCLE>10</SERVER__POOLING__CYCLE>
+  <AGENT__PORT>2611</AGENT__PORT>
 </org.jity.server.ServerConfig>

@@ -22,32 +22,23 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions;
+package org.jity.planifEngine;
 
-import org.jity.server.protocol.JityResponse;
+public class PlanifEngineException extends Exception {
 
-/**
- * Server commande to find something to launch for a client
- * @author 09344A
- *
- */
-public class FindLaunching implements Instruction {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1034270238243994342L;
 
-	public JityResponse launch(String xmlInputData) {
-		JityResponse response = new JityResponse();
-				
-		try {
-			
-			// do the job
-			
-			response.setInstructionResultOK(true);
-
-		} catch (Exception e) {
-			response.setException(e);
-		}
-		
-		
-		return response;
-	}
-	
+	/**
+     * Constructs a ServerException with the specified detail message. A detail
+     * message is a String that describes this particular exception.
+     * @param msg the detail message
+     * @param nested the exception or error that caused this exception to be
+     *            thrown.
+     */
+    public PlanifEngineException(String msg) {
+        super(msg);
+    }
 }
