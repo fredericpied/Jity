@@ -22,9 +22,9 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.client;
+package org.jity.UIClient;
 
-public class ClientException extends Exception {
+public class UIClientException extends Exception {
 
     /**
 	 * 
@@ -38,7 +38,7 @@ public class ClientException extends Exception {
      * @param nested the exception or error that caused this exception to be
      *            thrown.
      */
-    public ClientException(String msg) {
+    public UIClientException(String msg) {
         super(msg);
     }
 }

@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.ui.commandLine;
+package org.jity.UIClient.commandLine;
 
 public class BadArgCLException extends Exception {
 

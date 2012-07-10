@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
-import org.jity.client.Client;
+import org.jity.UIClient.UIClient;
 import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Calendar;
@@ -93,7 +93,7 @@ public class TestCalendarInstruction extends TestCase {
 			request.setInstructionName("ADDCALENDAR");
 			request.setXmlInputData(xmlCalendar);
 			
-			Client client = Client.getInstance();
+			UIClient client = UIClient.getInstance();
 			JityResponse response = client.sendRequest(request);
 			
 			assertTrue(response.isInstructionResultOK());
@@ -115,7 +115,7 @@ public class TestCalendarInstruction extends TestCase {
 			request.setInstructionName("GETCALENDAR");
 			request.setXmlInputData(XMLUtil.objectToXMLString(idCalendar));
 			
-			Client client = Client.getInstance();
+			UIClient client = UIClient.getInstance();
 			JityResponse response = client.sendRequest(request);
 			
 			if (!response.isInstructionResultOK()) {

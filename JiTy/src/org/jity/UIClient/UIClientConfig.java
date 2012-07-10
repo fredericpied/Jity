@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.client;
+package org.jity.UIClient;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,14 +35,14 @@ import org.jity.common.XMLUtil;
  * @author 09344A
  * 
  */
-public class ClientConfig {
+public class UIClientConfig {
 
-	private static ClientConfig instance = null;
+	private static UIClientConfig instance = null;
 
 	/**
 	 * XML File
 	 */
-	private static final String XML_FILE_NAME = "conf/ClientConfig.xml";
+	private static final String XML_FILE_NAME = "conf/UIClientConfig.xml";
 
 	/**
 	 * server hostname (default localhost)
@@ -64,17 +64,15 @@ public class ClientConfig {
 	 */
 	public String CLIENT_DESC = "no description";
 	
-	public static ClientConfig getInstance() {
+	public static UIClientConfig getInstance() {
 		if (instance == null)
-			instance = new ClientConfig();
+			instance = new UIClientConfig();
 		return instance;
 	}
 
 	
-	
-	
 	public void initialize() throws IOException {
-		instance = (ClientConfig) XMLUtil.XMLFileToObject(new File(
+		instance = (UIClientConfig) XMLUtil.XMLFileToObject(new File(
 				XML_FILE_NAME));
 	}
 

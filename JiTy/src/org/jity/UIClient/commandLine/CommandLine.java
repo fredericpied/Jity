@@ -1,4 +1,4 @@
-package org.jity.ui.commandLine;
+package org.jity.UIClient.commandLine;
 
 import java.io.File;
 import java.util.HashMap;

@@ -1,9 +1,9 @@
-package org.jity.ui.commandLine;
+package org.jity.UIClient.commandLine;
 
 import java.io.IOException;
 
-import org.jity.client.Client;
-import org.jity.client.ClientException;
+import org.jity.UIClient.UIClient;
+import org.jity.UIClient.UIClientException;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.instructions.InstructionException;
@@ -31,7 +31,7 @@ public class AddCalendar extends CommandLine {
 		this.setMaxArgsNumber(6);
 	}
 	
-	private	int launch(String[] args) throws BadArgCLException, ClientException, InstructionException, IOException {
+	private	int launch(String[] args) throws BadArgCLException, UIClientException, InstructionException, IOException {
 		int returnCode = 1;
 		
 		this.loadArguments(args);
@@ -59,7 +59,7 @@ public class AddCalendar extends CommandLine {
 		request.setInstructionName("ADDCALENDAR");
 		request.setXmlInputData(xmlCalendar);
 		
-		Client client = Client.getInstance();
+		UIClient client = UIClient.getInstance();
 		JityResponse response = client.sendRequest(request);
 		
 		if (response.isInstructionResultOK()) {
