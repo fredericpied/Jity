@@ -9,12 +9,12 @@ import org.hibernate.exception.DataException;
 import org.jity.UIClient.UIClient;
 import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.database.Database;
-import org.jity.server.protocol.JityRequest;
-import org.jity.server.protocol.JityResponse;
 
 import junit.framework.TestCase;
 

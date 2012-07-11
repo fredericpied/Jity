@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.protocol;
+package org.jity.protocol;
 
 public class JityRequest extends Datagram {
 

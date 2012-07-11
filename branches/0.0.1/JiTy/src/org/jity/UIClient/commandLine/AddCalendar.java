@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.jity.UIClient.UIClient;
 import org.jity.UIClient.UIClientException;
 import org.jity.common.XMLUtil;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.instructions.InstructionException;
-import org.jity.server.protocol.JityRequest;
-import org.jity.server.protocol.JityResponse;
 
 /**
  * Command line for adding a new Calendar

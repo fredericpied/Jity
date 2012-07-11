@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.planifEngine;
+package org.jity.server.planifEngine;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,8 +33,8 @@ import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
-import org.jity.server.protocol.JityRequest;
-import org.jity.server.protocol.JityResponse;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
 
 public class PlanifEngine {
 	private static final Logger logger = Logger

@@ -33,8 +33,8 @@ import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
-import org.jity.server.protocol.JityRequest;
-import org.jity.server.protocol.JityResponse;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
 
 public class UIClient {
 	private static final Logger logger = Logger

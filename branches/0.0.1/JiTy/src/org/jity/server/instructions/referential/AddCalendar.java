@@ -27,10 +27,10 @@ package org.jity.server.instructions.referential;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.common.XMLUtil;
+import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Calendar;
 import org.jity.server.database.Database;
 import org.jity.server.instructions.Instruction;
-import org.jity.server.protocol.JityResponse;
 
 /**
  * Server command to create a new calendar

@@ -30,8 +30,8 @@ package org.jity.agent;
 import java.io.*;
 import java.net.*;
 import org.apache.log4j.Logger;
-import org.jity.server.protocol.Protocol;
-import org.jity.server.protocol.ProtocolException;
+import org.jity.protocol.Protocol;
+import org.jity.protocol.ProtocolException;
 
 public class ServeOneLaunchRequest extends Thread {
 	private static final Logger logger = Logger.getLogger(ServeOneLaunchRequest.class);

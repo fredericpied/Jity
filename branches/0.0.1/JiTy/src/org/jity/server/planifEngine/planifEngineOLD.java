@@ -21,7 +21,7 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.planifEngine;
+ */package org.jity.server.planifEngine;
 
 import java.util.Calendar;
 import org.apache.log4j.Logger;

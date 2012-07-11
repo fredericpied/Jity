@@ -5,10 +5,10 @@ import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
-import org.jity.planifEngine.PlanifEngine;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Job;
-import org.jity.server.protocol.JityRequest;
-import org.jity.server.protocol.JityResponse;
+import org.jity.server.planifEngine.PlanifEngine;
 
 import junit.framework.TestCase;
 
