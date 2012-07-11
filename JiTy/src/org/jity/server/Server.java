@@ -27,6 +27,7 @@ package org.jity.server;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jity.server.database.Database;
+import org.jity.server.planifDaemon.PlanifDaemon;
 
 import java.io.*;
 import java.net.*;
@@ -81,6 +82,10 @@ public class Server implements Runnable {
 			logger.info("Shutdown of server asked.");
 
 			try {
+				
+				logger.info("Shutdowning planification daemon.");
+				PlanifDaemon.getInstance().stopPlanifDaemon();
+				
 				logger.info("Closing Database session.");
 				Database.terminateSessionFactory();
 				
@@ -146,6 +151,9 @@ public class Server implements Runnable {
 			logger.info("Starting the server...");
 		}
 
+		// Start the planification daemon
+		PlanifDaemon.getInstance().startPlanifDaemon();
+		
 		int serverPort = ServerConfig.getInstance().getSERVER_PORT();
 		try {
 			listenSocket = new ServerSocket(serverPort);

@@ -3,12 +3,12 @@ package org.jity.tests;
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
-import org.jity.common.TestUtil;
+import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Job;
-import org.jity.server.planifEngine.PlanifEngine;
+import org.jity.server.planifDaemon.PlanifEngine;
 
 import junit.framework.TestCase;
 
@@ -20,9 +20,13 @@ public class TestLaunchJobInstruction extends TestCase {
 
 			Agent.getInstance().startAgentDaemon();
 
-			TestUtil.waiting(5);
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 			
 		} catch (AgentException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -33,9 +37,13 @@ public class TestLaunchJobInstruction extends TestCase {
 		try {
 			Agent.getInstance().stopAgentDaemon();
 			
-			TestUtil.waiting(5);
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 			
 		} catch (AgentException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
