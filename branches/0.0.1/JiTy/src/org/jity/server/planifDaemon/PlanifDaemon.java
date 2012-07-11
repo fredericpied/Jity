@@ -21,26 +21,52 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server.planifEngine;
+ */package org.jity.server.planifDaemon;
 
+import java.io.IOException;
 import java.util.Calendar;
 import org.apache.log4j.Logger;
+import org.jity.common.TimeUtil;
+import org.jity.server.Server;
 import org.jity.server.ServerConfig;
+import org.jity.server.ServerException;
+import org.jity.server.database.Database;
 
-public class planifEngineOLD implements Runnable {
+public class PlanifDaemon implements Runnable {
+	private static final Logger logger = Logger.getLogger(PlanifDaemon.class);
 
-	private static final Logger logger = Logger.getLogger(planifEngineOLD.class);
+	private static PlanifDaemon instance = null;
+	
+    private Thread daemon = null;
 
-    Thread runner = null;
     volatile boolean shouldStop = false;
-
+    
+	public static PlanifDaemon getInstance() {
+		if (instance == null) {
+			instance = new PlanifDaemon();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Return true if planification engine is running
+	 * 
+	 * @return
+	 */
+	public synchronized boolean isRunning() {
+		if (this.daemon != null)
+			return this.daemon.isAlive();
+		else
+			return false;
+	}
+	
     /**
      * Start the planifDaemon in a Thread.
      */
     public synchronized void startPlanifDaemon() {
-        if (runner == null) {
-            runner = new Thread(this);
-            runner.start();
+        if (daemon == null) {
+            daemon = new Thread(this);
+            daemon.start();
         }
     }
 
@@ -48,10 +74,12 @@ public class planifEngineOLD implements Runnable {
      * Stop current planifDaemon if running.
      */
     public synchronized void stopPlanifDaemon() {
-        if (runner != null) {
+        if (daemon != null) {
+        	logger.info("Shutdown of PlanifDaemon asked.");
             shouldStop = true;
-            runner.interrupt();
-            runner = null;
+            daemon.interrupt();
+            daemon = null;
+			logger.info("PlanifDaemon successfuly shutdowned");
         }
     }
 
@@ -59,8 +87,8 @@ public class planifEngineOLD implements Runnable {
      * Analyse all jobs in the referential to check constraints and manage their
      * state.
      */
-    public void checkProg() {
-       
+    public void checkJobs() {
+    	 logger.info("checkJobs executing");
     }
 
     /**
@@ -71,12 +99,11 @@ public class planifEngineOLD implements Runnable {
         while (!shouldStop) {
             try {
                 logger.info("Start of job analyze.");
-                checkProg();
-                Calendar end = Calendar.getInstance();
+                checkJobs();
                 logger.info("End of job analyze.");
-                Thread.sleep(cycle);
+                TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
-                logger.warn("Engine is stopped.");
+                logger.warn("PlanifDaemon is stopped.");
                 logger.debug(ex.toString());
             } catch (Exception ex) {
                 logger.warn("Unknow error: " + ex.getMessage());

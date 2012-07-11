@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.planifEngine;
+package org.jity.server.planifDaemon;
 
 public class PlanifEngineException extends Exception {
 

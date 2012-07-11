@@ -7,7 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
 import org.jity.UIClient.UIClient;
-import org.jity.common.TestUtil;
+import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
@@ -25,9 +25,13 @@ public class TestCalendarInstruction extends TestCase {
 		try {
 			Server.getInstance().startServerDaemon();
 			
-			TestUtil.waiting(10);
+			logger.info("Waiting 10 sec");
+			TimeUtil.waiting(10);
 			
 		} catch (ServerException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -39,9 +43,13 @@ public class TestCalendarInstruction extends TestCase {
 			
 			Server.getInstance().stopServerDaemon();
 
-			TestUtil.waiting(5);
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 			
 		} catch (ServerException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

@@ -1,7 +1,7 @@
 package org.jity.tests;
 
 import org.apache.log4j.Logger;
-import org.jity.common.TestUtil;
+import org.jity.common.TimeUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 
@@ -15,9 +15,13 @@ public class TestServer extends TestCase {
 
 			Server.getInstance().startServerDaemon();
 
-			TestUtil.waiting(15);
+			logger.info("Waiting 25 sec");
+			TimeUtil.waiting(25);
 			
 		} catch (ServerException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -31,10 +35,14 @@ public class TestServer extends TestCase {
 	public void testStopServerDaemon() {
 		try {
 			Server.getInstance().stopServerDaemon();
-			
-			TestUtil.waiting(5);
+
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 			
 		} catch (ServerException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
