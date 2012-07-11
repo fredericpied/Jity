@@ -32,9 +32,9 @@ import org.jity.agent.commandExecutor.ErrorOutputLogger;
 import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.agent.commandExecutor.CommandExecutor;
 import org.jity.common.XMLUtil;
+import org.jity.protocol.JityResponse;
 import org.jity.referential.persistent.Job;
 import org.jity.server.instructions.Instruction;
-import org.jity.server.protocol.JityResponse;
 
 /**
  * Server commande to find something to launch for a client

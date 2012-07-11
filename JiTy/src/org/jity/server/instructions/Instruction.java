@@ -24,7 +24,7 @@
  */
 package org.jity.server.instructions;
 
-import org.jity.server.protocol.JityResponse;
+import org.jity.protocol.JityResponse;
 
 public interface Instruction {
 

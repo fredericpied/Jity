@@ -22,23 +22,23 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.protocol;
+package org.jity.server.planifEngine;
 
-public class ProtocolException extends Exception {
+public class PlanifEngineException extends Exception {
 
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = -7706917493336460539L;
+	private static final long serialVersionUID = 1034270238243994342L;
 
 	/**
-     * Constructs a OSJProtocolException with the specified detail message. A detail
+     * Constructs a ServerException with the specified detail message. A detail
      * message is a String that describes this particular exception.
      * @param msg the detail message
      * @param nested the exception or error that caused this exception to be
      *            thrown.
      */
-    public ProtocolException(String msg) {
+    public PlanifEngineException(String msg) {
         super(msg);
     }
 }
