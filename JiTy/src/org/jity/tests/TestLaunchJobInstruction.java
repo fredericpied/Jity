@@ -1,22 +1,12 @@
 package org.jity.tests;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.exception.DataException;
-import org.jity.UIClient.UIClient;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.TestUtil;
 import org.jity.common.XMLUtil;
 import org.jity.planifEngine.PlanifEngine;
-import org.jity.referential.persistent.Calendar;
 import org.jity.referential.persistent.Job;
-import org.jity.server.Server;
-import org.jity.server.ServerException;
-import org.jity.server.database.Database;
 import org.jity.server.protocol.JityRequest;
 import org.jity.server.protocol.JityResponse;
 
