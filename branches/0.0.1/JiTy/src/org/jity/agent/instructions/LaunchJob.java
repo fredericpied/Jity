@@ -28,9 +28,9 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
-import org.jity.agent.commandExecutor.ErrorLogger;
-import org.jity.agent.commandExecutor.OutputLogger;
-import org.jity.agent.commandExecutor.SysCommandExecutor;
+import org.jity.agent.commandExecutor.ErrorOutputLogger;
+import org.jity.agent.commandExecutor.StandardOutputLogger;
+import org.jity.agent.commandExecutor.CommandExecutor;
 import org.jity.common.XMLUtil;
 import org.jity.referential.persistent.Job;
 import org.jity.server.instructions.Instruction;
@@ -48,13 +48,11 @@ public class LaunchJob implements Instruction {
 		JityResponse response = new JityResponse();
 				
 		try {
-			int returnCode = -1;
+			int exitStatus = -1;
 			
-			//http://cmusphinx.sourceforge.net/sphinx4/javadoc/edu/cmu/sphinx/tools/gui/util/SysCommandExecutor.html
-			
-			SysCommandExecutor cmdExecutor = new SysCommandExecutor();
-			cmdExecutor.setOutputLogDevice(new OutputLogger());			
-			cmdExecutor.setErrorLogDevice(new ErrorLogger());
+			CommandExecutor cmdExecutor = new CommandExecutor();
+			cmdExecutor.setOutputLogDevice(new StandardOutputLogger());			
+			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger());
 			
 			// Setting Job with XML flow
 			Job job = (Job)XMLUtil.XMLStringToObject(xmlInputData);
@@ -66,11 +64,11 @@ public class LaunchJob implements Instruction {
 			logger.info("-- START OF JOB "+job.getName()+" --");
 			
 			// Running command
-			returnCode = cmdExecutor.runCommand(commandLine);
+			exitStatus = cmdExecutor.runCommand(commandLine);
 			
-			if (returnCode != 0) {
+			if (exitStatus != 0) {
 				logger.info("-- BAD END OF JOB "+job.getName()+"(Return code <> 0) --");
-				throw new Exception("Return code = "+returnCode);
+				throw new Exception("Exit status = "+exitStatus);
 			}
 			
 			if (cmdExecutor.getCommandError().length() != 0) {
@@ -79,9 +77,9 @@ public class LaunchJob implements Instruction {
 			}
 									
 			logger.info("-- GOOD END OF JOB "+job.getName()+" --");
-			if (returnCode == 0) {
+			if (exitStatus == 0) {
 				response.setInstructionResultOK(true);
-				response.setXmlOutputData(XMLUtil.objectToXMLString(returnCode));
+				response.setXmlOutputData(XMLUtil.objectToXMLString(exitStatus));
 			}
 
 		} catch (Exception e) {

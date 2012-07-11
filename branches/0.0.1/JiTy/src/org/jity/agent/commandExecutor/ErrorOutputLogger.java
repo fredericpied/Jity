@@ -21,23 +21,17 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.agent.instructions;
+ */
+package org.jity.agent.commandExecutor;
 
-public class LaunchJobException extends Exception {
+import org.apache.log4j.Logger;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3316474569056173179L;
 
-	/**
-     * Constructs a ServerException with the specified detail message. A detail
-     * message is a String that describes this particular exception.
-     * @param msg the detail message
-     * @param nested the exception or error that caused this exception to be
-     *            thrown.
-     */
-    public LaunchJobException(String msg) {
-        super(msg);
-    }
+public class ErrorOutputLogger implements LogDevice {
+	private static final Logger logger = Logger.getLogger(ErrorOutputLogger.class);
+	
+	public void log(String str) {
+		logger.error(str);
+	}
+
 }
