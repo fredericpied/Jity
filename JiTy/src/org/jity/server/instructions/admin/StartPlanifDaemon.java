@@ -22,51 +22,27 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions.admin;
 
-import java.util.List;
-
-import org.hibernate.Session;
-import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
-import org.jity.server.database.DataNotFoundDBException;
-import org.jity.server.database.DatabaseServer;
-import org.jity.server.database.TooMuchDataDBException;
 import org.jity.server.instructions.Instruction;
+import org.jity.server.planifDaemon.PlanifDaemon;
 
 /**
- * Server command to create à new calendar
- * 
- * @author 09344A
- * 
+ * Server command to shutdown the Planif Daemon
+ * @author Fred
+ *
  */
-public class GetCalendar implements Instruction {
+public class StartPlanifDaemon implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-
-		try {
-
-			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
-			String queryFind = "select cal from org.jity.referential.persistent.Calendar cal"
-	                + " where cal.id = '" + id + "'";
-
-			Session session = DatabaseServer.getSession();
-
-			List list = session.createQuery(queryFind).list();
-	        if (list.size() == 0) throw new DataNotFoundDBException(queryFind);
-			if (list.size() > 1) throw new TooMuchDataDBException(queryFind);
-			
-			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
-			response.setInstructionResultOK(true);
-
-			session.close();
-
-		} catch (Exception e) {
-			response.setException(e);
-		}
+		
+		PlanifDaemon.getInstance().startPlanifDaemon();
+		response.setInstructionResultOK(true);
 
 		return response;
 	}
+	
 
 }

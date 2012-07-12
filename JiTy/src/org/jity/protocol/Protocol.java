@@ -25,8 +25,11 @@
 package org.jity.protocol;
 
 import org.jity.agent.instructions.LaunchJob;
+import org.jity.agent.instructions.ShutdownAgent;
 import org.jity.common.XMLUtil;
+import org.jity.server.instructions.admin.ShutdownPlanifDaemon;
 import org.jity.server.instructions.admin.ShutdownServer;
+import org.jity.server.instructions.admin.StartPlanifDaemon;
 import org.jity.server.instructions.referential.AddCalendar;
 import org.jity.server.instructions.referential.DeleteCalendar;
 import org.jity.server.instructions.referential.GetCalendar;
@@ -51,6 +54,12 @@ public abstract class Protocol {
 			response = new LaunchJob().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("SHUTDOWNPLANIFDAEMON")) {
+			response = new ShutdownPlanifDaemon().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("STARTPLANIFDAEMON")) {
+			response = new StartPlanifDaemon().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("SHUTDOWNAGENT")) {
+			response = new ShutdownAgent().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
 			response = new AddCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("DELETECALENDAR")) {

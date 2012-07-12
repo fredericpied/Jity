@@ -1,4 +1,4 @@
-package org.jity.referential.persistent;
+package org.jity.referential;
 
 public class Calendar {
 	private long id;

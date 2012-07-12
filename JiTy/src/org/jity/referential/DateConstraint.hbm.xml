@@ -28,17 +28,16 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.jity.referential.persistent">
+<hibernate-mapping package="org.jity.referential">
 
-    <class name="Calendar" table="CALENDAR">
+    <class name="DateConstraint" table="DATE_CONSTRAINT">
         <id name="id" type="long">
-            <column name="ID" not-null="true" unique="true" index="PK_CALENDAR" />  
+        	<column name="ID" not-null="true" unique="true" index="PK_DATE_CONSTRAINT" />  
             <generator class="increment"/>
         </id>
-        <property name="name" column="NAME"/>
-        <property name="description" column="DESCRIPTION"/>
-        <property name="year" column="YEAR"></property>    
-        <property name="openDays" column="OPEN_DAYS"/>
-    </class>
+        <property name="planifRule" not-null="true" column="PLANIF_RULE"/>
+		<many-to-one name="calendar" not-null="true" column="CALENDAR_ID" cascade="all"/>
+	</class>
+
 
 </hibernate-mapping>

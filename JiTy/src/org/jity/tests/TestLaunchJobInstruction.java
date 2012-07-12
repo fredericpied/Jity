@@ -7,8 +7,9 @@ import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
-import org.jity.referential.persistent.Job;
-import org.jity.server.planifDaemon.PlanifEngine;
+import org.jity.referential.Job;
+import org.jity.server.ServerConfig;
+import org.jity.server.planifDaemon.JobLaunchRequest;
 
 import junit.framework.TestCase;
 
@@ -56,15 +57,16 @@ public class TestLaunchJobInstruction extends TestCase {
 			Job job = new Job();
 			job.setName("jobtest");
 			job.setCommandPath("d:\\temp\\test.bat");
+			job.setHostName("localhost");
+		
+			JobLaunchRequest launchRequest = new JobLaunchRequest();
 			
-			String xmlJob = XMLUtil.objectToXMLString(job);
+			launchRequest.openAgentConnection(job.getHostName(), 
+					ServerConfig.getInstance().getAGENT_PORT());
 			
-			JityRequest request = new JityRequest();
-			request.setInstructionName("LAUNCHJOB");
-			request.setXmlInputData(xmlJob);
+			JityResponse response = launchRequest.sendLaunchRequest(job);
 			
-			PlanifEngine planifEngine = PlanifEngine.getInstance();
-			JityResponse response = planifEngine.sendRequest(request);
+			launchRequest.closeAgentConnection();
 			
 			if (!response.isInstructionResultOK()) {
 				throw new Exception(response.getExceptionMessage());

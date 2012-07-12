@@ -1,7 +1,4 @@
-package org.jity.referential.persistent;
-
-import org.hibernate.Session;
-import org.jity.server.database.Database;
+package org.jity.referential;
 
 public class Job {
 
@@ -88,27 +85,6 @@ public class Job {
 
 	public void setDateConstraint(DateConstraint dateConstraint) {
 		this.dateConstraint = dateConstraint;
-	}
-
-	public static void insert(Job job) {
-		Session sess = Database.getSessionFactory().openSession();
-        sess.beginTransaction();
-	    sess.save(job);
-        sess.getTransaction().commit();
-	}
-	
-	public static void update(Job job) {
-		Session sess = Database.getSessionFactory().openSession();
-        sess.beginTransaction();
-        sess.update(job);
-        sess.getTransaction().commit();
-	}
-	
-	public static void delete(Job job) {
-		Session sess = Database.getSessionFactory().openSession();
-        sess.beginTransaction();
-        sess.delete(job);
-        sess.getTransaction().commit();
 	}
 
 }

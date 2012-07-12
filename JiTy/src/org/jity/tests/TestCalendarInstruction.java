@@ -11,10 +11,10 @@ import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
-import org.jity.referential.persistent.Calendar;
+import org.jity.referential.Calendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
-import org.jity.server.database.Database;
+import org.jity.server.database.DatabaseServer;
 
 import junit.framework.TestCase;
 
@@ -66,7 +66,7 @@ public class TestCalendarInstruction extends TestCase {
 			calendar.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
 							+ "OOOOOCCOOOOOCC");
 
-			Session session = Database.getSessionFactory().openSession();
+			Session session = DatabaseServer.getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);
@@ -74,8 +74,8 @@ public class TestCalendarInstruction extends TestCase {
 			transaction.commit();
 			session.close();
 			
-			Database.terminateSessionFactory();
-
+			DatabaseServer.stopDatabaseServer();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
