@@ -36,13 +36,7 @@ public class TestAgent extends TestCase {
 		try {
 			Agent.getInstance().stopAgentDaemon();
 			
-			logger.info("Waiting 5 sec");
-			TimeUtil.waiting(5);
-			
 		} catch (AgentException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
