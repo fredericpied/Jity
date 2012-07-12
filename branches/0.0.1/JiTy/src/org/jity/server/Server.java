@@ -26,11 +26,13 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jity.server.database.Database;
+import org.jity.server.database.DatabaseException;
+import org.jity.server.database.DatabaseServer;
 import org.jity.server.planifDaemon.PlanifDaemon;
 
 import java.io.*;
 import java.net.*;
+import java.sql.SQLException;
 
 public class Server implements Runnable {
 	private static final Logger logger = Logger.getLogger(Server.class);
@@ -86,8 +88,8 @@ public class Server implements Runnable {
 				logger.info("Shutdowning planification daemon.");
 				PlanifDaemon.getInstance().stopPlanifDaemon();
 				
-				logger.info("Closing Database session.");
-				Database.terminateSessionFactory();
+				logger.info("Closing Database server.");
+				DatabaseServer.stopDatabaseServer();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();
@@ -132,15 +134,31 @@ public class Server implements Runnable {
 			this.loadConfigFile();
 		} catch (ServerException e1) {
 			logger.fatal(e1.getMessage());
+			try {
+				this.stopServerDaemon();
+			} catch (ServerException e) {}
 			System.exit(1);
 		}
 
-		// Init database connection
-		logger.info("Init of DB connection...");
-		Session sess = Database.getSessionFactory().openSession();
-		sess.close();
-		logger.info("Connection to database: OK");
+		try {
+			
+			DatabaseServer.startDatabaseServer();
+			
+			// Init database connection
+			logger.info("Init of DB connection...");
+			Session sess = DatabaseServer.getSession();
+			sess.close();
+			logger.info("Connection to database: OK");
 
+		} catch (DatabaseException e) {
+			logger.fatal(e.getMessage());
+
+			DatabaseServer.stopDatabaseServer();
+			
+			System.exit(1);
+		}
+
+		
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
@@ -150,9 +168,6 @@ public class Server implements Runnable {
 			logger.warn(e1.getMessage());
 			logger.info("Starting the server...");
 		}
-
-		// Start the planification daemon
-		PlanifDaemon.getInstance().startPlanifDaemon();
 		
 		int serverPort = ServerConfig.getInstance().getSERVER_PORT();
 		try {
@@ -161,6 +176,9 @@ public class Server implements Runnable {
 			logger.info("JiTy Server successfully started.");
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
+			
+			DatabaseServer.stopDatabaseServer();
+			
 			System.exit(1);
 		}
 

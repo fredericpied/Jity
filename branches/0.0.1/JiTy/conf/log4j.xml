@@ -9,7 +9,7 @@
 	</appender>
 	
 	<appender name="ROLLING_FILE" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="./log/GraphScheduler.log"/>
+		<param name="File" value="./log/JiTy.log"/>
 		<param name="MaxFileSize" value="2048KB"></param>
 		<param name="MaxBackupIndex" value="30"/>
 		<layout class="org.apache.log4j.PatternLayout">

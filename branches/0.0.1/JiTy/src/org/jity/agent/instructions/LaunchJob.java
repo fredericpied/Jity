@@ -24,16 +24,13 @@
  */
 package org.jity.agent.instructions;
 
-import java.io.File;
-
 import org.apache.log4j.Logger;
-import org.jity.agent.Agent;
 import org.jity.agent.commandExecutor.ErrorOutputLogger;
 import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.agent.commandExecutor.CommandExecutor;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
-import org.jity.referential.persistent.Job;
+import org.jity.referential.Job;
 import org.jity.server.instructions.Instruction;
 
 /**
@@ -68,19 +65,19 @@ public class LaunchJob implements Instruction {
 			
 			if (exitStatus != 0) {
 				logger.info("-- BAD END OF JOB "+job.getName()+"(Return code <> 0) --");
-				throw new Exception("Exit status = "+exitStatus);
+			} else {
+				logger.info("-- GOOD END OF JOB "+job.getName()+" --");
 			}
+
+			response.setInstructionResultOK(true);
+			response.setXmlOutputData(XMLUtil.objectToXMLString(exitStatus));
 			
-			if (cmdExecutor.getCommandError().length() != 0) {
-				logger.info("-- BAD END OF JOB "+job.getName()+"(Error output not empty) --");
-				throw new Exception(cmdExecutor.getCommandOutput());
-			}
+//			if (cmdExecutor.getCommandError().length() != 0) {
+//				logger.info("-- BAD END OF JOB "+job.getName()+"(Error output not empty) --");
+//				exitStatus = 1;
+//			}
 									
-			logger.info("-- GOOD END OF JOB "+job.getName()+" --");
-			if (exitStatus == 0) {
-				response.setInstructionResultOK(true);
-				response.setXmlOutputData(XMLUtil.objectToXMLString(exitStatus));
-			}
+
 
 		} catch (Exception e) {
 			response.setException(e);

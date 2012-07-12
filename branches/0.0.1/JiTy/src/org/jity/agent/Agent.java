@@ -169,9 +169,18 @@ public class Agent implements Runnable {
 			while (true) {
 				server = listenSocket.accept();
 				try {
-					logger.info("New connection from "
-							+ server.getInetAddress() + ".");
-					new ServeOneLaunchRequest(server);
+					String serverHostname = server.getInetAddress().getHostName();
+					logger.info("New connection from "+serverHostname+" ("
+							+ server.getInetAddress() + ").");
+					
+					if (AgentConfig.getInstance().getHOSTNAME_LIST() != null 
+							&& AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
+						new ServeOneLaunchRequest(server);
+					} else {
+						// Server not allowed
+						logger.info(serverHostname+" not allowed for this agent");
+						server.close();
+					}
 				} catch (IOException e) {
 					server.close();
 				}

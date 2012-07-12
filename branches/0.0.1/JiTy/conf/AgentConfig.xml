@@ -1,5 +1,4 @@
 <org.jity.agent.AgentConfig>
   <AGENT__PORT>2611</AGENT__PORT>
   <AGENT__DESC>Agent description</AGENT__DESC>
-  
-</org.jity.agent.AgentConfig>
+ </org.jity.agent.AgentConfig>

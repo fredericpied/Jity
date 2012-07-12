@@ -1,19 +1,26 @@
-package org.jity.referential.persistent;
+package org.jity.referential;
 
 import java.util.Date;
 
 public class ExecStatus {
 
 	private long id;
+	private Date execDate;
 	private Date begin;
 	private Date end;
 	private int status;
 	private Job job;
+	private String statusMessage;
+	
+	public static final int NOT_PLANED = 1;
+	public static final int PLANED = 2;
+	public static final int RUNNING = 3;
+	public static final int OK = 4;
+	public static final int KO = 5;
 
 	public ExecStatus() {
 
 	}
-
 
 	public long getId() {
 		return id;
@@ -55,4 +62,22 @@ public class ExecStatus {
 		this.job = job;
 	}
 
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+
+	public Date getExecDate() {
+		return execDate;
+	}
+
+	public void setExecDate(Date execDate) {
+		this.execDate = execDate;
+	}
+
+	
+	
 }

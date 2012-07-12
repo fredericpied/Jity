@@ -1,11 +1,11 @@
-package org.jity.referential.persistent;
+package org.jity.referential;
 
 public class DateConstraint {
 
 	private long id;
 	private String planifRule;
 	private Calendar calendar;
-
+	
 	public DateConstraint() {
 		
 	}

@@ -24,7 +24,7 @@
  */
 package org.jity.server.planifDaemon;
 
-public class PlanifEngineException extends Exception {
+public class PlanifDaemonException extends Exception {
 
     /**
 	 * 
@@ -38,7 +38,7 @@ public class PlanifEngineException extends Exception {
      * @param nested the exception or error that caused this exception to be
      *            thrown.
      */
-    public PlanifEngineException(String msg) {
+    public PlanifDaemonException(String msg) {
         super(msg);
     }
 }

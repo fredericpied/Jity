@@ -35,30 +35,17 @@ import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.referential.Job;
 
-public class PlanifEngine {
-	private static final Logger logger = Logger
-			.getLogger(PlanifEngine.class);
+public class JobLaunchRequest {
+	private static final Logger logger = Logger.getLogger(JobLaunchRequest.class);
 
-	// Socket used to dialog with the server
+	// Socket used to dialog with the agent
 	private Socket sock = null;
 	private BufferedReader sin;
 	private PrintWriter sout;
 
-	private static PlanifEngine instance = null;
-
-	/**
-	 * Return the current instance of Client and create one if it's the thirst call
-	 * @return Client
-	 * @throws PlanifEngineException
-	 */
-	public static PlanifEngine getInstance() throws PlanifEngineException {
-		if (instance == null)
-			instance = new PlanifEngine();
-		return instance;
-	}
-
-	private void openConnection(String host, int port)
+	public void openAgentConnection(String host, int port)
 			throws UnknownHostException, IOException {
 		// open socket
 		sock = new Socket(host, port);
@@ -71,27 +58,42 @@ public class PlanifEngine {
 	 * Close the connection with the server
 	 * @throws IOException
 	 */
-	public void closeConnection() throws IOException {
+	public void closeAgentConnection() throws IOException {
 		if (sock != null)
 			sock.close();
 	}
 
+
 	/**
-	 * Send a request to the Server
+	 * Send a launch request to the agent
 	 * @param request
 	 * @return JiTyResponse
 	 */
-	public JityResponse sendRequest(JityRequest request) {
-		String xmlResult = null;
-		this.sout.println(request.toXML());
-		this.sout.flush();
+	public JityResponse sendLaunchRequest(Job job) {
+		
+		// Serialize job to XML
+		String xmlJob = XMLUtil.objectToXMLString(job);
+		
+		// Construct Request
+		JityRequest request = new JityRequest();
+		request.setInstructionName("LAUNCHJOB");
+		request.setXmlInputData(xmlJob);
+
 		JityResponse response = null;
 		
 		try {
-			xmlResult = this.sin.readLine();
+		
+			logger.debug("Sending launch request for job "+job.getName()+" on "+job.getHostName());
+	
+			// Send request
+			this.sout.println(request.toXML());
+			this.sout.flush();
+			
+			// Reading response
+			response = (JityResponse) XMLUtil.XMLStringToObject(this.sin.readLine());
 
-			response = (JityResponse) XMLUtil.XMLStringToObject(xmlResult);
-
+			logger.debug("Return of the launch request for job "+job.getName()+" on "+job.getHostName());
+			
 		} catch (IOException e) {
 			response = new JityResponse();
 			response.setException(e);
@@ -99,21 +101,6 @@ public class PlanifEngine {
 		
 		return response;
 	}
-
 	
-	private PlanifEngine() throws PlanifEngineException {
-				
-		
-		try {
-			this.openConnection("localhost",
-					2611);
-
-		} catch (UnknownHostException e) {
-			throw new PlanifEngineException(e.getMessage());
-		} catch (IOException e) {
-			throw new PlanifEngineException(e.getMessage());
-		}
-
-	}
 
 }

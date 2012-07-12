@@ -28,16 +28,21 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.jity.referential.persistent">
+<hibernate-mapping package="org.jity.referential">
 
-    <class name="DateConstraint" table="DATE_CONSTRAINT">
+    <class name="Job" table="JOB">
         <id name="id" type="long">
-        	<column name="ID" not-null="true" unique="true" index="PK_DATE_CONSTRAINT" />  
+        	<column name="ID" not-null="true" unique="true" index="PK_JOB" />  
             <generator class="increment"/>
         </id>
-        <property name="planifRule" not-null="true" column="PLANIF_RULE"/>
-		<many-to-one name="calendar" not-null="true" column="CALENDAR_ID" cascade="all"/>
-	</class>
-
+        <property name="name" column="NAME" not-null="true" unique="true"/>
+        <property name="description" column="DESCRIPTION"/>
+        <property name="hostName" column="HOST_NAME"/>
+        <property name="port" column="PORT"/>
+        <property name="userName" column="USER_NAME"/>
+        <property name="commandPath" column="COMMAND_PATH"/>
+		<property name="isActived" column="IS_ACTIVED"/>
+		<many-to-one name="dateConstraint" not-null="true" column="DATE_CONSTRAINT_ID" cascade="all"/>  
+    </class>
 
 </hibernate-mapping>

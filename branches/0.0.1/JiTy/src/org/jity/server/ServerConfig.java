@@ -83,6 +83,10 @@ public class ServerConfig {
 		return SERVER_POOLING_CYCLE;
 	}
 
+	public int getAGENT_PORT() {
+		return AGENT_PORT;
+	}
+
 	public static String getXmlFileName() {
 		return XML_FILE_NAME;
 	}
