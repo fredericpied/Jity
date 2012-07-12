@@ -60,6 +60,17 @@ public class AgentConfig {
 	 */
 	public ArrayList<String> HOSTNAME_LIST;
 	
+	public boolean hostnameListSet() {
+		if (this.HOSTNAME_LIST ==  null) {
+			return false;
+		} else if (this.HOSTNAME_LIST.size() == 0) {
+			return false;
+		} else if (this.HOSTNAME_LIST.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static AgentConfig getInstance() {
 		if (instance == null)
 			instance = new AgentConfig();

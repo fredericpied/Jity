@@ -170,16 +170,20 @@ public class Agent implements Runnable {
 				server = listenSocket.accept();
 				try {
 					String serverHostname = server.getInetAddress().getHostName();
+					
 					logger.info("New connection from "+serverHostname+" ("
 							+ server.getInetAddress() + ").");
 					
-					if (AgentConfig.getInstance().getHOSTNAME_LIST() != null 
-							&& AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
-						new ServeOneLaunchRequest(server);
+					if (AgentConfig.getInstance().hostnameListSet()) {
+						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
+							new ServeOneLaunchRequest(server);
+						} else {
+							// Server not allowed
+							logger.fatal("Server "+serverHostname+" not allowed for this agent. Closing connection.");
+							server.close();
+						}
 					} else {
-						// Server not allowed
-						logger.info(serverHostname+" not allowed for this agent");
-						server.close();
+						new ServeOneLaunchRequest(server);
 					}
 				} catch (IOException e) {
 					server.close();

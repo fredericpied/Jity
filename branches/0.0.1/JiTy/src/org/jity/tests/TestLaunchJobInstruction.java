@@ -1,7 +1,12 @@
 package org.jity.tests;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
+import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
 import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
@@ -20,7 +25,7 @@ public class TestLaunchJobInstruction extends TestCase {
 		try {
 
 			Agent.getInstance().startAgentDaemon();
-
+			
 			logger.info("Waiting 5 sec");
 			TimeUtil.waiting(5);
 			

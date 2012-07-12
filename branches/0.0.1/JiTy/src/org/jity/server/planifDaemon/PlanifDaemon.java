@@ -51,6 +51,9 @@ public class PlanifDaemon implements Runnable {
 
 	private static PlanifDaemon instance = null;
 	
+	private Session databaseSession;
+	
+	
     private Thread daemon = null;
 
     volatile boolean shouldStop = false;
@@ -91,6 +94,7 @@ public class PlanifDaemon implements Runnable {
         if (daemon != null) {
         	logger.info("Shutdown of PlanifDaemon asked.");
             shouldStop = true;
+    		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
 			logger.info("PlanifDaemon successfuly shutdowned");
@@ -104,11 +108,10 @@ public class PlanifDaemon implements Runnable {
      */
     public void checkJobs() throws DatabaseException {
 
-			String queryFind = "select job from org.jity.referential.Job job"
-				+ " where job.isActived = true";
-			Session session = DatabaseServer.getSession();
-			List jobList = session.createQuery(queryFind).list();
-			session.close();
+		String queryFind = "select job from org.jity.referential.Job job"
+			+ " where job.isActived = true";
+
+		List jobList = this.databaseSession.createQuery(queryFind).list();
 		
 		logger.debug("Found "+jobList.size()+" activated jobs in database");
 		
@@ -178,6 +181,13 @@ public class PlanifDaemon implements Runnable {
      */
     public void run() {
         int cycle = ServerConfig.getInstance().getSERVER_POOLING_CYCLE();
+        
+        try {
+			this.databaseSession = DatabaseServer.getSession();
+		} catch (DatabaseException e) {
+            logger.fatal(e.getMessage());
+		}
+        
         while (!shouldStop) {
             try {
                 logger.info("Start of job analyze.");
@@ -191,5 +201,6 @@ public class PlanifDaemon implements Runnable {
                 logger.fatal("Error during checkJobs: " + ex.getMessage());
             }
         }
+        
     }
 }
