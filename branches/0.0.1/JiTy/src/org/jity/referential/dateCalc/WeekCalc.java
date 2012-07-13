@@ -68,7 +68,7 @@ public abstract class WeekCalc {
 	 * @param date
 	 * @return
 	 */
-	public Date getFirstDayOfTheWeek(Date date) {
+	public static Date getFirstDayOfTheWeek(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
 		cal.setTime(date);
@@ -81,7 +81,7 @@ public abstract class WeekCalc {
 	 * @param date
 	 * @return
 	 */
-	public Date getLastDayOfTheWeek(Date date) {
+	public static Date getLastDayOfTheWeek(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
 		cal.setTime(date);

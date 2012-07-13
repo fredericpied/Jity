@@ -140,7 +140,7 @@ public abstract class YearCalc {
 		int numeroAnnee = getYearNumber(date);
 	
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		logger.debug("Date to test: "+dateFormat.format(calToTest));
+		logger.debug("Date to test: "+dateFormat.format(calToTest.getTime()));
 		
 		// For Calendar, month of year start à 0 (January)
 		
@@ -216,13 +216,13 @@ public abstract class YearCalc {
 		logger.debug("Jeudi de l'Ascension: "+dateFormat.format(calDateJeudiAscension.getTime()));
 		if (calToTest.equals(calDateJeudiAscension)) return true;
 		
-		// It's Lundi de Pentecote
-		// Lundi de Pentecote = Dimanche de paques + 50 jours
-		Calendar calDateLundiPentecote = new GregorianCalendar();
-		calDateLundiPentecote.setTime(getEasterEggsSyndayDate(numeroAnnee));
-		calDateLundiPentecote.add(Calendar.DAY_OF_MONTH, 50);
-		logger.debug("Lundi de Pentecote: "+dateFormat.format(calDateLundiPentecote.getTime()));
-		if (calToTest.equals(calDateLundiPentecote)) return true;
+//		// It's Lundi de Pentecote
+//		// Lundi de Pentecote = Dimanche de paques + 50 jours
+//		Calendar calDateLundiPentecote = new GregorianCalendar();
+//		calDateLundiPentecote.setTime(getEasterEggsSyndayDate(numeroAnnee));
+//		calDateLundiPentecote.add(Calendar.DAY_OF_MONTH, 50);
+//		logger.debug("Lundi de Pentecote: "+dateFormat.format(calDateLundiPentecote.getTime()));
+//		if (calToTest.equals(calDateLundiPentecote)) return true;
 				
 		return false;
 	}

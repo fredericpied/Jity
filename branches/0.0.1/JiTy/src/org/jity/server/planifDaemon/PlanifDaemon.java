@@ -34,12 +34,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jity.common.DateUtil;
 import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
 import org.jity.referential.ExecStatus;
 import org.jity.referential.Job;
-import org.jity.referential.dateCalc.DateUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerConfig;
 import org.jity.server.ServerException;
