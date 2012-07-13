@@ -21,11 +21,11 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.agent;
+ */package org.jity.referential;
 
-public class AgentException extends Exception {
+public class CalendarException extends Exception {
 
-    public AgentException(String msg) {
+    public CalendarException(String msg) {
         super(msg);
     }
 }

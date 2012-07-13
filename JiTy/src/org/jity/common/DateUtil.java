@@ -22,19 +22,27 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateCalc;
+package org.jity.common;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
+
+import org.jity.referential.dateCalc.DateException;
 
 public abstract class DateUtil {
 	
 	/**
 	 * Default String format for Date
 	 */
-	private static final String DEFAULT_DATE_FORMAT = "EEE dd/MM/yyyy";
+	public static final String DEFAULT_DATE_FORMAT = "EEE dd/MM/yyyy";
+
+	/**
+	 * Default String format for Date Time
+	 */
+	public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	
 	/**
 	 * Get String ("EEE dd/MM/yy") with Date
@@ -62,6 +70,5 @@ public abstract class DateUtil {
 			throw new DateException(e.getMessage());
 		}
 	}
-
 	
 }
