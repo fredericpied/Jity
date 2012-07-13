@@ -2,7 +2,7 @@ package org.jity.tests;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jity.referential.Calendar;
+import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.DateConstraint;
 import org.jity.referential.Job;
 import org.jity.server.database.DatabaseException;
@@ -17,7 +17,7 @@ public class AddDBDataForTest {
 			Session session = DatabaseServer.getSession();
 			
 			// Calendars
-			Calendar Cal5OpenDays2012 = new Calendar("Cal5OpenDays2012", 
+			PersonnalCalendar Cal5OpenDays2012 = new PersonnalCalendar("Cal5OpenDays2012", 
 					"5 open days 2012", 2012, "OOOOOCCOOOOOCCOOOOOCCOOOOOCC" +
 							"OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOO" +
 							"OCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCO" +
@@ -25,7 +25,7 @@ public class AddDBDataForTest {
 							"CCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
 							+ "OOOOOCCOOOOOCC");
 
-			Calendar Cal6OpenDays2012 = new Calendar("Cal6OpenDays2012", 
+			PersonnalCalendar Cal6OpenDays2012 = new PersonnalCalendar("Cal6OpenDays2012", 
 					"6 open days 2012", 2012, "OOOOOCCOOOOOCCOOOOOCCOOOOOCC" +
 							"OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOO" +
 							"OCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCO" +
@@ -33,7 +33,7 @@ public class AddDBDataForTest {
 							"CCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
 							+ "OOOOOCCOOOOOCC");
 			
-			Calendar Cal7OpenDays2012 = new Calendar("Cal7OpenDays2012", 
+			PersonnalCalendar Cal7OpenDays2012 = new PersonnalCalendar("Cal7OpenDays2012", 
 					"7 open days 2012", 2012, "OOOOOCCOOOOOCCOOOOOCCOOOOOCC" +
 							"OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOO" +
 							"OCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCO" +

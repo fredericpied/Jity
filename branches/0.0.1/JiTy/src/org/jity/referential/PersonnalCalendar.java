@@ -9,8 +9,8 @@ import org.jity.referential.dateCalc.DateException;
 import org.jity.referential.dateCalc.YearCalc;
 import org.jity.tests.TestCalendar;
 
-public class Calendar {
-	private static final Logger logger = Logger.getLogger(Calendar.class);
+public class PersonnalCalendar {
+	private static final Logger logger = Logger.getLogger(PersonnalCalendar.class);
 	
 	private long id;
 	private String name;
@@ -24,7 +24,7 @@ public class Calendar {
 	 */
 	private String openDays;
 	
-	public Calendar() {
+	public PersonnalCalendar() {
 		
 	}
 	
@@ -79,7 +79,7 @@ public class Calendar {
 		return cal.get(java.util.Calendar.DAY_OF_YEAR);
 	}
 	
-	public Calendar(String name, String description, int year, String openDays) {
+	public PersonnalCalendar(String name, String description, int year, String openDays) {
 		this.name = name;
 		this.description = description;
 		this.year = year;
@@ -88,12 +88,12 @@ public class Calendar {
 
 	/**
 	 * Initialize the open days by setting all days of the year open
-	 * @throws CalendarException
+	 * @throws PersonnalCalendarException
 	 */
-	public void initializeWithAllDaysOpen() throws CalendarException {
+	public void initializeWithAllDaysOpen() throws PersonnalCalendarException {
 		
 		if (this.year == 0)
-			throw new CalendarException(this.name+": Year not defined");
+			throw new PersonnalCalendarException(this.name+": Year not defined");
 		
 		try {
 			String openDays = "";
@@ -105,16 +105,16 @@ public class Calendar {
 			this.openDays = openDays;
 			
 		} catch (Exception e) {
-			throw new CalendarException(this.name+": "+e.getMessage());
+			throw new PersonnalCalendarException(this.name+": "+e.getMessage());
 		}
 	}
 
 	/**
 	 * Return number of closed days in this calendar
 	 * @return int
-	 * @throws CalendarException
+	 * @throws PersonnalCalendarException
 	 */
-	public int getNumberOfClosedDays() throws CalendarException {
+	public int getNumberOfClosedDays() throws PersonnalCalendarException {
 		int number = 0;
 		
 		for (int day = 1;day <= this.getNumberOfDaysInTheYear();day ++) {
@@ -130,15 +130,15 @@ public class Calendar {
 	 * Set type (Open or closed) for a specific days
 	 * @param dayNumber
 	 * @param type ("O" or "C")
-	 * @throws CalendarException 
+	 * @throws PersonnalCalendarException 
 	 */
-	public void setOneDayType(int dayNumber, String type) throws CalendarException {
+	public void setOneDayType(int dayNumber, String type) throws PersonnalCalendarException {
 				
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		if (dayNumber > this.openDays.length())
-			throw new CalendarException(this.name+": Specified day number > max number of days in this year");
+			throw new PersonnalCalendarException(this.name+": Specified day number > max number of days in this year");
 		
 		String openDaysBefore = this.openDays.substring(0, dayNumber-1);
 		String openDaysAfter = this.openDays.substring(dayNumber, this.openDays.length());
@@ -149,28 +149,28 @@ public class Calendar {
 	/**
 	 * Get type (Open or closed) for a specific days
 	 * @param dayNumber
-	 * @throws CalendarException
+	 * @throws PersonnalCalendarException
 	 * @return String 
 	 */
-	public String getOneDayType(int dayNumber) throws CalendarException {
+	public String getOneDayType(int dayNumber) throws PersonnalCalendarException {
 				
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		if (dayNumber > this.openDays.length())
-			throw new CalendarException(this.name+": Specified day number > max number of days in this year");
+			throw new PersonnalCalendarException(this.name+": Specified day number > max number of days in this year");
 		
 		return this.openDays.substring(dayNumber-1, dayNumber);
 	}
 	
 	/**
 	 * List all closed days on the default logger
-	 * @throws CalendarException
+	 * @throws PersonnalCalendarException
 	 */
-	public void showClosedDays() throws CalendarException {
+	public void showClosedDays() throws PersonnalCalendarException {
 				
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		for (int day = 1;day <= this.getNumberOfDaysInTheYear();day ++) {
 			if (this.getOneDayType(day).equals("C")) {
@@ -186,15 +186,15 @@ public class Calendar {
 	/**
 	 * Set closed days for a day of week (1 = monday) to 7 = sunday)
 	 * @param dayOfWeek
-	 * @throws CalendarException
+	 * @throws PersonnalCalendarException
 	 */
-	public void addClosedDayOfWeek(int dayOfWeek) throws CalendarException {
+	public void addClosedDayOfWeek(int dayOfWeek) throws PersonnalCalendarException {
 				
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		if (dayOfWeek < 1 || dayOfWeek > 7)
-			throw new CalendarException(this.name+": Day of week must be 1 (monday) to 7 (sunday)");
+			throw new PersonnalCalendarException(this.name+": Day of week must be 1 (monday) to 7 (sunday)");
 		
 		// default, is 1:Sunday and 7:Monday
 		if (dayOfWeek < 7) dayOfWeek++;
@@ -214,12 +214,12 @@ public class Calendar {
 	
 	/**
 	 * Set closed days for the french holidays
-	 * @throws CalendarException 
+	 * @throws PersonnalCalendarException 
 	 */
-	public void addFrenchHolydays() throws CalendarException {
+	public void addFrenchHolydays() throws PersonnalCalendarException {
 		
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		java.util.Calendar cal = new GregorianCalendar();
 		cal.clear();
@@ -238,7 +238,7 @@ public class Calendar {
 			}
 		
 		} catch (DateException e) {
-			throw new CalendarException(this.name+": "+e.getMessage());
+			throw new PersonnalCalendarException(this.name+": "+e.getMessage());
 		}
 	}
 		
@@ -246,12 +246,12 @@ public class Calendar {
 	 * Return true if date is inclued as an open days in this calendar
 	 * @param date
 	 * @return boolean
-	 * @throws CalendarException 
+	 * @throws PersonnalCalendarException 
 	 */
-	public boolean isAnOpenDay(Date date) throws CalendarException {
+	public boolean isAnOpenDay(Date date) throws PersonnalCalendarException {
 		
 		if (this.openDays.length() == 0)
-			throw new CalendarException(this.name+": Open days not initialized");
+			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 			
 		// Attention: Pour Calendar, les mois débutent à 0
 		java.util.Calendar cal = new GregorianCalendar();
@@ -260,7 +260,7 @@ public class Calendar {
 
 		// Test if year of date not equal year of this calendar
 		if (cal.get(java.util.Calendar.YEAR) != this.year)
-			throw new CalendarException(this.name+": Calendar year != Date year to test");
+			throw new PersonnalCalendarException(this.name+": Calendar year != Date year to test");
 					
 		int dayNumber = cal.get(java.util.Calendar.DAY_OF_YEAR);
 		

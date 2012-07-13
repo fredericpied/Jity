@@ -6,8 +6,8 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.TimeUtil;
-import org.jity.referential.Calendar;
-import org.jity.referential.CalendarException;
+import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
 
 import junit.framework.TestCase;
 
@@ -16,7 +16,7 @@ public class TestCalendar extends TestCase {
 		
 	public void testGetNumberOfDaysInTheYear() {
 		
-		Calendar cal = new Calendar();
+		PersonnalCalendar cal = new PersonnalCalendar();
 		cal.setName("calTest");
 
 		cal.setYear(2016);
@@ -49,7 +49,7 @@ public class TestCalendar extends TestCase {
 	
 	
 	public void testSetAllOpenDays(){
-		Calendar cal = new Calendar();
+		PersonnalCalendar cal = new PersonnalCalendar();
 		cal.setName("calTest");
 		
 		try {
@@ -61,7 +61,7 @@ public class TestCalendar extends TestCase {
 			cal.initializeWithAllDaysOpen();
 			assertEquals(cal.getOpenDays().length(), cal.getNumberOfDaysInTheYear());
 		
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -70,7 +70,7 @@ public class TestCalendar extends TestCase {
 	public void testSetOneDayType() {
 		try {
 
-			Calendar cal = new Calendar();
+			PersonnalCalendar cal = new PersonnalCalendar();
 			cal.setName("calTest");
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
@@ -87,7 +87,7 @@ public class TestCalendar extends TestCase {
 			
 			assertEquals(openDays1.length(), openDays3.length());
 			
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -97,7 +97,7 @@ public class TestCalendar extends TestCase {
 	public void testGetOneDayType() {
 		try {
 
-			Calendar cal = new Calendar();
+			PersonnalCalendar cal = new PersonnalCalendar();
 			cal.setName("calTest");
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
@@ -115,7 +115,7 @@ public class TestCalendar extends TestCase {
 
 			
 			
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -125,7 +125,7 @@ public class TestCalendar extends TestCase {
 	public void testAddFrenchHolydays() {
 		try {
 
-			Calendar cal = new Calendar();
+			PersonnalCalendar cal = new PersonnalCalendar();
 			cal.setName("calTest");
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
@@ -140,7 +140,7 @@ public class TestCalendar extends TestCase {
 			
 			//cal.showClosedDays();
 			
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -150,7 +150,7 @@ public class TestCalendar extends TestCase {
 	public void testAddClosedDayOfWeek() {
 		try {
 
-			Calendar cal = new Calendar();
+			PersonnalCalendar cal = new PersonnalCalendar();
 			cal.setName("calTest");
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
@@ -167,7 +167,7 @@ public class TestCalendar extends TestCase {
 			
 			assertEquals(cal.getNumberOfClosedDays(), 105);
 			
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -176,20 +176,20 @@ public class TestCalendar extends TestCase {
 	public void testIsAnOpenDay() {
 		try {
 
-			Calendar cal1 = new Calendar();
+			PersonnalCalendar cal1 = new PersonnalCalendar();
 			cal1.setName("cal1_5OpenDaysPerWeeks");
 			cal1.setYear(2012);
 			cal1.initializeWithAllDaysOpen();
 			cal1.addClosedDayOfWeek(6);
 			cal1.addClosedDayOfWeek(7);
 			
-			Calendar cal2 = new Calendar();
+			PersonnalCalendar cal2 = new PersonnalCalendar();
 			cal2.setName("cal1_6OpenDaysPerWeeks");
 			cal2.setYear(2012);
 			cal2.initializeWithAllDaysOpen();
 			cal2.addClosedDayOfWeek(7);
 			
-			Calendar cal3 = new Calendar();
+			PersonnalCalendar cal3 = new PersonnalCalendar();
 			cal3.setName("cal1_6OpenDaysPerWeeksPlusFrenchHolidays");
 			cal3.setYear(2012);
 			cal3.initializeWithAllDaysOpen();
@@ -228,7 +228,7 @@ public class TestCalendar extends TestCase {
 			assertEquals(cal2.isAnOpenDay(calToTest.getTime()), true);
 			assertEquals(cal3.isAnOpenDay(calToTest.getTime()), false);
 			
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

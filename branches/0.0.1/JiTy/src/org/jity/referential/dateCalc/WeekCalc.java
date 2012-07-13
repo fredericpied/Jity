@@ -28,6 +28,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
+
 public abstract class WeekCalc {
 
 	/**
@@ -87,6 +90,52 @@ public abstract class WeekCalc {
 		cal.setTime(date);
 		cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK)+1);
 		return cal.getTime();
+	}
+	
+	/**
+	 * Get last open day of the week
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException 
+	 */
+	public static Date getLastOpenDayOfTheWeek(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastDayOfTheWeek(date));
+	
+		for (int i=7;i>=1;i--) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_WEEK, -1);
+			}	
+		}
+
+		throw new PersonnalCalendarException("Not able to found an open day in this week");
+	}
+	
+	/**
+	 * Get first open day of the week
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException 
+	 */
+	public static Date getFirstOpenDayOfTheWeek(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstDayOfTheWeek(date));
+	
+		for (int i=1;i<=7;i++) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_WEEK, 1);
+			}	
+		}
+
+		throw new PersonnalCalendarException("Not able to found an open day in this week");
 	}
 	
 	/**

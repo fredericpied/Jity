@@ -94,7 +94,7 @@ public abstract class MonthCalc {
 	 * @param date
 	 * @return
 	 */
-	public Date getLastMonthDay(Date date) {
+	public static Date getLastMonthDay(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -106,7 +106,7 @@ public abstract class MonthCalc {
 	 * @param date
 	 * @return
 	 */
-	public Date getFirstMonthDay(Date date) {
+	public static Date getFirstMonthDay(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));

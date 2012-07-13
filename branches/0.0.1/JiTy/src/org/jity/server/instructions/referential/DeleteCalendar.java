@@ -30,7 +30,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
-import org.jity.referential.Calendar;
+import org.jity.referential.PersonnalCalendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseServer;
@@ -48,7 +48,7 @@ public class DeleteCalendar implements Instruction {
 
 		try {
 
-			Calendar calendar = (Calendar) XMLUtil.XMLStringToObject(xmlInputData);
+			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
 
 			Session session = DatabaseServer.getSession();
 			Transaction transaction = session.beginTransaction();
