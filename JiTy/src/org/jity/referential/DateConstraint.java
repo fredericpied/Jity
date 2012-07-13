@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import org.jity.referential.dateCalc.DateException;
 import org.jity.referential.dateCalc.MonthCalc;
 import org.jity.referential.dateCalc.WeekCalc;
+import org.jity.referential.dateCalc.YearCalc;
 
 public class DateConstraint {
 
@@ -31,7 +32,7 @@ public class DateConstraint {
 	 */
 	private String planifRule;
 	
-	private Calendar calendar;
+	private PersonnalCalendar calendar;
 	
 	private static final String[] OPERATOR_KEYWORDS = { "before", "after",
 		"not", "equal" };
@@ -66,11 +67,11 @@ public class DateConstraint {
 		this.planifRule = planifRule;
 	}
 
-	public Calendar getCalendar() {
+	public PersonnalCalendar getCalendar() {
 		return calendar;
 	}
 
-	public void setCalendar(Calendar calendar) {
+	public void setCalendar(PersonnalCalendar calendar) {
 		this.calendar = calendar;
 	}
 	
@@ -100,6 +101,7 @@ public class DateConstraint {
 					
 					// Extract sentence
 					String[] planifRuleSplit = this.planifRule.split("-");
+					
 					String operator = planifRuleSplit[0];
 					
 					String stringDayNumber = planifRuleSplit[1];
@@ -117,10 +119,10 @@ public class DateConstraint {
 					
 						// If day name are different, return false now
 						if (execDateDayNumberInWeek != ruleDayNumberInWeek) return false;
-						else dayName="TRUE"; // Same dayname as execDate
+						else dayName="execDay"; // Same dayname as execDate
 												
 					} else { // if (! dayName.equals("day")) {
-						dayName="TRUE";
+						dayName="execDay";
 					}
 
 					// PERIOD
@@ -130,70 +132,101 @@ public class DateConstraint {
 					
 						// If month name are different, return false now
 						if (execDateMonthNumber != ruleMonthNumber) return false;
-						else period="TRUE"; // Same month as execDate
+						else period="execMonth"; // Same month as execDate
 												
-					} else { // if (! period.equals("week") && ! period.equals("month") && ! period.equals("year")) {
-						
 					}
-				
 					
 					// DAY NUMBER
-					int dayNumberInPeriod = 0;
-					
 					if (stringDayNumber.equals("first")) {
-						dayNumberInPeriod = 1;
-					} else if (stringDayNumber.equals("last")) {
 
 						if (period.equals("week")) {
+							
 							if (dayType.equals("open")) {
+							
+								if (execDate.compareTo(WeekCalc.getLastOpenDayOfTheWeek(execDate, this.calendar)) == 0) return true;
 								
-								java.util.Calendar calToTest = new GregorianCalendar();
-								calToTest.clear();
-								calToTest.setTime(execDate);
-								
-								for (int i=7;i>0;i--) {
-								
-									Date dateLastDayOfWeek = WeekCalc.getLastDayOfTheWeek(calToTest.getTime());
-									if (this.calendar.isAnOpenDay(dateLastDayOfWeek)) {
-										break;
-									} else {
-										
-									}
-								}
+							} else if (dayType.equals("close")) {
 								
 								
+							} else if (dayType.equals("calend")) {
+								if (execDate.compareTo(WeekCalc.getFirstDayOfTheWeek(execDate)) == 0) return true;
+							}
+							
+						} else if (period.equals("month") || period.equals("execMonth")) {
+					
+							if (dayType.equals("open")) {
 								
 							} else if (dayType.equals("close")) {
 								
 							} else if (dayType.equals("calend")) {
-								dayNumberInPeriod = 7;
+								if (execDate.compareTo(MonthCalc.getFirstMonthDay(execDate)) == 0) return true;
 							}
 							
+						} else if (period.equals("year")) {
+					
+							if (dayType.equals("open")) {
+								
+							} else if (dayType.equals("close")) {
+								
+							} else if (dayType.equals("calend")) {
+								// If execDate = first day of the year, return true;
+								if (execDate.compareTo(YearCalc.getFirstYearDay(YearCalc.getYearNumber(execDate))) == 0)
+									return true;
+							}
+
+						}
+					
+					} else if (stringDayNumber.equals("last")) {
+
+						if (period.equals("week")) {
+							if (dayType.equals("open")) {
+							
+								Date lastOpenDayOfWeek = WeekCalc.getLastOpenDayOfTheWeek(execDate, this.calendar);
+								if (lastOpenDayOfWeek.equals(execDate)) return true;
+								
+							} else if (dayType.equals("close")) {
+								
+							} else if (dayType.equals("calend")) {
+								if (execDate.equals(WeekCalc.getLastDayOfTheWeek(execDate))) return true;
+							}
 							
 						} else if (period.equals("month")) {
-					
+
+							if (dayType.equals("open")) {
+								
+							} else if (dayType.equals("close")) {
+								
+							} else if (dayType.equals("calend")) {
+								if (execDate.equals(MonthCalc.getLastMonthDay(execDate))) return true;
+							}
 							
 						} else if (period.equals("year")) {
-						
+							
+							if (dayType.equals("open")) {
+								
+							} else if (dayType.equals("close")) {
+								
+							} else if (dayType.equals("calend")) {
+								
+								// If execDate = last day of the year, return true;
+								if (execDate.equals(YearCalc.getLastYearDay(YearCalc.getYearNumber(execDate))))
+									return true;
+							}
+
 						}
 						
-						
 					}	
-					
-					
 					
 				}
 				
 			}
 			
-			
+			throw new DateConstraintException("Not able to resolv planification rule:"+this.planifRule);
 		
-		
-		} catch (CalendarException e) {
+		} catch (PersonnalCalendarException e) {
 			throw new DateConstraintException(e.getMessage());
 		}
-		
-		return false;
+
 	}
 
 }

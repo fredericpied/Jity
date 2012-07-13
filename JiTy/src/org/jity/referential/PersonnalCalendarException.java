@@ -23,9 +23,9 @@
  *
  */package org.jity.referential;
 
-public class CalendarException extends Exception {
+public class PersonnalCalendarException extends Exception {
 
-    public CalendarException(String msg) {
+    public PersonnalCalendarException(String msg) {
         super(msg);
     }
 }

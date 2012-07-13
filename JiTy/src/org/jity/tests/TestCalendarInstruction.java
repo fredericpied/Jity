@@ -11,7 +11,7 @@ import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
-import org.jity.referential.Calendar;
+import org.jity.referential.PersonnalCalendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseServer;
@@ -59,7 +59,7 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 
-			Calendar calendar = new Calendar();
+			PersonnalCalendar calendar = new PersonnalCalendar();
 			calendar.setName("Calendar1");
 			calendar.setDescription("Calendar1 description");
 			calendar.setYear(2012);
@@ -87,7 +87,7 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 
-			Calendar calendar = new Calendar();
+			PersonnalCalendar calendar = new PersonnalCalendar();
 			calendar.setName("Calendar2");
 			calendar.setDescription("Calendar2 description");
 			calendar.setYear(2012);
@@ -130,7 +130,7 @@ public class TestCalendarInstruction extends TestCase {
 				throw new Exception(response.getExceptionMessage());
 			} else {
 				List list = (List)XMLUtil.XMLStringToObject(response.getXmlOutputData());
-				Calendar calendar = (Calendar) list.get(0);
+				PersonnalCalendar calendar = (PersonnalCalendar) list.get(0);
 				logger.info(calendar.getName()+", "+calendar.getDescription());
 			}
 			
