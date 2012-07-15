@@ -9,6 +9,14 @@ public class AllTests extends TestSuite {
 		TestSuite suite = new TestSuite();
 
 		suite.addTestSuite(TestServer.class);
+		suite.addTestSuite(TestAgent.class);
+		
+		suite.addTestSuite(TestWeekCalc.class);
+		
+		suite.addTestSuite(TestCalendar.class);
+		
+		
+		
 		suite.addTestSuite(TestCalendarInstruction.class);
 		
 		return suite;

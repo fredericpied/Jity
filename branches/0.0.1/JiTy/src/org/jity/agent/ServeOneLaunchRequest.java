@@ -30,6 +30,7 @@ package org.jity.agent;
 import java.io.*;
 import java.net.*;
 import org.apache.log4j.Logger;
+import org.jity.protocol.JityResponse;
 import org.jity.protocol.Protocol;
 import org.jity.protocol.ProtocolException;
 
@@ -69,7 +70,24 @@ public class ServeOneLaunchRequest extends Thread {
             	try {
             		logger.debug("Server data received: " + xmlInputData);
 
-            		xmlOutputData = Protocol.executeRequest(xmlInputData);
+            		//String serverHostname = socket.getInetAddress().getHostName();
+            		String serverIP = socket.getInetAddress().getHostAddress();
+            		
+            		if (AgentConfig.getInstance().hostnameListSet()) {
+						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverIP)) {
+		            		xmlOutputData = Protocol.executeRequest(xmlInputData);
+						} else {
+							JityResponse response = new JityResponse();
+							response.setInstructionResultOK(false);
+							response.setExceptionName("AgentException");
+							response.setExceptionMessage("Server IP "+serverIP+" not allowed for this agent. Closing connection");
+							xmlOutputData = response.toXML();
+						}
+					} else {
+	            		xmlOutputData = Protocol.executeRequest(xmlInputData);
+					}
+            		
+            		//xmlOutputData = Protocol.executeRequest(xmlInputData);
             		
                 	networkWriter.println(xmlOutputData);
                     networkWriter.flush();

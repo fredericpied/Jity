@@ -34,6 +34,7 @@ public class TestAgent extends TestCase {
 	
 	public void testStopAgentDaemon() {
 		try {
+			
 			Agent.getInstance().stopAgentDaemon();
 			
 		} catch (AgentException e) {

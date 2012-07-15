@@ -111,6 +111,13 @@ public class Agent implements Runnable {
 	}
 	
 	/**
+	 * return type of OS supporting the agent
+	 */
+	public String getOSName() {
+		return System.getProperty("os.name");
+	}
+	
+	/**
 	 * Loading the agent config file
 	 * 
 	 * @throws AgentException
@@ -129,7 +136,7 @@ public class Agent implements Runnable {
 	}
 
 	public void run() {
-		Socket server = null;
+		Socket socket = null;
 
 		logger.info("JiTy Agent starting process.");
 
@@ -146,7 +153,7 @@ public class Agent implements Runnable {
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
-			logger.info("Starting agent on "+localHostname+"...");
+			logger.info("Starting agent on "+localHostname+" ("+this.getOSName()+")...");
 			
 		} catch (UnknownHostException e1) {
 			logger.warn(e1.getMessage());
@@ -167,26 +174,26 @@ public class Agent implements Runnable {
 		try {
 
 			while (true) {
-				server = listenSocket.accept();
+				socket = listenSocket.accept();
 				try {
-					String serverHostname = server.getInetAddress().getHostName();
+					String serverHostname = socket.getInetAddress().getHostName();
 					
 					logger.info("New connection from "+serverHostname+" ("
-							+ server.getInetAddress() + ").");
+							+ socket.getInetAddress() + ").");
 					
-					if (AgentConfig.getInstance().hostnameListSet()) {
-						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
-							new ServeOneLaunchRequest(server);
-						} else {
-							// Server not allowed
-							logger.fatal("Server "+serverHostname+" not allowed for this agent. Closing connection.");
-							server.close();
-						}
-					} else {
-						new ServeOneLaunchRequest(server);
-					}
+//					if (AgentConfig.getInstance().hostnameListSet()) {
+//						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
+//							new ServeOneLaunchRequest(socket);
+//						} else {
+//							// Server not allowed
+//							logger.fatal("Server "+serverHostname+" not allowed for this agent. Closing connection.");
+//							socket.close();
+//						}
+//					} else {
+						new ServeOneLaunchRequest(socket);
+//					}
 				} catch (IOException e) {
-					server.close();
+					socket.close();
 				}
 			}
 
