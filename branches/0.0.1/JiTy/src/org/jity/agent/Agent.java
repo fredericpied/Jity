@@ -46,6 +46,10 @@ public class Agent implements Runnable {
 
 	private Thread daemon = null;
 
+	/**
+	 * Return the current instance of Agent (if none, create one)
+	 * @return
+	 */
 	public static Agent getInstance() {
 		if (instance == null) {
 			instance = new Agent();

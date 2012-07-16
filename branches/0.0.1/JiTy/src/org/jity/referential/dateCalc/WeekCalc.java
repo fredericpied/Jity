@@ -71,7 +71,7 @@ public abstract class WeekCalc {
 	 * @param date
 	 * @return
 	 */
-	public static Date getFirstDayOfTheWeek(Date date) {
+	public static Date getFirstWeekDay(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
 		cal.setTime(date);
@@ -84,7 +84,7 @@ public abstract class WeekCalc {
 	 * @param date
 	 * @return
 	 */
-	public static Date getLastDayOfTheWeek(Date date) {
+	public static Date getLastWeekDay(Date date) {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
 		cal.setTime(date);
@@ -99,10 +99,10 @@ public abstract class WeekCalc {
 	 * @return
 	 * @throws PersonnalCalendarException 
 	 */
-	public static Date getLastOpenDayOfTheWeek(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+	public static Date getLastOpenWeekDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
-		cal.setTime(getLastDayOfTheWeek(date));
+		cal.setTime(getLastWeekDay(date));
 	
 		for (int i=7;i>=1;i--) {
 			if (persCal.isAnOpenDay(cal.getTime())) {
@@ -122,10 +122,10 @@ public abstract class WeekCalc {
 	 * @return
 	 * @throws PersonnalCalendarException 
 	 */
-	public static Date getFirstOpenDayOfTheWeek(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+	public static Date getFirstOpenWeekDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
-		cal.setTime(getFirstDayOfTheWeek(date));
+		cal.setTime(getFirstWeekDay(date));
 	
 		for (int i=1;i<=7;i++) {
 			if (persCal.isAnOpenDay(cal.getTime())) {
