@@ -48,7 +48,7 @@ public class TestWeekCalc extends TestCase {
 				
 	}
 	
-	public void testGetFirstDayOfTheWeek(){
+	public void testGetFirstWeekDay(){
 
 			Calendar cal1 = new GregorianCalendar();
 			cal1.clear();
@@ -58,26 +58,54 @@ public class TestWeekCalc extends TestCase {
 			cal2.clear();
 			cal2.set(2012, 0, 2); // Jan 2
 			
-			Date firstDayOfTheWeek = WeekCalc.getFirstDayOfTheWeek(cal1.getTime());
+			Date firstDayOfTheWeek = WeekCalc.getFirstWeekDay(cal1.getTime());
 			
 			assertEquals(firstDayOfTheWeek.compareTo(cal2.getTime()), 0);
 			
 			Calendar cal3 = new GregorianCalendar();
 			cal3.clear();
 			cal3.set(2012, 4, 6); // May 6
-			logger.info(cal3.getTime());
 			
 			Calendar cal4 = new GregorianCalendar();
 			cal4.clear();
 			cal4.set(2012, 3, 30); // Apr 30
-			logger.info(cal4.getTime());
 			
-			firstDayOfTheWeek = WeekCalc.getFirstDayOfTheWeek(cal3.getTime());
-			logger.info(firstDayOfTheWeek);
+			firstDayOfTheWeek = WeekCalc.getFirstWeekDay(cal3.getTime());
 			
 			assertEquals(firstDayOfTheWeek.compareTo(cal4.getTime()), 0);
-			
-				
+	}
+
+	
+	public void testGetLastWeekDay() {
+
+		Calendar cal1 = new GregorianCalendar();
+		cal1.clear();
+		cal1.set(2012, 0, 4); // Jan 3
+		logger.info(DateUtil.dateToString(cal1.getTime()));
+		
+		Calendar cal2 = new GregorianCalendar();
+		cal2.clear();
+		cal2.set(2012, 0, 8); // Jan 8
+		logger.info(DateUtil.dateToString(cal2.getTime()));
+		
+		Date lastDayOfTheWeek = WeekCalc.getLastWeekDay(cal1.getTime());
+		logger.info(DateUtil.dateToString(lastDayOfTheWeek));
+		
+		assertEquals(lastDayOfTheWeek.compareTo(cal2.getTime()), 0);
+		
+		Calendar cal3 = new GregorianCalendar();
+		cal3.clear();
+		cal3.set(2012, 4, 31); // May 6
+		logger.info(DateUtil.dateToString(cal3.getTime()));
+		
+		Calendar cal4 = new GregorianCalendar();
+		cal4.clear();
+		cal4.set(2012, 5, 3); // June 3
+		logger.info(DateUtil.dateToString(cal4.getTime()));
+		
+		lastDayOfTheWeek = WeekCalc.getLastWeekDay(cal3.getTime());
+		logger.info(DateUtil.dateToString(lastDayOfTheWeek));
+		assertEquals(lastDayOfTheWeek.compareTo(cal4.getTime()), 0);
 	}
 	
 	

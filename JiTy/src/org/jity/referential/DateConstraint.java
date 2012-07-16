@@ -32,7 +32,7 @@ public class DateConstraint {
 	 */
 	private String planifRule;
 	
-	private PersonnalCalendar calendar;
+	private PersonnalCalendar persCalendar;
 	
 	private static final String[] OPERATOR_KEYWORDS = { "before", "after",
 		"not", "equal" };
@@ -68,11 +68,11 @@ public class DateConstraint {
 	}
 
 	public PersonnalCalendar getCalendar() {
-		return calendar;
+		return persCalendar;
 	}
 
 	public void setCalendar(PersonnalCalendar calendar) {
-		this.calendar = calendar;
+		this.persCalendar = calendar;
 	}
 	
 	/**
@@ -84,12 +84,15 @@ public class DateConstraint {
 	 */
 	public boolean isAValidDate(Date execDate) throws DateConstraintException, DateException {
 
-		if (this.calendar == null) 
-			throw new DateConstraintException("Calendar is not defined for the Date Constraint");
+		if (this.persCalendar == null) 
+			throw new DateConstraintException("PersonnalCalendar is not defined for the Date Constraint");
+		
+		if (this.persCalendar.getYear() != YearCalc.getYearNumber(execDate)) 
+			throw new DateConstraintException("PersonnalCalendar is not defined for year "+YearCalc.getYearNumber(execDate));
 		
 		try {
 			// If it's a closed day in the calendar
-			if (!this.calendar.isAnOpenDay(execDate)) {
+			if (!this.persCalendar.isAnOpenDay(execDate)) {
 				return false;
 			} else {
 				// It's an open Days in the calendar
@@ -142,20 +145,18 @@ public class DateConstraint {
 						if (period.equals("week")) {
 							
 							if (dayType.equals("open")) {
-							
-								if (execDate.compareTo(WeekCalc.getLastOpenDayOfTheWeek(execDate, this.calendar)) == 0) return true;
-								
+								if (execDate.compareTo(WeekCalc.getFirstOpenWeekDay(execDate, this.persCalendar)) == 0) return true;
 							} else if (dayType.equals("close")) {
 								
 								
 							} else if (dayType.equals("calend")) {
-								if (execDate.compareTo(WeekCalc.getFirstDayOfTheWeek(execDate)) == 0) return true;
+								if (execDate.compareTo(WeekCalc.getFirstWeekDay(execDate)) == 0) return true;
 							}
 							
 						} else if (period.equals("month") || period.equals("execMonth")) {
 					
 							if (dayType.equals("open")) {
-								
+								if (execDate.compareTo(MonthCalc.getFirstOpenMonthDay(execDate, this.persCalendar)) == 0) return true;
 							} else if (dayType.equals("close")) {
 								
 							} else if (dayType.equals("calend")) {
@@ -180,24 +181,21 @@ public class DateConstraint {
 
 						if (period.equals("week")) {
 							if (dayType.equals("open")) {
-							
-								Date lastOpenDayOfWeek = WeekCalc.getLastOpenDayOfTheWeek(execDate, this.calendar);
-								if (lastOpenDayOfWeek.equals(execDate)) return true;
-								
+								if (execDate.compareTo(WeekCalc.getLastOpenWeekDay(execDate, this.persCalendar)) == 0) return true;
 							} else if (dayType.equals("close")) {
 								
 							} else if (dayType.equals("calend")) {
-								if (execDate.equals(WeekCalc.getLastDayOfTheWeek(execDate))) return true;
+								if (execDate.compareTo(WeekCalc.getLastWeekDay(execDate)) == 0) return true;
 							}
 							
 						} else if (period.equals("month")) {
 
 							if (dayType.equals("open")) {
-								
+								if (execDate.compareTo(MonthCalc.getLastOpenMonthDay(execDate, this.persCalendar)) == 0) return true;
 							} else if (dayType.equals("close")) {
 								
 							} else if (dayType.equals("calend")) {
-								if (execDate.equals(MonthCalc.getLastMonthDay(execDate))) return true;
+								if (execDate.compareTo(MonthCalc.getLastMonthDay(execDate)) == 0) return true;
 							}
 							
 						} else if (period.equals("year")) {
@@ -209,7 +207,7 @@ public class DateConstraint {
 							} else if (dayType.equals("calend")) {
 								
 								// If execDate = last day of the year, return true;
-								if (execDate.equals(YearCalc.getLastYearDay(YearCalc.getYearNumber(execDate))))
+								if (execDate.compareTo(YearCalc.getLastYearDay(YearCalc.getYearNumber(execDate))) == 0)
 									return true;
 							}
 

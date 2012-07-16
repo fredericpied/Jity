@@ -28,6 +28,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
+
 public abstract class MonthCalc {
 
 	/**
@@ -113,6 +116,56 @@ public abstract class MonthCalc {
 		return cal.getTime();
 	}
 
+	/**
+	 * Return first open day in the month according to specified PersonnalCalendar
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getFirstOpenMonthDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstMonthDay(date));
+		
+		int maxNbDay = getDayNumberInMonth(getLastMonthDay(date));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+		}
+			
+		throw new PersonnalCalendarException("Not able to found an open day in this month");
+	}
+	
+	/**
+	 * Return last open day in the month according to specified PersonnalCalendar
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getLastOpenMonthDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastMonthDay(date));
+		
+		int maxNbDay = getDayNumberInMonth(getLastMonthDay(date));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+			}
+		}
+			
+		throw new PersonnalCalendarException("Not able to found an open day in this month");
+	}
+	
 	/**
 	 * return true if date1 and date2 is in the same month
 	 * @param date1
