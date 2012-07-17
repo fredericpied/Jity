@@ -24,10 +24,19 @@
  */
 package org.jity.agent.instructions;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.log4j.Appender;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.jity.agent.commandExecutor.ErrorOutputLogger;
 import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.agent.commandExecutor.CommandExecutor;
+import org.jity.common.DateUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
 import org.jity.referential.Job;
@@ -46,28 +55,37 @@ public class LaunchJob implements Instruction {
 				
 		try {
 			int exitStatus = -1;
-			
 			CommandExecutor cmdExecutor = new CommandExecutor();
-			cmdExecutor.setOutputLogDevice(new StandardOutputLogger());			
-			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger());
-			
+
 			// Setting Job with XML flow
 			Job job = (Job)XMLUtil.XMLStringToObject(xmlInputData);
+
+			// TimeStamp for log files
+			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
+			String timestamp = dateFormat.format(new Date());
+			File jobLogFile = new File("d:\\temp\\"+job.getName()+"_"+timestamp+".log");
+			
+			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %-5p %c{1}: %m%n");
+			Appender jobLogger = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
+
+			try {
+				cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
+				cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
+			} catch (IOException e) {
+				response.setException(e);
+			}
+			
 			
 			String commandLine = job.getCommandPath();
 			
 			//cmdExecutor.setWorkingDirectory(workingDirectory);
 			
-			logger.info("-- START OF JOB "+job.getName()+" --");
+			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
 			
 			// Running command
 			exitStatus = cmdExecutor.runCommand(commandLine);
 			
-			if (exitStatus != 0) {
-				logger.info("-- BAD END OF JOB "+job.getName()+"(Return code <> 0) --");
-			} else {
-				logger.info("-- GOOD END OF JOB "+job.getName()+" --");
-			}
+			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
 
 			response.setInstructionResultOK(true);
 			response.setXmlOutputData(XMLUtil.objectToXMLString(exitStatus));

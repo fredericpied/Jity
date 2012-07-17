@@ -43,6 +43,12 @@ public abstract class DateUtil {
 	 * Default String format for Date Time
 	 */
 	public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+
+	/**
+	 * Default String format for file timestamp
+	 */
+	public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyyMMdd-HHmmss";
+
 	
 	/**
 	 * Get String ("EEE dd/MM/yy") with Date

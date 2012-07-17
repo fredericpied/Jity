@@ -24,14 +24,24 @@
  */
 package org.jity.agent.commandExecutor;
 
+import java.io.IOException;
+
+import org.apache.log4j.Appender;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 
 public class ErrorOutputLogger implements LogDevice {
-	private static final Logger logger = Logger.getLogger(ErrorOutputLogger.class);
+private Logger jobLogger; 
+	
+	public ErrorOutputLogger(Appender log4jAppender) throws IOException {
+		this.jobLogger = Logger.getLogger("JOB_ERR_OUTPUT");
+		this.jobLogger.setAdditivity(false);
+		jobLogger.addAppender(log4jAppender);
+	}
 	
 	public void log(String str) {
-		logger.error(str);
+		jobLogger.info(str);
 	}
 
 }
