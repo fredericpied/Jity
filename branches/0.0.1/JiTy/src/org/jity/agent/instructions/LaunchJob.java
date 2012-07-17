@@ -33,12 +33,15 @@ import java.util.Date;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
+import org.jity.agent.AgentConfig;
+import org.jity.agent.AgentException;
 import org.jity.agent.commandExecutor.ErrorOutputLogger;
 import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.agent.commandExecutor.CommandExecutor;
 import org.jity.common.DateUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
+import org.jity.referential.ExecStatus;
 import org.jity.referential.Job;
 import org.jity.server.instructions.Instruction;
 
@@ -60,22 +63,33 @@ public class LaunchJob implements Instruction {
 			// Setting Job with XML flow
 			Job job = (Job)XMLUtil.XMLStringToObject(xmlInputData);
 
-			// TimeStamp for log files
+			// Log files
+			if (AgentConfig.getInstance().getJOBS_LOGS_DIR().trim().length() == 0)
+				throw new AgentException("Parameters \"JOBS_LOGS_DIR\" not set for this agent");
+			
+			File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
+			if (! logDir.isDirectory() || ! logDir.exists())
+				throw new AgentException("Unable to write job logs \"JOBS_LOGS_DIR\" ("+logDir.getAbsolutePath()+")");
+			
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
 			String timestamp = dateFormat.format(new Date());
-			File jobLogFile = new File("d:\\temp\\"+job.getName()+"_"+timestamp+".log");
+			File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
 			
-			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %-5p %c{1}: %m%n");
-			Appender jobLogger = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
-
+			// Specific job logger
+			//Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %-5p %c{1}: %m%n");
+			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
+			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
+			Logger jobLogger = Logger.getLogger(job.getName());
+			jobLogger.setAdditivity(false);
+			jobLogger.addAppender(jobLoggerAppender);
+			
 			try {
 				cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
 				cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
 			} catch (IOException e) {
 				response.setException(e);
 			}
-			
-			
+						
 			String commandLine = job.getCommandPath();
 			
 			//cmdExecutor.setWorkingDirectory(workingDirectory);
@@ -87,15 +101,12 @@ public class LaunchJob implements Instruction {
 			
 			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
 
-			response.setInstructionResultOK(true);
-			response.setXmlOutputData(XMLUtil.objectToXMLString(exitStatus));
+			ExecStatus execStatus = new ExecStatus();
+			execStatus.setStatus(exitStatus);
+			execStatus.setLogFile(jobLogFile.getAbsolutePath());
 			
-//			if (cmdExecutor.getCommandError().length() != 0) {
-//				logger.info("-- BAD END OF JOB "+job.getName()+"(Error output not empty) --");
-//				exitStatus = 1;
-//			}
-									
-
+			response.setInstructionResultOK(true);
+			response.setXmlOutputData(XMLUtil.objectToXMLString(execStatus));
 
 		} catch (Exception e) {
 			response.setException(e);

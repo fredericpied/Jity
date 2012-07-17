@@ -33,8 +33,8 @@ import org.apache.log4j.Logger;
 import org.jity.protocol.Protocol;
 import org.jity.protocol.ProtocolException;
 
-public class ServeOneClient extends Thread {
-	private static final Logger logger = Logger.getLogger(ServeOneClient.class);
+public class ServeOneUIClient extends Thread {
+	private static final Logger logger = Logger.getLogger(ServeOneUIClient.class);
 	
     private Socket socket;
     private BufferedReader networkReader;
@@ -46,7 +46,7 @@ public class ServeOneClient extends Thread {
      * @param s
      * @throws IOException
      */
-    public ServeOneClient(Socket s) throws IOException {
+    public ServeOneUIClient(Socket s) throws IOException {
         this.socket = s;
         this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.networkWriter = new PrintWriter(socket.getOutputStream());

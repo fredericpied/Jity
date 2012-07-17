@@ -32,12 +32,10 @@ import org.apache.log4j.Logger;
 
 
 public class ErrorOutputLogger implements LogDevice {
-private Logger jobLogger; 
+	private Logger jobLogger; 
 	
-	public ErrorOutputLogger(Appender log4jAppender) throws IOException {
-		this.jobLogger = Logger.getLogger("JOB_ERR_OUTPUT");
-		this.jobLogger.setAdditivity(false);
-		jobLogger.addAppender(log4jAppender);
+	public ErrorOutputLogger(Logger jobLogger) throws IOException {
+		this.jobLogger = jobLogger;
 	}
 	
 	public void log(String str) {

@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
+import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
 
 public abstract class YearCalc {
 	private static final Logger logger = Logger.getLogger(YearCalc.class);
@@ -63,6 +65,57 @@ public abstract class YearCalc {
 	}
 	
 	/**
+	 * Return last open day in the year according to persCal
+	 * @param year
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getLastOpenYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastYearDay(year));
+		
+		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+			}
+		}
+			
+		return null;
+	}
+	
+	/**
+	 * Return last close day in the year according to persCal
+	 * @param year
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getLastCloseYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastYearDay(year));
+		
+		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+			}
+		}
+			
+		return null;
+	}
+	
+	
+	/**
 	 * Return first day of the year
 	 * @param year
 	 * @return Date
@@ -74,6 +127,54 @@ public abstract class YearCalc {
 		cal.set(Calendar.MONTH, 0); // January
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 		return cal.getTime();
+	}
+	
+	/**
+	 * Return first open day in the year
+	 * @param year
+	 * @param persCal
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getFirstOpenYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstYearDay(year));
+		
+		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, 1);
+			}
+		}
+			
+		return null;
+	}
+	
+	/**
+	 * Return first close day in the year
+	 * @param year
+	 * @param persCal
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getFirstCloseYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstYearDay(year));
+		
+		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, 1);
+			}
+		}
+			
+		return null;
 	}
 	
 	/**

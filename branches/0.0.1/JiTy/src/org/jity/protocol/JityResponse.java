@@ -77,7 +77,7 @@ public class JityResponse extends Datagram {
 	public void setXmlOutputData(String xmlOutputData) {
 		this.xmlOutputData = xmlOutputData;
 	}
-
+	
 	/**
 	 * Parse an Exception to format Response
 	 * 

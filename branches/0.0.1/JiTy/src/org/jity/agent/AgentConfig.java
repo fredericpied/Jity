@@ -60,6 +60,12 @@ public class AgentConfig {
 	 */
 	public ArrayList<String> HOSTNAME_LIST;
 	
+	/**
+	 * Root directory of jobs log file
+	 */
+	public String JOBS_LOGS_DIR;
+	
+	
 	public boolean hostnameListSet() {
 		if (this.HOSTNAME_LIST ==  null) {
 			return false;
@@ -112,6 +118,14 @@ public class AgentConfig {
 
 	public void setAGENT_PORT(int aGENTPORT) {
 		AGENT_PORT = aGENTPORT;
+	}
+
+	public String getJOBS_LOGS_DIR() {
+		return JOBS_LOGS_DIR;
+	}
+
+	public void setJOBS_LOGS_DIR(String jOBSLOGSDIR) {
+		JOBS_LOGS_DIR = jOBSLOGSDIR;
 	}
 	
 
