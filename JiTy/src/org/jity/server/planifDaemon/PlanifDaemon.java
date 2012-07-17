@@ -125,7 +125,7 @@ public class PlanifDaemon implements Runnable {
 		
     }
     
-	public void TestOneJob() {
+	public void testOneJob() {
 		
 		Job job = new Job();
 		job.setName("jobtest");
@@ -151,15 +151,18 @@ public class PlanifDaemon implements Runnable {
 
 			// If response is OK
 			if (response.isInstructionResultOK()) {
-				execStatus.setEnd(new Date());
 				execStatus.setStatus(ExecStatus.OK);
 			} else {
 				// Is response is KO
-				execStatus.setEnd(new Date());
 				execStatus.setStatus(ExecStatus.KO);
-				int exitStatus = (Integer)XMLUtil.XMLStringToObject(response.getXmlOutputData());
-				execStatus.setStatusMessage("Exit status = "+exitStatus);
 			}
+			
+			execStatus.setEnd(new Date());
+			
+			ExecStatus returnExecStatus = (ExecStatus)XMLUtil.XMLStringToObject(response.getXmlOutputData());
+			execStatus.setStatus(returnExecStatus.getStatus());
+			execStatus.setStatusMessage(returnExecStatus.getStatusMessage());
+			execStatus.setLogFile(returnExecStatus.getLogFile());
 			
 		} catch (UnknownHostException e) {
 			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
@@ -191,7 +194,8 @@ public class PlanifDaemon implements Runnable {
         while (!shouldStop) {
             try {
                 logger.info("Start of job analyze.");
-                checkJobs();
+                //checkJobs();
+                testOneJob();
                 logger.info("End of job analyze.");
                 TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {

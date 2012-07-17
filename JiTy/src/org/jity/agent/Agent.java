@@ -112,6 +112,7 @@ public class Agent implements Runnable {
 		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
 		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
 		logger.info("HOSTNAME_LIST = "+agentConfig.getHOSTNAME_LIST());
+		logger.info("JOBS_LOGS_DIR = "+agentConfig.getJOBS_LOGS_DIR());
 	}
 	
 	/**

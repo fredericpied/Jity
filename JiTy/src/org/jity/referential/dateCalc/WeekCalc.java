@@ -112,7 +112,30 @@ public abstract class WeekCalc {
 			}	
 		}
 
-		throw new PersonnalCalendarException("Not able to found an open day in this week");
+		return null;
+	}
+	
+	/**
+	 * Get last clode day of the week
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException 
+	 */
+	public static Date getLastCloseWeekDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastWeekDay(date));
+	
+		for (int i=7;i>=1;i--) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_WEEK, -1);
+			}	
+		}
+
+		return null;
 	}
 	
 	/**
@@ -135,7 +158,30 @@ public abstract class WeekCalc {
 			}	
 		}
 
-		throw new PersonnalCalendarException("Not able to found an open day in this week");
+		return null;
+	}
+	
+	/**
+	 * Get first close day of the week
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException 
+	 */
+	public static Date getFirstCloseWeekDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstWeekDay(date));
+	
+		for (int i=1;i<=7;i++) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_WEEK, 1);
+			}	
+		}
+
+		return null;
 	}
 	
 	/**

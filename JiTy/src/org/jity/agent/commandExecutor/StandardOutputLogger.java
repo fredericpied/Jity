@@ -36,10 +36,8 @@ import org.apache.log4j.spi.LoggerFactory;
 public class StandardOutputLogger implements LogDevice {
 	private Logger jobLogger; 
 	
-	public StandardOutputLogger(Appender log4jAppender) throws IOException {
-		this.jobLogger = Logger.getLogger("JOB_STD_OUTPUT");
-		this.jobLogger.setAdditivity(false);
-		jobLogger.addAppender(log4jAppender);
+	public StandardOutputLogger(Logger jobLogger) throws IOException {
+		this.jobLogger = jobLogger;
 	}
 	
 	public void log(String str) {

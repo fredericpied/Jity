@@ -189,7 +189,7 @@ public class Server implements Runnable {
 				try {
 					logger.info("New connection from "
 							+ client.getInetAddress() + ".");
-					new ServeOneClient(client);
+					new ServeOneUIClient(client);
 				} catch (IOException e) {
 					client.close();
 				}

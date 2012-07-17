@@ -4,4 +4,5 @@
  <HOSTNAME__LIST> 
      <string>127.0.0.1</string>
    </HOSTNAME__LIST>
+   <JOBS__LOGS__DIR>D:\temp</JOBS__LOGS__DIR>
  </org.jity.agent.AgentConfig>

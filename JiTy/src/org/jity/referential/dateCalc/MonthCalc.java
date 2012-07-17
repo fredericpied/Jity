@@ -138,7 +138,32 @@ public abstract class MonthCalc {
 			}
 		}
 			
-		throw new PersonnalCalendarException("Not able to found an open day in this month");
+		return null;
+	}
+	
+	/**
+	 * Return first close day in the month according to specified PersonnalCalendar
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getFirstCloseMonthDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getFirstMonthDay(date));
+		
+		int maxNbDay = getDayNumberInMonth(getLastMonthDay(date));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+		}
+			
+		return null;
 	}
 	
 	/**
@@ -163,7 +188,32 @@ public abstract class MonthCalc {
 			}
 		}
 			
-		throw new PersonnalCalendarException("Not able to found an open day in this month");
+		return null;
+	}
+	
+	/**
+	 * Return last close day in the month according to specified PersonnalCalendar
+	 * @param date
+	 * @param persCal
+	 * @return
+	 * @throws PersonnalCalendarException
+	 */
+	public static Date getLastCloseMonthDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		cal.setTime(getLastMonthDay(date));
+		
+		int maxNbDay = getDayNumberInMonth(getLastMonthDay(date));
+		
+		for (int i=1;i<=maxNbDay;i++) {
+			if (!persCal.isAnOpenDay(cal.getTime())) {
+				return cal.getTime();
+			} else {
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+			}
+		}
+			
+		return null;
 	}
 	
 	/**
