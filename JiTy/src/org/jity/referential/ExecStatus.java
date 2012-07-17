@@ -1,5 +1,6 @@
 package org.jity.referential;
 
+import java.io.File;
 import java.util.Date;
 
 public class ExecStatus {
@@ -11,7 +12,16 @@ public class ExecStatus {
 	private int status;
 	private Job job;
 	private String statusMessage;
+	private String logFile;
 	
+	public String getLogFile() {
+		return logFile;
+	}
+
+	public void setLogFile(String logFile) {
+		this.logFile = logFile;
+	}
+
 	public static final int NOT_PLANED = 1;
 	public static final int PLANED = 2;
 	public static final int RUNNING = 3;

@@ -22,7 +22,7 @@ public class PersonnalCalendar {
 	 * if characters is 'O': The day is open
 	 * if characters is 'C': The day is close 
 	 */
-	private String openDays;
+	private String days;
 	
 	public PersonnalCalendar() {
 		
@@ -60,12 +60,12 @@ public class PersonnalCalendar {
 		this.year = year;
 	}
 
-	public String getOpenDays() {
-		return openDays;
+	public String getDays() {
+		return days;
 	}
 
-	public void setOpenDays(String openDays) {
-		this.openDays = openDays;
+	public void setDays(String days) {
+		this.days = days;
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class PersonnalCalendar {
 		this.name = name;
 		this.description = description;
 		this.year = year;
-		this.openDays = openDays;
+		this.days = openDays;
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class PersonnalCalendar {
 				openDays = openDays + "O";
 			}
 			
-			this.openDays = openDays;
+			this.days = openDays;
 			
 		} catch (Exception e) {
 			throw new PersonnalCalendarException(this.name+": "+e.getMessage());
@@ -134,16 +134,16 @@ public class PersonnalCalendar {
 	 */
 	public void setOneDayType(int dayNumber, String type) throws PersonnalCalendarException {
 				
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
-		if (dayNumber > this.openDays.length())
+		if (dayNumber > this.days.length())
 			throw new PersonnalCalendarException(this.name+": Specified day number > max number of days in this year");
 		
-		String openDaysBefore = this.openDays.substring(0, dayNumber-1);
-		String openDaysAfter = this.openDays.substring(dayNumber, this.openDays.length());
+		String openDaysBefore = this.days.substring(0, dayNumber-1);
+		String openDaysAfter = this.days.substring(dayNumber, this.days.length());
 		
-		this.openDays = openDaysBefore+type+openDaysAfter;
+		this.days = openDaysBefore+type+openDaysAfter;
 	}
 	
 	/**
@@ -154,13 +154,13 @@ public class PersonnalCalendar {
 	 */
 	public String getOneDayType(int dayNumber) throws PersonnalCalendarException {
 				
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
-		if (dayNumber > this.openDays.length())
+		if (dayNumber > this.days.length())
 			throw new PersonnalCalendarException(this.name+": Specified day number > max number of days in this year");
 		
-		return this.openDays.substring(dayNumber-1, dayNumber);
+		return this.days.substring(dayNumber-1, dayNumber);
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class PersonnalCalendar {
 	 */
 	public void showClosedDays() throws PersonnalCalendarException {
 				
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		for (int day = 1;day <= this.getNumberOfDaysInTheYear();day ++) {
@@ -190,7 +190,7 @@ public class PersonnalCalendar {
 	 */
 	public void addClosedDayOfWeek(int dayOfWeek) throws PersonnalCalendarException {
 				
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		if (dayOfWeek < 1 || dayOfWeek > 7)
@@ -218,7 +218,7 @@ public class PersonnalCalendar {
 	 */
 	public void addFrenchHolydays() throws PersonnalCalendarException {
 		
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 		
 		java.util.Calendar cal = new GregorianCalendar();
@@ -250,7 +250,7 @@ public class PersonnalCalendar {
 	 */
 	public boolean isAnOpenDay(Date date) throws PersonnalCalendarException {
 		
-		if (this.openDays.length() == 0)
+		if (this.days.length() == 0)
 			throw new PersonnalCalendarException(this.name+": Open days not initialized");
 			
 		// Attention: Pour Calendar, les mois débutent à 0

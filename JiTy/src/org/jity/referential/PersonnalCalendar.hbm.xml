@@ -30,15 +30,15 @@
 
 <hibernate-mapping package="org.jity.referential">
 
-    <class name="Calendar" table="CALENDAR">
+    <class name="PersonnalCalendar" table="PERSONNAL_CALENDAR">
         <id name="id" type="long">
-            <column name="ID" not-null="true" unique="true" index="PK_CALENDAR" />  
+            <column name="ID" not-null="true" unique="true" index="PK_PERSONNAL_CALENDAR" />  
             <generator class="increment"/>
         </id>
         <property name="name" column="NAME"/>
         <property name="description" column="DESCRIPTION"/>
         <property name="year" column="YEAR"></property>    
-        <property name="openDays" column="OPEN_DAYS"/>
+        <property name="days" column="DAYS" type="string" length="366"/>
     </class>
 
 </hibernate-mapping>

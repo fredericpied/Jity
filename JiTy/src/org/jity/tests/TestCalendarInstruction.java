@@ -63,8 +63,7 @@ public class TestCalendarInstruction extends TestCase {
 			calendar.setName("Calendar1");
 			calendar.setDescription("Calendar1 description");
 			calendar.setYear(2012);
-			calendar.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
-							+ "OOOOOCCOOOOOCC");
+			calendar.initializeWithAllDaysOpen();
 
 			Session session = DatabaseServer.getSession();
 			Transaction transaction = session.beginTransaction();
@@ -91,9 +90,7 @@ public class TestCalendarInstruction extends TestCase {
 			calendar.setName("Calendar2");
 			calendar.setDescription("Calendar2 description");
 			calendar.setYear(2012);
-			calendar
-					.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
-							+ "OOOOOCCOOOOOCC");
+			calendar.initializeWithAllDaysOpen();
 			
 			String xmlCalendar = XMLUtil.objectToXMLString(calendar);
 			

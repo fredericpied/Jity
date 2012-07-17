@@ -55,11 +55,11 @@ public class TestCalendar extends TestCase {
 		try {
 			cal.setYear(2010);
 			cal.initializeWithAllDaysOpen();
-			assertEquals(cal.getOpenDays().length(), cal.getNumberOfDaysInTheYear());
+			assertEquals(cal.getDays().length(), cal.getNumberOfDaysInTheYear());
 		
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
-			assertEquals(cal.getOpenDays().length(), cal.getNumberOfDaysInTheYear());
+			assertEquals(cal.getDays().length(), cal.getNumberOfDaysInTheYear());
 		
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
@@ -75,15 +75,15 @@ public class TestCalendar extends TestCase {
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
 			
-			String openDays1 = cal.getOpenDays();
+			String openDays1 = cal.getDays();
 			cal.setOneDayType(1, "C");
 
-			String openDays2 = cal.getOpenDays();
+			String openDays2 = cal.getDays();
 			
 			assertEquals(openDays1.length(), openDays2.length());
 			
 			cal.setOneDayType(cal.getNumberOfDaysInTheYear(), "C");
-			String openDays3 = cal.getOpenDays();
+			String openDays3 = cal.getDays();
 			
 			assertEquals(openDays1.length(), openDays3.length());
 			
