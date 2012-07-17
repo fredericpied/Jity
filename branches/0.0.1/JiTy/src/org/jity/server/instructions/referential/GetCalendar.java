@@ -48,14 +48,14 @@ public class GetCalendar implements Instruction {
 		try {
 
 			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
-			String queryFind = "select cal from org.jity.referential.persistent.Calendar cal"
-	                + " where cal.id = '" + id + "'";
+			String queryFind = "select cal from org.jity.referential.PersonnalCalendar cal"
+	                + " where cal.id = " + id;
 
 			Session session = DatabaseServer.getSession();
 
 			List list = session.createQuery(queryFind).list();
-	        if (list.size() == 0) throw new DataNotFoundDBException(queryFind);
-			if (list.size() > 1) throw new TooMuchDataDBException(queryFind);
+	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			if (list.size() > 1) throw new TooMuchDataDBException("TooMuchDataDBException :"+queryFind);
 			
 			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
 			response.setInstructionResultOK(true);

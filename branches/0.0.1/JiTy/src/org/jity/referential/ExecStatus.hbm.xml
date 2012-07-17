@@ -41,6 +41,7 @@
         <property name="status" column="STATUS"/>
 		<many-to-one name="job" not-null="true" column="JOB_ID" cascade="all"/>
         <property name="statusMessage" column="STATUS_MESSAGE"/>
+        <property name="logFile" column="LOG_FILE"/>
 	</class>
 
 

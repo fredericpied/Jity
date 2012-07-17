@@ -8,6 +8,7 @@ import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
 import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
 import org.jity.server.instructions.InstructionException;
 
 /**
@@ -31,7 +32,7 @@ public class AddCalendar extends CommandLine {
 		this.setMaxArgsNumber(6);
 	}
 	
-	private	int launch(String[] args) throws BadArgCLException, UIClientException, InstructionException, IOException {
+	private	int launch(String[] args) throws BadArgCLException, UIClientException, InstructionException, IOException, PersonnalCalendarException {
 		int returnCode = 1;
 		
 		this.loadArguments(args);
@@ -49,9 +50,7 @@ public class AddCalendar extends CommandLine {
 		calendar.setName(this.calendarName);
 		calendar.setDescription(this.calendarDescription);
 		calendar.setYear(this.calendarYear);
-		calendar
-				.setOpenDays("OOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCCOOOOOCC"
-						+ "OOOOOCCOOOOOCC");
+		calendar.initializeWithAllDaysOpen();
 		
 		String xmlCalendar = XMLUtil.objectToXMLString(calendar);
 		
