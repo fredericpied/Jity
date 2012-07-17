@@ -54,7 +54,7 @@
         <!-- Drop and re-create the database schema on startup -->
         <!-- <property name="hbm2ddl.auto">create</property> -->
 
-        <mapping resource="org/jity/referential/Calendar.hbm.xml"/>
+        <mapping resource="org/jity/referential/PersonnalCalendar.hbm.xml"/>
         <mapping resource="org/jity/referential/Job.hbm.xml"/>
         <mapping resource="org/jity/referential/ExecStatus.hbm.xml"/>
         <mapping resource="org/jity/referential/DateConstraint.hbm.xml"/>
