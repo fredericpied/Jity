@@ -37,7 +37,7 @@ public abstract class DateUtil {
 	/**
 	 * Default String format for Date
 	 */
-	public static final String DEFAULT_DATE_FORMAT = "EEE dd/MM/yyyy";
+	public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
 	/**
 	 * Default String format for Date Time

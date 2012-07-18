@@ -92,7 +92,7 @@ public class DateConstraint {
 
 		try {
 			// If it's a closed day in the calendar
-			if (!this.persCalendar.isAnOpenDay(execDate))
+			if (! this.persCalendar.isAnOpenDay(execDate))
 				return false;
 
 			// It's an open Days in the calendar
@@ -104,7 +104,7 @@ public class DateConstraint {
 			// Extract sentence
 			String[] planifRuleSplit = this.planifRule.split("-");
 			String operator = planifRuleSplit[0];
-			String stringDayNumber = planifRuleSplit[1];
+			String dayNumber = planifRuleSplit[1];
 			String dayType = planifRuleSplit[2];
 			String dayName = planifRuleSplit[3];
 			String period = planifRuleSplit[4];
@@ -136,7 +136,7 @@ public class DateConstraint {
 			Date calculateDate = null;
 
 			// DAY NUMBER
-			if (stringDayNumber.equals("first")) {
+			if (dayNumber.equals("first")) {
 
 				if (period.equals("week")) {
 
@@ -171,7 +171,7 @@ public class DateConstraint {
 
 				}
 
-			} else if (stringDayNumber.equals("last")) {
+			} else if (dayNumber.equals("last")) {
 
 				if (period.equals("week")) {
 					if (dayType.equals("open")) {

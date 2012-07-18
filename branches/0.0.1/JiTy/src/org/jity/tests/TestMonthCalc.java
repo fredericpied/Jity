@@ -16,35 +16,8 @@ import org.jity.referential.dateCalc.WeekCalc;
 
 import junit.framework.TestCase;
 
-public class TestWeekCalc extends TestCase {
-	private static final Logger logger = Logger.getLogger(TestWeekCalc.class);
-
-	public void testIsValidDayName() {
-		assertEquals(WeekCalc.isValidDayName("mon"), true);
-		assertEquals(WeekCalc.isValidDayName("tue"), true);
-		assertEquals(WeekCalc.isValidDayName("wed"), true);
-		assertEquals(WeekCalc.isValidDayName("thu"), true);
-		assertEquals(WeekCalc.isValidDayName("fri"), true);
-		assertEquals(WeekCalc.isValidDayName("sat"), true);
-		assertEquals(WeekCalc.isValidDayName("sun"), true);
-	}
-
-	public void testGetDayName() {
-
-		try {
-			assertEquals(WeekCalc.getDayName(1), "mon");
-			assertEquals(WeekCalc.getDayName(2), "tue");
-			assertEquals(WeekCalc.getDayName(3), "wed");
-			assertEquals(WeekCalc.getDayName(4), "thu");
-			assertEquals(WeekCalc.getDayName(5), "fri");
-			assertEquals(WeekCalc.getDayName(6), "sat");
-			assertEquals(WeekCalc.getDayName(7), "sun");
-		} catch (DateException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-
-	}
+public class TestMonthCalc extends TestCase {
+	private static final Logger logger = Logger.getLogger(TestMonthCalc.class);
 
 	public void testGetFirstWeekDay() {
 		try {
