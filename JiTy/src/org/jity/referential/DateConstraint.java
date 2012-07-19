@@ -130,7 +130,6 @@ public class DateConstraint {
 				// If month name are different, return false now
 				if (execDateMonthNumber != ruleMonthNumber) return false;
 				else period="execMonth"; // Same month as execDate
-
 			}
 
 			Date calculateDate = null;
@@ -147,7 +146,6 @@ public class DateConstraint {
 					} else if (dayType.equals("calend")) {
 						calculateDate = WeekCalc.getFirstWeekDay(execDate);
 					}
-
 
 				} else if (period.equals("month") || period.equals("execMonth")) {
 
