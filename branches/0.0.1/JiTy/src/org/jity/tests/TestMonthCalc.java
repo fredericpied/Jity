@@ -199,4 +199,56 @@ public class TestMonthCalc extends TestCase {
 		}
 	}
 
+	public void testGetNiemeOpenWeekDay() {
+
+		try {
+			PersonnalCalendar persCal = new PersonnalCalendar();
+			persCal.setName("5OpenDaysPerWeek");
+			persCal.setYear(2012);
+			persCal.initializeWithAllDaysOpen();
+			persCal.addFrenchHolydays();
+			persCal.addClosedDayOfWeek(6);
+			persCal.addClosedDayOfWeek(7);
+
+			Date dateToTest1 = DateUtil.stringToDate("13/04/2012");
+			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
+			Date goodDate1 = DateUtil.stringToDate("11/04/2012");
+			logger.info("Good result: " + DateUtil.dateToString(goodDate1));
+			Date calculateDate1 = WeekCalc.getNiemeOpenWeekDay(dateToTest1, persCal, 2);
+			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
+			assertEquals(calculateDate1.compareTo(goodDate1), 0);
+			
+			dateToTest1 = DateUtil.stringToDate("15/08/2012");
+			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
+			goodDate1 = DateUtil.stringToDate("14/08/2012");
+			logger.info("Good result: " + DateUtil.dateToString(goodDate1));
+			calculateDate1 = WeekCalc.getNiemeOpenWeekDay(dateToTest1, persCal, 3);
+			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
+			assertEquals(calculateDate1.compareTo(goodDate1), 0);
+			
+			dateToTest1 = DateUtil.stringToDate("06/06/2012");
+			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
+			goodDate1 = DateUtil.stringToDate("05/06/2012");
+			logger.info("Good result: " + DateUtil.dateToString(goodDate1));
+			calculateDate1 = WeekCalc.getNiemeOpenWeekDay(dateToTest1, persCal, 4);
+			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
+			assertEquals(calculateDate1.compareTo(goodDate1), 0);
+			
+			dateToTest1 = DateUtil.stringToDate("24/12/2012");
+			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
+			goodDate1 = DateUtil.stringToDate("26/12/2012");
+			logger.info("Good result: " + DateUtil.dateToString(goodDate1));
+			calculateDate1 = WeekCalc.getNiemeOpenWeekDay(dateToTest1, persCal, 1);
+			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
+			assertEquals(calculateDate1.compareTo(goodDate1), 0);
+			
+		} catch (PersonnalCalendarException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (DateException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 }

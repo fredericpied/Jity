@@ -140,25 +140,89 @@ public abstract class WeekCalc {
 	
 	/**
 	 * Get first open day of the week
-	 * @param date
+	 * @param dateToTest
 	 * @param persCal
-	 * @return
+	 * @return Date
 	 * @throws PersonnalCalendarException 
 	 */
-	public static Date getFirstOpenWeekDay(Date date, PersonnalCalendar persCal) throws PersonnalCalendarException {
-		Calendar cal = new GregorianCalendar();
-		cal.clear();
-		cal.setTime(getFirstWeekDay(date));
+	public static Date getFirstOpenWeekDay(Date dateToTest, PersonnalCalendar persCal) throws PersonnalCalendarException {
+		return getNiemeOpenWeekDay(dateToTest, persCal, 1);
+	}
 	
-		for (int i=1;i<=7;i++) {
-			if (persCal.isAnOpenDay(cal.getTime())) {
-				return cal.getTime();
-			} else {
-				cal.add(Calendar.DAY_OF_WEEK, 1);
-			}	
-		}
+	/**
+	 * Get N ieme open day of the week
+	 * @param dateToTest
+	 * @param persCal
+	 * @param nbDay
+	 * @return Date
+	 * @throws PersonnalCalendarException 
+	 */
+	public static Date getNiemeOpenWeekDay(Date dateToTest, PersonnalCalendar persCal, int nbDay)
+			throws PersonnalCalendarException {
 
-		return null;
+		Calendar calToTest = new GregorianCalendar();
+		calToTest.clear();
+
+		if (nbDay < 0) {
+
+			// Initialize a new calendar this the first day of the week
+			calToTest.setTime(getFirstWeekDay(dateToTest));
+
+			// Last day of the week
+			Date lastWeekDay = getLastWeekDay(dateToTest);
+
+			if (nbDay > 7)
+				throw new PersonnalCalendarException("nbDay must be < 7");
+
+			int dayCount = 0;
+
+			// While end of week not reached test each day of week
+			do {
+
+				if (persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an open day, count 1 day
+					dayCount++;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				}
+				calToTest.add(Calendar.DAY_OF_WEEK, 1);
+
+			} while (lastWeekDay.compareTo(calToTest.getTime()) == 1);
+
+			return null;
+
+		} else {
+
+			// Initialize a new calendar this the first day of the week
+			calToTest.setTime(getLastWeekDay(dateToTest));
+
+			// Last day of the week
+			Date firstWeekDay = getFirstWeekDay(dateToTest);
+
+			if (nbDay > 7)
+				throw new PersonnalCalendarException("nbDay must be < 7");
+
+			int dayCount = 0;
+
+			// While end of week not reached test each day of week
+			do {
+
+				if (persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an open day, count 1 day
+					dayCount--;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				}
+				calToTest.add(Calendar.DAY_OF_WEEK, -1);
+
+			} while (firstWeekDay.compareTo(calToTest.getTime()) == -1);
+
+			return null;
+		}
 	}
 	
 	/**
