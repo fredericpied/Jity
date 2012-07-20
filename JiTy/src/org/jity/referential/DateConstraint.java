@@ -111,7 +111,7 @@ public class DateConstraint {
 
 			// DAY NAME
 			if (! dayName.equals("day")) {
-				int execDateDayNumberInWeek = WeekCalc.getDayNumberInWeek(execDate);
+				int execDateDayNumberInWeek = WeekCalc.getDayNumberInWeekByDate(execDate);
 				int ruleDayNumberInWeek = WeekCalc.getDayNumberInWeekByName(dayName);
 
 				// If day name are different, return false now
