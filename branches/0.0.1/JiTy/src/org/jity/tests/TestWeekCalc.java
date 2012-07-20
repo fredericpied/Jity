@@ -32,13 +32,13 @@ public class TestWeekCalc extends TestCase {
 	public void testGetDayName() {
 
 		try {
-			assertEquals(WeekCalc.getDayName(1), "mon");
-			assertEquals(WeekCalc.getDayName(2), "tue");
-			assertEquals(WeekCalc.getDayName(3), "wed");
-			assertEquals(WeekCalc.getDayName(4), "thu");
-			assertEquals(WeekCalc.getDayName(5), "fri");
-			assertEquals(WeekCalc.getDayName(6), "sat");
-			assertEquals(WeekCalc.getDayName(7), "sun");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(1), "mon");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(2), "tue");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(3), "wed");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(4), "thu");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(5), "fri");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(6), "sat");
+			assertEquals(WeekCalc.getDayNameInWeekByNumber(7), "sun");
 		} catch (DateException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -261,6 +261,14 @@ public class TestWeekCalc extends TestCase {
 			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
 			assertEquals(calculateDate1.compareTo(goodDate1), 0);
 			
+			dateToTest1 = DateUtil.stringToDate("06/06/2012");
+			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
+			goodDate1 = DateUtil.stringToDate("08/06/2012");
+			logger.info("Good result: " + DateUtil.dateToString(goodDate1));
+			calculateDate1 = WeekCalc.getNiemeOpenWeekDay(dateToTest1, persCal, -1);
+			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
+			assertEquals(calculateDate1.compareTo(goodDate1), 0);
+						
 			dateToTest1 = DateUtil.stringToDate("24/12/2012");
 			logger.info("Date to test: " + DateUtil.dateToString(dateToTest1));
 			goodDate1 = DateUtil.stringToDate("24/12/2012");
