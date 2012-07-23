@@ -65,55 +65,117 @@ public abstract class YearCalc {
 	}
 	
 	/**
-	 * Return last open day in the year according to persCal
-	 * @param year
+	 * Get N ieme day of the year type close or open
+	 * @param dateToTest
 	 * @param persCal
-	 * @return
-	 * @throws PersonnalCalendarException
+	 * @param nbDay
+	 * @return Date
+	 * @throws PersonnalCalendarException 
 	 */
-	public static Date getLastOpenYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
-		Calendar cal = new GregorianCalendar();
-		cal.clear();
-		cal.setTime(getLastYearDay(year));
+	public static Date getNiemeYearDay(Date dateToTest, PersonnalCalendar persCal, int nbDay, String dayType)
+			throws PersonnalCalendarException {
+
+		Calendar calToTest = new GregorianCalendar();
+		calToTest.clear();
+
+		if (! dayType.equals("close") &&
+				! dayType.equals("open") &&
+				! dayType.equals("calend"))
+			throw new PersonnalCalendarException("dayType must be \"calend\", \"open\" or \"close\"");
+
+		int yearNum = getYearNumber(dateToTest);
+		int numberOfDaysInTheYear = getDayNumberInYear(getLastYearDay(yearNum));
 		
-		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
-		
-		for (int i=1;i<=maxNbDay;i++) {
-			if (persCal.isAnOpenDay(cal.getTime())) {
-				return cal.getTime();
-			} else {
-				cal.add(Calendar.DAY_OF_YEAR, -1);
-			}
-		}
+		if (nbDay > 0) {
+
+			// Initialize a new calendar whith the first day of the year
+			calToTest.setTime(getFirstYearDay(yearNum));
+
+			// Last day of the year
+			Date lastYearDay = getLastYearDay(yearNum);
 			
-		return null;
-	}
-	
-	/**
-	 * Return last close day in the year according to persCal
-	 * @param year
-	 * @param persCal
-	 * @return
-	 * @throws PersonnalCalendarException
-	 */
-	public static Date getLastCloseYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
-		Calendar cal = new GregorianCalendar();
-		cal.clear();
-		cal.setTime(getLastYearDay(year));
-		
-		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
-		
-		for (int i=1;i<=maxNbDay;i++) {
-			if (!persCal.isAnOpenDay(cal.getTime())) {
-				return cal.getTime();
-			} else {
-				cal.add(Calendar.DAY_OF_YEAR, -1);
-			}
+			if (nbDay > numberOfDaysInTheYear)
+				throw new PersonnalCalendarException("nbDay must be < "+numberOfDaysInTheYear);
+
+			int dayCount = 0;
+
+			// While end of month not reached test each day of month
+			do {
+
+				if (dayType.equals("close") && ! persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an close day, count 1 day
+					dayCount++;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				} else if (dayType.equals("open") && persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an open day, count 1 day
+					dayCount++;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				} else if (dayType.equals("calend")) {
+					dayCount++;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				}
+				
+				calToTest.add(Calendar.DAY_OF_YEAR, 1);
+
+			} while (lastYearDay.compareTo(calToTest.getTime()) == 1);
+
+			return null;
+
+		} else {
+
+			// Initialize a new calendar this the first day of the year
+			calToTest.setTime(getLastYearDay(yearNum));
+
+			// Last day of the week
+			Date firstYearDay = getFirstYearDay(yearNum);
+
+			if (nbDay < -numberOfDaysInTheYear)
+				throw new PersonnalCalendarException("nbDay must be > -"+numberOfDaysInTheYear);
+
+			int dayCount = 0;
+
+			// While end of month not reached test each day of month
+			do {
+
+				if (dayType.equals("close") && ! persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an close day, count 1 day
+					dayCount--;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				
+				} else if (dayType.equals("open") && persCal.isAnOpenDay(calToTest.getTime())) {
+					// If it's an open day, count 1 day
+					dayCount--;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				} else if (dayType.equals("calend")) {
+					dayCount--;
+
+					// If nbDay reach, return actual cal value
+					if (dayCount == nbDay)
+						return calToTest.getTime();
+				}
+				
+				calToTest.add(Calendar.DAY_OF_YEAR, -1);
+
+			} while (firstYearDay.compareTo(calToTest.getTime()) == -1);
+
+			return null;
 		}
-			
-		return null;
 	}
-	
 	
 	/**
 	 * Return first day of the year
@@ -127,54 +189,6 @@ public abstract class YearCalc {
 		cal.set(Calendar.MONTH, 0); // January
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 		return cal.getTime();
-	}
-	
-	/**
-	 * Return first open day in the year
-	 * @param year
-	 * @param persCal
-	 * @throws PersonnalCalendarException
-	 */
-	public static Date getFirstOpenYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
-		Calendar cal = new GregorianCalendar();
-		cal.clear();
-		cal.setTime(getFirstYearDay(year));
-		
-		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
-		
-		for (int i=1;i<=maxNbDay;i++) {
-			if (persCal.isAnOpenDay(cal.getTime())) {
-				return cal.getTime();
-			} else {
-				cal.add(Calendar.DAY_OF_YEAR, 1);
-			}
-		}
-			
-		return null;
-	}
-	
-	/**
-	 * Return first close day in the year
-	 * @param year
-	 * @param persCal
-	 * @throws PersonnalCalendarException
-	 */
-	public static Date getFirstCloseYearDay(int year, PersonnalCalendar persCal) throws PersonnalCalendarException {
-		Calendar cal = new GregorianCalendar();
-		cal.clear();
-		cal.setTime(getFirstYearDay(year));
-		
-		int maxNbDay = getDayNumberInYear(getLastYearDay(year));
-		
-		for (int i=1;i<=maxNbDay;i++) {
-			if (!persCal.isAnOpenDay(cal.getTime())) {
-				return cal.getTime();
-			} else {
-				cal.add(Calendar.DAY_OF_YEAR, 1);
-			}
-		}
-			
-		return null;
 	}
 	
 	/**
@@ -344,8 +358,7 @@ public abstract class YearCalc {
 	
 		return cal2.get(Calendar.YEAR) == cal1.get(Calendar.YEAR);
 	}
-	
-	
+		
 	/**
 	 * get Day Number in year
 	 * @param date
@@ -355,19 +368,6 @@ public abstract class YearCalc {
 		Calendar calToTest = new GregorianCalendar();
 		calToTest.setTime(date);
 		return calToTest.get(Calendar.DAY_OF_YEAR);
-	}
-
-	/**
-	 * Get date obtained by adding numberOfDays to a date
-	 * @param date
-	 * @param numberOfDays
-	 * @return
-	 */
-	public Date getDatePlusNumberOfDays(Date date, int numberOfDays) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(date);
-		cal.add(Calendar.DAY_OF_MONTH, numberOfDays);
-		return cal.getTime();
 	}
 		
 }
