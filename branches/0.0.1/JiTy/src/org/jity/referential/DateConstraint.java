@@ -34,18 +34,15 @@ public class DateConstraint {
 
 	private PersonnalCalendar persCalendar;
 
-	private static final String[] OPERATOR_KEYWORDS = { "before", "after",
-		"not", "equal" };
+	private static final String OPERATOR_KEYWORDS = "before,after,not,equal";
 
-	private static final String[] DAY_NUM_KEYWORDS = { "all", "first", "last" };
+	private static final String DAY_NUM_KEYWORDS = "all,first,last";
 
-	//  private static final String[] DAY_TYPE_KEYWORDS = { "calend", "openned",
-	//		"closed" };
+	private static final String DAY_TYPE_KEYWORDS = "calend,open,close";
 
-	private static final String[] DAY_NAME_KEYWORDS = { "day", "mon", "tue",
-		"wed", "thu", "fri", "sat", "sun" };
+	private static final String DAY_NAME_KEYWORDS = "day,mon,tue,wed,thu,fri,sat,sun";
 
-	private static final String[] PERIOD_KEYWORDS = { "week", "month", "year" };
+	private static final String PERIOD_KEYWORDS = "week,month,year,jan,feb,mar,apr,mai,jun,jul,aug,sep,oct,nov,dec";
 
 	public DateConstraint() {
 
@@ -102,29 +99,67 @@ public class DateConstraint {
 				return true; 
 
 			// Extract sentence
-			String[] planifRuleSplit = this.planifRule.split("-");
+			String[] planifRuleSplit = this.planifRule.split("_");
+			
+			// If sentence not compose of 5 characters sequence, throw Exception
+			if (planifRuleSplit.length != 5)
+				throw new DateConstraintException("Syntax error in Planification Rule");
+			
 			String operator = planifRuleSplit[0];
-			String dayNumber = planifRuleSplit[1];
+			String stringDayNumber = planifRuleSplit[1];
 			String dayType = planifRuleSplit[2];
 			String dayName = planifRuleSplit[3];
 			String period = planifRuleSplit[4];
 
-			// DAY NAME
-			if (! dayName.equals("day")) {
-				int execDateDayNumberInWeek = WeekCalc.getDayNumberInWeekByDate(execDate);
-				int ruleDayNumberInWeek = WeekCalc.getDayNumberInWeekByName(dayName);
+			// Syntax test
+			if (! OPERATOR_KEYWORDS.contains(operator))
+				throw new DateConstraintException(this.planifRule+": incorrect operator ("+OPERATOR_KEYWORDS+")");
 
-				// If day name are different, return false now
-				if (execDateDayNumberInWeek != ruleDayNumberInWeek) return false;
-				else dayName="execDay"; // Same dayname as execDate
+			if (! DAY_TYPE_KEYWORDS.contains(dayType))
+				throw new DateConstraintException(this.planifRule+": incorrect day type ("+DAY_TYPE_KEYWORDS+")");
 
-			} else { // if (! dayName.equals("day")) {
-				dayName="execDay";
+			if (! DAY_NAME_KEYWORDS.contains(dayName))
+				throw new DateConstraintException(this.planifRule+": incorrect day name ("+DAY_NAME_KEYWORDS+")");
+			
+			if (! PERIOD_KEYWORDS.contains(period))
+				throw new DateConstraintException(this.planifRule+": incorrect day type ("+PERIOD_KEYWORDS+")");
+						
+			// TODO
+			if (dayType.equals("close"))
+				throw new DateConstraintException(this.planifRule+": dayType == close not yet implemented");
+			
+			// Transforming day numeber
+			int dayNumber = 0;
+			if (stringDayNumber.equals("first")) {
+				dayNumber = 1;
+			} else if (stringDayNumber.equals("last")) {
+				dayNumber = -1;
+			} else {
+				dayNumber = Integer.parseInt(stringDayNumber);
 			}
 
+			
+//			// DAY NAME
+//			if (! dayName.equals("day")) {
+//				int execDateDayNumberInWeek = WeekCalc.getDayNumberInWeekByDate(execDate);
+//				int ruleDayNumberInWeek = WeekCalc.getDayNumberInWeekByName(dayName);
+//
+//				// If day name are different, return false now
+//				if (execDateDayNumberInWeek != ruleDayNumberInWeek) return false;
+//				else dayName="execDay"; // Same dayname as execDate
+//
+//			} else { // if (! dayName.equals("day")) {
+//				dayName="execDay";
+//			}
+
 			// PERIOD
-			if (! period.equals("week") && ! period.equals("month") && ! period.equals("year")) {
+			if (! period.equals("week") 
+					&& ! period.equals("month") 
+					&& ! period.equals("year")) {
+				
+				// If period is month name
 				int execDateMonthNumber = MonthCalc.getMonthNumberByDate(execDate);
+				
 				int ruleMonthNumber = MonthCalc.getMonthNumberByName(period);
 
 				// If month name are different, return false now
@@ -133,83 +168,25 @@ public class DateConstraint {
 			}
 
 			Date calculateDate = null;
-
-			// DAY NUMBER
-			if (dayNumber.equals("first")) {
-
+			
+			if (dayName.equals("day")) {
 				if (period.equals("week")) {
-
-					if (dayType.equals("open")) {
-						calculateDate = WeekCalc.getFirstOpenWeekDay(execDate, this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = WeekCalc.getFirstCloseWeekDay(execDate, this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = WeekCalc.getFirstWeekDay(execDate);
-					}
-
+					calculateDate = WeekCalc.getNiemeWeekDay(execDate, this.persCalendar, dayNumber, dayType);
 				} else if (period.equals("month") || period.equals("execMonth")) {
-
-					if (dayType.equals("open")) {
-						calculateDate = MonthCalc.getFirstOpenMonthDay(execDate, this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = MonthCalc.getFirstCloseMonthDay(execDate, this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = MonthCalc.getFirstMonthDay(execDate);
-					}
-
+					calculateDate = MonthCalc.getNiemeMonthDay(execDate, this.persCalendar, dayNumber, dayType);
 				} else if (period.equals("year")) {
-
-					if (dayType.equals("open")) {
-						calculateDate = YearCalc.getFirstOpenYearDay(YearCalc.getYearNumber(execDate), this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = YearCalc.getFirstCloseYearDay(YearCalc.getYearNumber(execDate), this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = YearCalc.getFirstYearDay(YearCalc.getYearNumber(execDate));
-					}
-
+					calculateDate = YearCalc.getNiemeYearDay(execDate, this.persCalendar, dayNumber, dayType);
 				}
-
-			} else if (dayNumber.equals("last")) {
-
-				if (period.equals("week")) {
-					if (dayType.equals("open")) {
-						calculateDate = WeekCalc.getLastOpenWeekDay(execDate, this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = WeekCalc.getLastCloseWeekDay(execDate, this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = WeekCalc.getLastWeekDay(execDate);
-					}
-
-				} else if (period.equals("month")) {
-
-					if (dayType.equals("open")) {
-						calculateDate = MonthCalc.getLastOpenMonthDay(execDate, this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = MonthCalc.getLastCloseMonthDay(execDate, this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = MonthCalc.getLastMonthDay(execDate);
-					}
-
-				} else if (period.equals("year")) {
-
-					if (dayType.equals("open")) {
-						calculateDate = YearCalc.getLastOpenYearDay(YearCalc.getYearNumber(execDate), this.persCalendar);
-					} else if (dayType.equals("close")) {
-						calculateDate = YearCalc.getLastCloseYearDay(YearCalc.getYearNumber(execDate), this.persCalendar);
-					} else if (dayType.equals("calend")) {
-						calculateDate = YearCalc.getLastYearDay(YearCalc.getYearNumber(execDate));
-					}
-
-				}
-
 			} else {
-				throw new DateConstraintException("Unable to resolv planification rule:"+this.planifRule+"(numeric stringDayNumber)");
+				// dayName is a name of a Week day
+				// TODO 
+				if (!dayName.equals("day"))
+					throw new DateConstraintException(this.planifRule+": dayName != day not yet implemented");
 			}
-
-
-
-			//if (calculateDate == null)
-			//return false;
+			
+			// No valid day for rules
+			if (calculateDate == null) return false;
+				//throw new DateConstraintException("Unable to resolv planification rule:"+this.planifRule);
 
 			//before after equal not
 			// the value 0 if the calculateDate is equal to execDate;
@@ -219,17 +196,17 @@ public class DateConstraint {
 				if (execDate.compareTo(calculateDate) == 0) return true;
 				else return false;
 			} else if (operator.equals("before")) {
-				if (execDate.compareTo(calculateDate) > 0) return true;
+				if (execDate.compareTo(calculateDate) < 0) return true;
 				else return false;
 			} else if (operator.equals("after")) {
-				if (execDate.compareTo(calculateDate) < 0) return true;
+				if (execDate.compareTo(calculateDate) > 0) return true;
 				else return false;
 			}  else if (operator.equals("not")) {
 				if (execDate.compareTo(calculateDate) != 0) return true;
 				else return false;
 			}
 			
-			throw new DateConstraintException("Unable to resolv planification rule:"+this.planifRule);
+			throw new DateConstraintException("Unable to resolv planification rule: "+this.planifRule);
 
 
 		} catch (PersonnalCalendarException e) {
