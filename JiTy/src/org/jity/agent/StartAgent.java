@@ -1,6 +1,8 @@
 package org.jity.agent;
 
-public class Start {
+import org.jity.common.TimeUtil;
+
+public class StartAgent {
 
 	/**
 	 * @param args
@@ -10,9 +12,8 @@ public class Start {
 
 			Agent.getInstance().startAgentDaemon();
 			
-		} catch (AgentException e) {
-			e.printStackTrace();
-			System.exit(1);
+			TimeUtil.waiting(15);
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

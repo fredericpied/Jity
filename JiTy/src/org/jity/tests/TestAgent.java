@@ -18,9 +18,6 @@ public class TestAgent extends TestCase {
 			logger.info("Waiting 15 sec");
 			TimeUtil.waiting(15);
 			
-		} catch (AgentException e) {
-			e.printStackTrace();
-			System.exit(1);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);

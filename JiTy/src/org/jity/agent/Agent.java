@@ -72,9 +72,8 @@ public class Agent implements Runnable {
 	/**
 	 * Start the agent in a Thread.
 	 * 
-	 * @throws AgentException
 	 */
-	public synchronized void startAgentDaemon() throws AgentException {
+	public synchronized void startAgentDaemon() {
 		if (daemon == null) {
 			daemon = new Thread(this);
 			daemon.start();

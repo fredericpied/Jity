@@ -3,7 +3,6 @@ package org.jity.tests.ui;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
@@ -13,14 +12,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
@@ -34,9 +29,8 @@ import org.jity.referential.PersonnalCalendarException;
 import org.jity.referential.dateCalc.DateException;
 
 public class UITestDateCalc {
-	private static final Logger logger = Logger.getLogger(UITestDateCalc.class);  //  @jve:decl-index=0:
-
-	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="29,12"
+	private static final Logger logger = Logger.getLogger(UITestDateCalc.class);  
+	private Shell sShell = null;
 	private Label label = null;
 	private Text text = null;
 	private Button button = null;
