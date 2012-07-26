@@ -147,7 +147,7 @@ public class CommandExecutor {
 		while (envVarIter.hasNext() == true) {
 			EnvVar envVar = envVarIter.next();
 			String envVarToken = envVar.getName() + "=" + envVar.getValue();
-			logger.debug("Setting env. variable: "+envVar);
+			logger.debug("Setting env. variable: "+envVarToken);
 			envTokenArray[nEnvVarIndex++] = envVarToken;
 		}
 
