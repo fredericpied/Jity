@@ -22,11 +22,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.jity.referential.DateConstraint;
-import org.jity.referential.DateConstraintException;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
-import org.jity.referential.dateCalc.DateException;
+import org.jity.referential.dateConstraint.DateConstraint;
+import org.jity.referential.dateConstraint.DateConstraintException;
 
 public class UITestDateCalc {
 	private static final Logger logger = Logger.getLogger(UITestDateCalc.class);  
@@ -301,7 +300,7 @@ public class UITestDateCalc {
 		return cal.get(Calendar.YEAR);
 	}
 	
-	public void updateTabDays(DateConstraint dc) throws PersonnalCalendarException, DateConstraintException, DateException {
+	public void updateTabDays(DateConstraint dc) throws PersonnalCalendarException, DateConstraintException {
 		
 		Calendar cal = new GregorianCalendar();
 		cal.clear();

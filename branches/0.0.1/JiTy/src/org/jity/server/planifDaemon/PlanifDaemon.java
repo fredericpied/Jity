@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.jity.common.XMLUtil;
 import org.jity.protocol.JityResponse;
 import org.jity.referential.ExecStatus;
 import org.jity.referential.Job;
+import org.jity.referential.dateConstraint.DateConstraintException;
 import org.jity.server.Server;
 import org.jity.server.ServerConfig;
 import org.jity.server.ServerException;
@@ -106,7 +108,7 @@ public class PlanifDaemon implements Runnable {
      * state.
      * @throws DatabaseException 
      */
-    public void checkJobs() throws DatabaseException {
+    private void checkJobs() throws DatabaseException {
 
 		String queryFind = "select job from org.jity.referential.Job job"
 			+ " where job.isActived = true";
@@ -115,24 +117,26 @@ public class PlanifDaemon implements Runnable {
 		
 		logger.debug("Found "+jobList.size()+" activated jobs in database");
 		
+		Calendar cal = new GregorianCalendar();
+		Date execDateValue = cal.getTime();
+		
 		Iterator iterJobList = jobList.iterator();
 		while (iterJobList.hasNext()) {
 			Job job = (Job) iterJobList.next();
 
-			
-			
+			try {
+				if (job.getDateConstraint().isAValidDate(execDateValue))
+					launchOneJob(job);
+			} catch (DateConstraintException e) {
+				logger.warn("Job "+job.getName()+": "+e.getMessage());
+			}			
 		}
 		
     }
     
-	public void testOneJob() {
+	private void launchOneJob(Job job) {
 		
-		Job job = new Job();
-		job.setName("jobtest");
-		job.setCommandPath("d:\\temp\\test.bat");
-		job.setHostName("localhost");
-		
-		logger.info("Job "+job.getName());
+		logger.info("Launching Job "+job.getName());
 		
 		ExecStatus execStatus = new ExecStatus();
 		execStatus.setJob(job);
@@ -194,8 +198,8 @@ public class PlanifDaemon implements Runnable {
         while (!shouldStop) {
             try {
                 logger.info("Start of job analyze.");
-                //checkJobs();
-                testOneJob();
+                checkJobs();
+                //testOneJob();
                 logger.info("End of job analyze.");
                 TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {

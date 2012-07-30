@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateCalc;
+package org.jity.referential.dateConstraint;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -197,7 +197,7 @@ public abstract class YearCalc {
 	 * @return
 	 * @throws DateException 
 	 */
-	public static Date getEasterEggsSyndayDate(int year) throws DateException {
+	public static Date getEasterEggsSyndayDate(int year) throws DateConstraintException {
 		//http://quincy.inria.fr/data/courses/ipa-java-99/td1.html
 		Date easterEggsDate = null;
 		int dayNumber;
@@ -236,7 +236,7 @@ public abstract class YearCalc {
 			easterEggsDate = new SimpleDateFormat("dd/MM/yyyy").parse(stringDay+"/"+
 					stringMonth+"/"+stringYear);
 		} catch (ParseException ex) {
-			throw new DateException(ex.getMessage());
+			throw new DateConstraintException(ex.getMessage());
 		}
 		
 		return easterEggsDate;
@@ -248,7 +248,7 @@ public abstract class YearCalc {
 	 * @return boolean
 	 * @throws DateException 
 	 */
-	public static boolean isFrenchPublicHoliday(Date date) throws DateException  {
+	public static boolean isFrenchPublicHoliday(Date date) throws DateConstraintException  {
 		
 		Calendar calToTest = new GregorianCalendar();
 		calToTest.setTime(date);

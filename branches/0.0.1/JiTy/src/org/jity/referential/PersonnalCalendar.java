@@ -5,8 +5,8 @@ import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
 import org.jity.common.DateUtil;
-import org.jity.referential.dateCalc.DateException;
-import org.jity.referential.dateCalc.YearCalc;
+import org.jity.referential.dateConstraint.DateConstraintException;
+import org.jity.referential.dateConstraint.YearCalc;
 import org.jity.tests.TestCalendar;
 
 public class PersonnalCalendar {
@@ -237,7 +237,7 @@ public class PersonnalCalendar {
 				
 			}
 		
-		} catch (DateException e) {
+		} catch (DateConstraintException e) {
 			throw new PersonnalCalendarException(this.name+": "+e.getMessage());
 		}
 	}

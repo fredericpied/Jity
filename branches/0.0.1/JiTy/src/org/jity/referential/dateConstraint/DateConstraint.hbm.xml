@@ -28,7 +28,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.jity.referential">
+<hibernate-mapping package="org.jity.referential.dateConstraint">
 
     <class name="DateConstraint" table="DATE_CONSTRAINT">
         <id name="id" type="long">
