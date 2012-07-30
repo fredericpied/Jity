@@ -33,6 +33,9 @@ import org.jity.server.planifDaemon.PlanifDaemon;
 import java.io.*;
 import java.net.*;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Server implements Runnable {
 	private static final Logger logger = Logger.getLogger(Server.class);
@@ -43,6 +46,8 @@ public class Server implements Runnable {
 
 	private Thread daemon = null;
 
+	private Date execDate;
+	
 	public static Server getInstance() {
 		if (instance == null) {
 			instance = new Server();
@@ -209,5 +214,20 @@ public class Server implements Runnable {
 			logger.info("JiTy Server shutdowned correctly.");
 		}
 	}
+
+	private void initializeExecDate() {
+		Calendar cal = new GregorianCalendar();
+		this.execDate = cal.getTime();
+	}
+	
+	public Date getExecDate() {
+		return execDate;
+	}
+
+	public void setExecDate(Date execDate) {
+		this.execDate = execDate;
+	}
+	
+	
 
 }

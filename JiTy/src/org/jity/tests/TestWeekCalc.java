@@ -1,5 +1,6 @@
 package org.jity.tests;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,8 +12,8 @@ import org.jity.common.DateUtil;
 import org.jity.common.TimeUtil;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
-import org.jity.referential.dateCalc.DateException;
-import org.jity.referential.dateCalc.WeekCalc;
+import org.jity.referential.dateConstraint.DateConstraintException;
+import org.jity.referential.dateConstraint.WeekCalc;
 
 import junit.framework.TestCase;
 
@@ -39,7 +40,7 @@ public class TestWeekCalc extends TestCase {
 			assertEquals(WeekCalc.getDayNameInWeekByNumber(5), "fri");
 			assertEquals(WeekCalc.getDayNameInWeekByNumber(6), "sat");
 			assertEquals(WeekCalc.getDayNameInWeekByNumber(7), "sun");
-		} catch (DateException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -76,7 +77,7 @@ public class TestWeekCalc extends TestCase {
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (DateException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -114,7 +115,7 @@ public class TestWeekCalc extends TestCase {
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (DateException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -168,7 +169,7 @@ public class TestWeekCalc extends TestCase {
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (DateException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -220,7 +221,7 @@ public class TestWeekCalc extends TestCase {
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (DateException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -340,7 +341,7 @@ public class TestWeekCalc extends TestCase {
 		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
-		} catch (DateException e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

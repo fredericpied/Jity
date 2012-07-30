@@ -1,13 +1,17 @@
-package org.jity.referential;
+package org.jity.referential.dateConstraint;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
-import org.jity.referential.dateCalc.DateException;
-import org.jity.referential.dateCalc.MonthCalc;
-import org.jity.referential.dateCalc.WeekCalc;
-import org.jity.referential.dateCalc.YearCalc;
+import org.jity.referential.PersonnalCalendar;
+import org.jity.referential.PersonnalCalendarException;
 
+/**
+ * DateConstraint is a type of JobConstraint. The planification rule define one or few day when the
+ * job must execute
+ *  
+ * @author 09344a
+ *
+ */
 public class DateConstraint {
 
 	private long id;
@@ -34,15 +38,16 @@ public class DateConstraint {
 
 	private PersonnalCalendar persCalendar;
 
-	private static final String OPERATOR_KEYWORDS = "before,after,not,equal";
+	public static final String[] OPERATOR_KEYWORDS = {"before","after","not","equal"};
 
-	private static final String DAY_NUM_KEYWORDS = "all,first,last";
+	public static final String[] DAY_NUM_KEYWORDS = {"first","last"}; //,"all"};
 
-	private static final String DAY_TYPE_KEYWORDS = "calend,open,close";
+	public static final String[] DAY_TYPE_KEYWORDS = {"calend","open"}; //,"close"};
 
-	private static final String DAY_NAME_KEYWORDS = "day,mon,tue,wed,thu,fri,sat,sun";
+	public static final String[] DAY_NAME_KEYWORDS = {"day","mon","tue","wed","thu","fri","sat","sun"};
 
-	private static final String PERIOD_KEYWORDS = "week,month,year,jan,feb,mar,apr,mai,jun,jul,aug,sep,oct,nov,dec";
+	public static final String[] PERIOD_KEYWORDS = {"week","month","year","jan","feb","mar","apr","mai",
+		"jun","jul","aug","sep","oct","nov","dec"};
 
 	public DateConstraint() {
 
@@ -73,13 +78,26 @@ public class DateConstraint {
 	}
 
 	/**
+	 * Return true if value exist in tab
+	 * @param tab
+	 * @param value
+	 * @return
+	 */
+	private static boolean existInTab(String[] tab, String value) {
+		for (int i=0;i<tab.length;i++) {
+			if (tab[i].equals(value)) return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Return true if the constrainte is valid for an exec Date
 	 * @param execDate
 	 * @return
 	 * @throws DateConstraintException
 	 * @throws DateException 
 	 */
-	public boolean isAValidDate(Date execDate) throws DateConstraintException, DateException {
+	public boolean isAValidDate(Date execDate) throws DateConstraintException {
 
 		if (this.persCalendar == null) 
 			throw new DateConstraintException("PersonnalCalendar is not defined for the Date Constraint");
@@ -112,28 +130,33 @@ public class DateConstraint {
 			String period = planifRuleSplit[4];
 
 			// Syntax test
-			if (! OPERATOR_KEYWORDS.contains(operator))
+			if (! existInTab(OPERATOR_KEYWORDS, operator))
 				throw new DateConstraintException(this.planifRule+": incorrect operator ("+OPERATOR_KEYWORDS+")");
 
-			if (! DAY_TYPE_KEYWORDS.contains(dayType))
+			if (! existInTab(DAY_TYPE_KEYWORDS, dayType))
 				throw new DateConstraintException(this.planifRule+": incorrect day type ("+DAY_TYPE_KEYWORDS+")");
 
-			if (! DAY_NAME_KEYWORDS.contains(dayName))
+			if (! existInTab(DAY_NAME_KEYWORDS, dayName))
 				throw new DateConstraintException(this.planifRule+": incorrect day name ("+DAY_NAME_KEYWORDS+")");
 			
-			if (! PERIOD_KEYWORDS.contains(period))
+			if (! existInTab(PERIOD_KEYWORDS, period))
 				throw new DateConstraintException(this.planifRule+": incorrect day type ("+PERIOD_KEYWORDS+")");
 						
 			// TODO
 			if (dayType.equals("close"))
 				throw new DateConstraintException(this.planifRule+": dayType == close not yet implemented");
 			
-			// Transforming day numeber
+			// Transforming day number
 			int dayNumber = 0;
 			if (stringDayNumber.equals("first")) {
 				dayNumber = 1;
 			} else if (stringDayNumber.equals("last")) {
 				dayNumber = -1;
+			} else if (stringDayNumber.equals("all")) {
+				throw new DateConstraintException(this.planifRule+": dayNumber == all not yet implemented");
+
+				//dayNumber = 999;
+				// TODO
 			} else {
 				dayNumber = Integer.parseInt(stringDayNumber);
 			}

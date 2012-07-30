@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateCalc;
+package org.jity.referential.dateConstraint;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -60,11 +60,11 @@ public abstract class MonthCalc {
 	 * @return
 	 * @throws DateException 
 	 */
-	public static int getMonthNumberByName(String monthName) throws DateException {
+	public static int getMonthNumberByName(String monthName) throws DateConstraintException {
 		for (int i=0;i<tabMonthsNames.length;i++) {
 			if (tabMonthsNames[i].equals(monthName)) return i+1;
 		}
-		throw new DateException("Month "+monthName+" not exist");
+		throw new DateConstraintException("Month "+monthName+" not exist");
 	}
 	
 	/**
@@ -85,9 +85,9 @@ public abstract class MonthCalc {
 	 * @return
 	 * @throws ExceptionVTOM
 	 */
-	public static String getMonthNameByNumber(int monthNum) throws DateException {
+	public static String getMonthNameByNumber(int monthNum) throws DateConstraintException {
 		if (monthNum < 1 || monthNum > 12 ) {
-			throw new DateException("Month number "+monthNum+" not exist");
+			throw new DateConstraintException("Month number "+monthNum+" not exist");
 		}
 		return tabMonthsNames[monthNum-1];
 	}

@@ -1,5 +1,7 @@
 package org.jity.referential;
 
+import org.jity.referential.dateConstraint.DateConstraint;
+
 public class Job {
 
 	private long id;

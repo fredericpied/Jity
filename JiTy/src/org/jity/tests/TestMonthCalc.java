@@ -11,8 +11,7 @@ import org.jity.common.DateUtil;
 import org.jity.common.TimeUtil;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
-import org.jity.referential.dateCalc.DateException;
-import org.jity.referential.dateCalc.WeekCalc;
+import org.jity.referential.dateConstraint.WeekCalc;
 
 import junit.framework.TestCase;
 

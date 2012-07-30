@@ -30,8 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.jity.referential.dateCalc.DateException;
-
 public abstract class DateUtil {
 	
 	/**
@@ -66,15 +64,11 @@ public abstract class DateUtil {
 	 * @return
 	 * @throws DateException 
 	 */
-	public static Date stringToDate(String chaine) throws DateException {
+	public static Date stringToDate(String chaine) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 		sdf.setLenient(false);
-		
-		try {
-			return sdf.parse(chaine);
-		} catch (ParseException e) {
-			throw new DateException(e.getMessage());
-		}
+
+		return sdf.parse(chaine);
 	}
 	
 }

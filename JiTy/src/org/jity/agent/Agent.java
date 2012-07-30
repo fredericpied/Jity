@@ -76,7 +76,7 @@ public class Agent implements Runnable {
 	public synchronized void startAgentDaemon() {
 		if (daemon == null) {
 			daemon = new Thread(this);
-			daemon.setDaemon(true);
+			//daemon.setDaemon(true);
 			daemon.start();
 		}
 	}

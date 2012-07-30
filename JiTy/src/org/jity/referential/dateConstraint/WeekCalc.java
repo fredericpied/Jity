@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.referential.dateCalc;
+package org.jity.referential.dateConstraint;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -194,11 +194,11 @@ public abstract class WeekCalc {
 	 * @return int
 	 * @throws DateException 
 	 */
-	public static int getDayNumberInWeekByName(String dayName) throws DateException {
+	public static int getDayNumberInWeekByName(String dayName) throws DateConstraintException {
 		for (int i=0;i<tabDaysNames.length;i++) {
 			if (tabDaysNames[i].equals(dayName)) return i+1;
 		}
-		throw new DateException("Day name "+dayName+" not exist.");
+		throw new DateConstraintException("Day name "+dayName+" not exist.");
 	}
 
 	/**
@@ -208,9 +208,9 @@ public abstract class WeekCalc {
 	 * @return
 	 * @throws DateException
 	 */
-	public static String getDayNameInWeekByNumber(int weekDayNumber) throws DateException {
+	public static String getDayNameInWeekByNumber(int weekDayNumber) throws DateConstraintException {
 		if (weekDayNumber < 1 || weekDayNumber > 7 ) {
-			throw new DateException("week day number "+weekDayNumber+" not exist.");
+			throw new DateConstraintException("week day number "+weekDayNumber+" not exist.");
 		}
 		return tabDaysNames[weekDayNumber-1];
 	}
