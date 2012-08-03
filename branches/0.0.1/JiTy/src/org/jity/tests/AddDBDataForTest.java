@@ -126,7 +126,7 @@ public class AddDBDataForTest {
 			maxDayInPeriod = 30;
 		}
 		
-		int dayNumInd = getRandomInt(0, maxDayInPeriod);
+		int dayNumInd = getRandomInt(1, maxDayInPeriod);
 		
 		if (getRandomInt(0, 1) == 1) {
 			dayNumInd = dayNumInd * -1;

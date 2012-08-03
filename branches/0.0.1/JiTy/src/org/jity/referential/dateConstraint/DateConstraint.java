@@ -2,6 +2,7 @@ package org.jity.referential.dateConstraint;
 
 import java.util.Date;
 
+import org.jity.common.ListUtil;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
 
@@ -89,7 +90,7 @@ public class DateConstraint {
 		}
 		return false;
 	}
-	
+		
 	/**
 	 * Return true if the constrainte is valid for an exec Date
 	 * @param execDate
@@ -131,16 +132,16 @@ public class DateConstraint {
 
 			// Syntax test
 			if (! existInTab(OPERATOR_KEYWORDS, operator))
-				throw new DateConstraintException(this.planifRule+": incorrect operator ("+OPERATOR_KEYWORDS+")");
+				throw new DateConstraintException(this.planifRule+": incorrect operator ("+ListUtil.tabToString(OPERATOR_KEYWORDS)+")");
 
 			if (! existInTab(DAY_TYPE_KEYWORDS, dayType))
-				throw new DateConstraintException(this.planifRule+": incorrect day type ("+DAY_TYPE_KEYWORDS+")");
+				throw new DateConstraintException(this.planifRule+": incorrect day type ("+ListUtil.tabToString(DAY_TYPE_KEYWORDS)+")");
 
 			if (! existInTab(DAY_NAME_KEYWORDS, dayName))
-				throw new DateConstraintException(this.planifRule+": incorrect day name ("+DAY_NAME_KEYWORDS+")");
+				throw new DateConstraintException(this.planifRule+": incorrect day name ("+ListUtil.tabToString(DAY_NAME_KEYWORDS)+")");
 			
 			if (! existInTab(PERIOD_KEYWORDS, period))
-				throw new DateConstraintException(this.planifRule+": incorrect day type ("+PERIOD_KEYWORDS+")");
+				throw new DateConstraintException(this.planifRule+": incorrect day type ("+ListUtil.tabToString(PERIOD_KEYWORDS)+")");
 						
 			// TODO
 			if (dayType.equals("close"))
@@ -190,6 +191,38 @@ public class DateConstraint {
 				else period="execMonth"; // Same month as execDate
 			}
 
+			if (dayNumber > 0) {
+				// Positive dayNumber
+				
+				// Test dayNumber value
+				if (period.equals("week") && dayNumber > 7)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be > 7 when period = week");
+				
+				int maxNumberOfDaysInTheMonth = MonthCalc.getMonthNumberByDate(MonthCalc.getLastMonthDay(execDate));
+				if ( (period.equals("month") || period.equals("execMonth")) && dayNumber > maxNumberOfDaysInTheMonth)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be > "+maxNumberOfDaysInTheMonth+" for this period");
+				
+				int maxNumberOfDaysInYear = YearCalc.getMaxNumberofDayInYear(YearCalc.getYearNumber(execDate));
+				if (period.equals("year") && dayNumber > maxNumberOfDaysInYear)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be > "+maxNumberOfDaysInYear+" for this period");
+				
+			} else {
+				// Negative dayNumber
+				
+				// Test dayNumber value
+				if (period.equals("week") && dayNumber < -7)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be < -7 when period = week");
+				
+				int maxNumberOfDaysInTheMonth = MonthCalc.getMonthNumberByDate(MonthCalc.getLastMonthDay(execDate));
+				if ( (period.equals("month") || period.equals("execMonth")) && dayNumber < -maxNumberOfDaysInTheMonth)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be < -"+maxNumberOfDaysInTheMonth+" for this period");
+				
+				int maxNumberOfDaysInYear = YearCalc.getMaxNumberofDayInYear(YearCalc.getYearNumber(execDate));
+				if (period.equals("year") && dayNumber < -maxNumberOfDaysInYear)
+					throw new DateConstraintException(this.planifRule+": dayNumber cannot be < -"+maxNumberOfDaysInYear+" for this period");
+				
+			}
+			
 			Date calculateDate = null;
 			
 			if (dayName.equals("day")) {
@@ -201,6 +234,7 @@ public class DateConstraint {
 					calculateDate = YearCalc.getNiemeYearDay(execDate, this.persCalendar, dayNumber, dayType);
 				}
 			} else {
+								
 				// dayName is a name of a Week day
 				// TODO 
 				if (!dayName.equals("day"))
