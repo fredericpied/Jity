@@ -71,4 +71,26 @@ public abstract class ListUtil {
 		}
 		
 	}
+	
+	/**
+	 * Convert a String[] tab to String containing comma separated values
+	 * @param tab
+	 * @return String
+	 */
+	public static String tabToString(String[] tab) {
+		String string = "";
+		
+		for (int i=1;i<tab.length;i++) {
+			string = tab[i]+",";
+		}
+		
+		// Last comma suppression
+		if (string.length() > 1) {
+			return string.substring(0, string.length()-1);
+		} else {
+			return "";
+		}
+		
+	}
+	
 }

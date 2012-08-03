@@ -65,6 +65,15 @@ public abstract class YearCalc {
 	}
 	
 	/**
+	 * Retour max days in the year
+	 * @param year
+	 * @return
+	 */
+	public static int getMaxNumberofDayInYear(int year) {
+		return getDayNumberInYear(getLastYearDay(year));
+	}
+	
+	/**
 	 * Get N ieme day of the year type close or open
 	 * @param dateToTest
 	 * @param persCal
