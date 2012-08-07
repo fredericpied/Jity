@@ -38,8 +38,8 @@
         <property name="name" column="NAME" not-null="true" unique="true"/>
         <property name="description" column="DESCRIPTION"/>
         <property name="hostName" column="HOST_NAME"/>
-        <property name="port" column="PORT"/>
-        <property name="userName" column="USER_NAME"/>
+        <property name="hostPort" column="HOST_PORT"/>
+        <property name="hostUserName" column="HOST_USER_NAME"/>
         <property name="commandPath" column="COMMAND_PATH"/>
 		<property name="isActived" column="IS_ACTIVED"/>
 		<many-to-one name="dateConstraint" not-null="true" column="DATE_CONSTRAINT_ID" cascade="all"/>  

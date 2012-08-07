@@ -46,6 +46,8 @@ public class Server implements Runnable {
 
 	private Thread daemon = null;
 
+	private boolean shutdownAsked = false;
+	
 	private Date execDate;
 	
 	public static Server getInstance() {
@@ -89,7 +91,7 @@ public class Server implements Runnable {
 			logger.info("Shutdown of server asked.");
 
 			try {
-				
+				shutdownAsked = true;
 				logger.info("Shutdowning planification daemon.");
 				PlanifDaemon.getInstance().stopPlanifDaemon();
 				
@@ -201,7 +203,7 @@ public class Server implements Runnable {
 			}
 
 		} catch (IOException e) {
-			logger.warn("Problem during client connection.");
+			if (!shutdownAsked) logger.warn("Problem during client connection.");
 			logger.debug(e.getMessage());
 		} finally {
 			try {

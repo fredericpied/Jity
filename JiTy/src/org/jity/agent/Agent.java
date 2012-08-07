@@ -45,6 +45,8 @@ public class Agent implements Runnable {
 	private ServerSocket listenSocket;
 
 	private Thread daemon = null;
+	
+	private boolean shutwdownAsked = false;
 
 	/**
 	 * Return the current instance of Agent (if none, create one)
@@ -91,7 +93,7 @@ public class Agent implements Runnable {
 			logger.info("Shutdown of agent asked.");
 
 			try {
-				
+				shutwdownAsked = true;
 				logger.info("Closing Network socket.");
 				listenSocket.close();
 
@@ -203,7 +205,7 @@ public class Agent implements Runnable {
 			}
 
 		} catch (IOException e) {
-			logger.warn("Problem during client connection.");
+			if (!shutwdownAsked) logger.warn("Problem during client connection.");
 			logger.debug(e.getMessage());
 		} finally {
 			try {
