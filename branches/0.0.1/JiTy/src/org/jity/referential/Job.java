@@ -8,8 +8,8 @@ public class Job {
 	private String name;
 	private String description;
 	private String hostName;
-	private int port;
-	private String userName;
+	private int hostPort;
+	private String hostUserName;
 	private String commandPath;
 	private boolean isActived;
 	private DateConstraint dateConstraint;
@@ -49,20 +49,20 @@ public class Job {
 		this.hostName = hostName;
 	}
 
-	public int getPort() {
-		return port;
+	public int getHostPort() {
+		return hostPort;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
+	public void setHostPort(int port) {
+		this.hostPort = port;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getHostUserName() {
+		return hostUserName;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setHostUserName(String hostUserName) {
+		this.hostUserName = hostUserName;
 	}
 
 	public String getCommandPath() {
