@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.UIClient;
+package org.jity.protocol;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,30 +35,29 @@ import org.apache.log4j.Logger;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.referential.Job;
 
-public class UIClient {
-	private static final Logger logger = Logger
-			.getLogger(UIClient.class);
+/**
+ * Request Launcher is used to create a JiTyRequest, connect to remote host, submit the request
+ * and read the response
+ *
+ */
+public class RequestSender {
+	private static final Logger logger = Logger.getLogger(RequestSender.class);
 
-	// Socket used to dialog with the server
+	// Socket used to dialog with the remote host
 	private Socket sock = null;
 	private BufferedReader sin;
 	private PrintWriter sout;
 
-	private static UIClient instance = null;
-
 	/**
-	 * Return the current instance of Client and create one if it's the thirst call
-	 * @return Client
-	 * @throws UIClientException
+	 * Open remote connection
+	 * @param host
+	 * @param port
+	 * @throws UnknownHostException
+	 * @throws IOException
 	 */
-	public static UIClient getInstance() throws UIClientException {
-		if (instance == null)
-			instance = new UIClient();
-		return instance;
-	}
-
-	private void openConnection(String host, int port)
+	public void openConnection(String host, int port)
 			throws UnknownHostException, IOException {
 		// open socket
 		sock = new Socket(host, port);
@@ -68,7 +67,7 @@ public class UIClient {
 	}
 
 	/**
-	 * Close the connection with the server
+	 * Close the connection
 	 * @throws IOException
 	 */
 	public void closeConnection() throws IOException {
@@ -77,21 +76,23 @@ public class UIClient {
 	}
 
 	/**
-	 * Send a request to the Server
-	 * @param request
-	 * @return JiTyResponse
+	 * Send Request to remote host
+	 * @param JityRequest request
+	 * @return JityResponse
 	 */
 	public JityResponse sendRequest(JityRequest request) {
-		String xmlResult = null;
-		this.sout.println(request.toXML());
-		this.sout.flush();
+
 		JityResponse response = null;
 		
 		try {
-			xmlResult = this.sin.readLine();
-
-			response = (JityResponse) XMLUtil.XMLStringToObject(xmlResult);
-
+	
+			// Send request
+			this.sout.println(request.toXML());
+			this.sout.flush();
+			
+			// Reading response
+			response = (JityResponse) XMLUtil.XMLStringToObject(this.sin.readLine());
+			
 		} catch (IOException e) {
 			response = new JityResponse();
 			response.setException(e);
@@ -99,35 +100,4 @@ public class UIClient {
 		
 		return response;
 	}
-
-	
-	private UIClient() throws UIClientException {
-		UIClientConfig clientConfig = UIClientConfig.getInstance();
-		
-		// Load config file
-		try {
-					
-			logger.info("Reading configuration file.");
-			clientConfig.initialize();
-			logger.info("Configuration File successfully loaded.");
-		
-		
-		} catch (IOException e) {
-			throw new UIClientException(
-					"Failed to read configuration file (" + e.getMessage()
-							+ ").");
-		}
-
-		try {
-			this.openConnection(clientConfig.getSERVER_HOSTNAME(),
-					clientConfig.getSERVER_PORT());
-
-		} catch (UnknownHostException e) {
-			throw new UIClientException(e.getMessage());
-		} catch (IOException e) {
-			throw new UIClientException(e.getMessage());
-		}
-
-	}
-
 }

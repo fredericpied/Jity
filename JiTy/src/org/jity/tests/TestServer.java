@@ -1,11 +1,14 @@
 package org.jity.tests;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
-import org.jity.UIClient.UIClient;
+import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
 import org.jity.common.TimeUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.referential.PersonnalCalendarException;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
@@ -54,24 +57,25 @@ public class TestServer extends TestCase {
 			JityRequest request = new JityRequest();
 			request.setInstructionName("STARTPLANIFDAEMON");
 			
-			UIClient client = UIClient.getInstance();
-			JityResponse response = client.sendRequest(request);
-
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			logger.info("Reading configuration file.");
+			clientConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+			
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
+			
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
-			
-			
-			logger.info("Waiting 15 sec");
-			TimeUtil.waiting(15);
+						
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 		
 			assertTrue(response.isInstructionResultOK());
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (UIClientException e) {
-			e.printStackTrace();
-			System.exit(1);
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -84,9 +88,17 @@ public class TestServer extends TestCase {
 			JityRequest request = new JityRequest();
 			request.setInstructionName("SHUTDOWNPLANIFDAEMON");
 			
-			UIClient client = UIClient.getInstance();
-			JityResponse response = client.sendRequest(request);
-
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			logger.info("Reading configuration file.");
+			clientConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+			
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
+			
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
 						
@@ -95,12 +107,6 @@ public class TestServer extends TestCase {
 		
 			assertTrue(response.isInstructionResultOK());
 						
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (UIClientException e) {
-			e.printStackTrace();
-			System.exit(1);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -114,21 +120,25 @@ public class TestServer extends TestCase {
 			JityRequest request = new JityRequest();
 			request.setInstructionName("SHUTDOWNSERVER");
 			
-			UIClient client = UIClient.getInstance();
-			JityResponse response = client.sendRequest(request);
-
-
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			logger.info("Reading configuration file.");
+			clientConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+			
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
+			
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
+						
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
 		
 			assertTrue(response.isInstructionResultOK());
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (UIClientException e) {
-			e.printStackTrace();
-			System.exit(1);
+						
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

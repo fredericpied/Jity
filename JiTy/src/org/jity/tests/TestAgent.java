@@ -1,9 +1,13 @@
 package org.jity.tests;
 
 import org.apache.log4j.Logger;
+import org.jity.UIClient.UIClientException;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.TimeUtil;
+import org.jity.protocol.JityRequest;
+import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 
 import junit.framework.TestCase;
 
@@ -14,9 +18,7 @@ public class TestAgent extends TestCase {
 		try {
 
 			Agent.getInstance().startAgentDaemon();
-
-			logger.info("Waiting 15 sec");
-			TimeUtil.waiting(15);
+			TimeUtil.waiting(5);
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -44,4 +46,45 @@ public class TestAgent extends TestCase {
 		assertFalse(Agent.getInstance().isRunning());
 	}
 	
+	
+	public void testStartAgentDaemon2() {
+		try {
+
+			Agent.getInstance().startAgentDaemon();
+			TimeUtil.waiting(3);
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	public void testServerShutdownAgent() {
+		try {
+			
+			JityRequest request = new JityRequest();
+			request.setInstructionName("SHUTDOWNAGENT");
+			
+			RequestSender requestLauncher = new RequestSender();
+			requestLauncher.openConnection("localhost", 2611);
+			JityResponse response = requestLauncher.sendRequest(request);
+			requestLauncher.closeConnection();
+			
+			if (!response.isInstructionResultOK())
+				throw new Exception(response.getExceptionMessage());
+		
+			assertTrue(response.isInstructionResultOK());
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (UIClientException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+		
 }

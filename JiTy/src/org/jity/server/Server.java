@@ -26,6 +26,7 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jity.protocol.RequestReceiver;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 import org.jity.server.planifDaemon.PlanifDaemon;
@@ -196,7 +197,8 @@ public class Server implements Runnable {
 				try {
 					logger.info("New connection from "
 							+ client.getInetAddress() + ".");
-					new ServeOneUIClient(client);
+					//new ServeOneUIClientRequest(client);
+					new RequestReceiver(client);
 				} catch (IOException e) {
 					client.close();
 				}

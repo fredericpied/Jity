@@ -25,6 +25,7 @@
 package org.jity.agent;
 
 import org.apache.log4j.Logger;
+import org.jity.protocol.RequestReceiver;
 
 import com.thoughtworks.xstream.core.util.Fields;
 
@@ -109,7 +110,10 @@ public class Agent implements Runnable {
 		}
 	}
 
-	public void showConfig() {
+	/**
+	 * Print current Agent configuration
+	 */
+	private void showConfig() {
 		AgentConfig agentConfig = AgentConfig.getInstance();
 		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
 		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
@@ -119,8 +123,9 @@ public class Agent implements Runnable {
 	
 	/**
 	 * return type of OS supporting the agent
+	 * @return String
 	 */
-	public String getOSName() {
+	private String getOSName() {
 		return System.getProperty("os.name");
 	}
 	
@@ -130,7 +135,6 @@ public class Agent implements Runnable {
 	 * @throws AgentException
 	 */
 	private void loadConfigFile() throws AgentException {
-		// Load config file
 		try {
 			AgentConfig agentConfig = AgentConfig.getInstance();
 			logger.info("Reading configuration file.");
@@ -142,6 +146,9 @@ public class Agent implements Runnable {
 		}
 	}
 
+	/**
+	 * Thread code
+	 */
 	public void run() {
 		Socket socket = null;
 
@@ -187,18 +194,9 @@ public class Agent implements Runnable {
 					
 					logger.info("New connection from "+serverHostname+" ("
 							+ socket.getInetAddress() + ").");
-					
-//					if (AgentConfig.getInstance().hostnameListSet()) {
-//						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverHostname)) {
-//							new ServeOneLaunchRequest(socket);
-//						} else {
-//							// Server not allowed
-//							logger.fatal("Server "+serverHostname+" not allowed for this agent. Closing connection.");
-//							socket.close();
-//						}
-//					} else {
-						new ServeOneLaunchRequest(socket);
-//					}
+
+					//new ServeOneServerRequest(socket);
+					new RequestReceiver(socket, AgentConfig.getInstance().getHOSTNAME_LIST());
 				} catch (IOException e) {
 					socket.close();
 				}

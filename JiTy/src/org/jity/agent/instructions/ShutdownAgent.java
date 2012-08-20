@@ -43,9 +43,13 @@ public class ShutdownAgent implements Instruction {
 		JityResponse response = new JityResponse();
 		
 		try {
+			logger.info("Stopping the agent...");
+			
 			Agent.getInstance().stopAgentDaemon();
 
 			response.setInstructionResultOK(true);
+
+			logger.info("Agent Stopped.");
 
 		} catch (AgentException e) {
 			response.setException(e);

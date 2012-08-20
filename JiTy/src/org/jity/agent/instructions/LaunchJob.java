@@ -57,50 +57,49 @@ public class LaunchJob implements Instruction {
 		JityResponse response = new JityResponse();
 				
 		try {
+			// Initializing exitStatus
 			int exitStatus = -1;
-			CommandExecutor cmdExecutor = new CommandExecutor();
 
 			// Setting Job with XML flow
 			Job job = (Job)XMLUtil.XMLStringToObject(xmlInputData);
 
-			// Log files
+			// Get Log files directory from Agent Config
 			if (AgentConfig.getInstance().getJOBS_LOGS_DIR().trim().length() == 0)
 				throw new AgentException("Parameters \"JOBS_LOGS_DIR\" not set for this agent");
 			
+			// Can't acces to log files directory
 			File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
 			if (! logDir.isDirectory() || ! logDir.exists())
 				throw new AgentException("Unable to write job logs \"JOBS_LOGS_DIR\" ("+logDir.getAbsolutePath()+")");
 			
+			// Initializing log file name whith timestamp
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
 			String timestamp = dateFormat.format(new Date());
 			File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
 			
-			// Specific job logger
-			//Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %-5p %c{1}: %m%n");
+			// Create a specific log4j logger for this execution
 			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
 			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
 			Logger jobLogger = Logger.getLogger(job.getName());
 			jobLogger.setAdditivity(false);
 			jobLogger.addAppender(jobLoggerAppender);
 			
-			try {
-				cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
-				cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
-			} catch (IOException e) {
-				response.setException(e);
-			}
-						
-			String commandLine = job.getCommandPath();
+			CommandExecutor cmdExecutor = new CommandExecutor();
+
+			// initializing output loggers
+			cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
+			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
 			
-			//cmdExecutor.setWorkingDirectory(workingDirectory);
+			//TODO cmdExecutor.setWorkingDirectory(workingDirectory);
 			
 			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
 			
 			// Running command
-			exitStatus = cmdExecutor.runCommand(commandLine);
+			exitStatus = cmdExecutor.runCommand(job.getCommandPath());
 			
 			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
 
+			// Setting execStatus for returning to Server
 			ExecStatus execStatus = new ExecStatus();
 			execStatus.setStatus(exitStatus);
 			execStatus.setLogFile(jobLogFile.getAbsolutePath());
