@@ -7,7 +7,7 @@ import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
 
 /**
- * DateConstraint is a type of JobConstraint. The planification rule define one or few day when the
+ * DateConstraint is a type of Constraint. The planification rule define one or few day when the
  * job must execute
  *  
  * @author 09344a
@@ -181,9 +181,10 @@ public class DateConstraint {
 					&& ! period.equals("month") 
 					&& ! period.equals("year")) {
 				
-				// If period is month name
+				// If period is month name, calculating month number of execDate
 				int execDateMonthNumber = MonthCalc.getMonthNumberByDate(execDate);
 				
+				// calculating month number of the rule
 				int ruleMonthNumber = MonthCalc.getMonthNumberByName(period);
 
 				// If month name are different, return false now
@@ -198,7 +199,7 @@ public class DateConstraint {
 				if (period.equals("week") && dayNumber > 7)
 					throw new DateConstraintException(this.planifRule+": dayNumber cannot be > 7 when period = week");
 				
-				int maxNumberOfDaysInTheMonth = MonthCalc.getMonthNumberByDate(MonthCalc.getLastMonthDay(execDate));
+				int maxNumberOfDaysInTheMonth = MonthCalc.getDayNumberInMonth(MonthCalc.getLastMonthDay(execDate));
 				if ( (period.equals("month") || period.equals("execMonth")) && dayNumber > maxNumberOfDaysInTheMonth)
 					throw new DateConstraintException(this.planifRule+": dayNumber cannot be > "+maxNumberOfDaysInTheMonth+" for this period");
 				
@@ -213,7 +214,7 @@ public class DateConstraint {
 				if (period.equals("week") && dayNumber < -7)
 					throw new DateConstraintException(this.planifRule+": dayNumber cannot be < -7 when period = week");
 				
-				int maxNumberOfDaysInTheMonth = MonthCalc.getMonthNumberByDate(MonthCalc.getLastMonthDay(execDate));
+				int maxNumberOfDaysInTheMonth = MonthCalc.getDayNumberInMonth(MonthCalc.getLastMonthDay(execDate));
 				if ( (period.equals("month") || period.equals("execMonth")) && dayNumber < -maxNumberOfDaysInTheMonth)
 					throw new DateConstraintException(this.planifRule+": dayNumber cannot be < -"+maxNumberOfDaysInTheMonth+" for this period");
 				

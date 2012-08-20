@@ -58,7 +58,7 @@ public class PlanifDaemon implements Runnable {
 	
     private Thread daemon = null;
 
-    volatile boolean shouldStop = false;
+    private boolean shutdownAsked = false;
     
 	public static PlanifDaemon getInstance() {
 		if (instance == null) {
@@ -95,7 +95,7 @@ public class PlanifDaemon implements Runnable {
     public synchronized void stopPlanifDaemon() {
         if (daemon != null) {
         	logger.info("Shutdown of PlanifDaemon asked.");
-            shouldStop = true;
+            shutdownAsked = true;
     		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
@@ -115,7 +115,7 @@ public class PlanifDaemon implements Runnable {
 
 		List jobList = this.databaseSession.createQuery(queryFind).list();
 		
-		logger.debug("Found "+jobList.size()+" activated jobs in database");
+		logger.info("Found "+jobList.size()+" activated jobs in database");
 		
 		Calendar cal = new GregorianCalendar();
 		Date execDateValue = cal.getTime();
@@ -123,7 +123,10 @@ public class PlanifDaemon implements Runnable {
 		Iterator iterJobList = jobList.iterator();
 		while (iterJobList.hasNext()) {
 			Job job = (Job) iterJobList.next();
-
+//TODO ne pas lancer un job qui est déja en cours d'exécution
+// il faudra affiner la requete en ajoutant un execStatus != RUNNING
+// Mais l'execstatus n'est pas mis à jour avant le lancement de l'exécution
+// à modifier certainnement
 			try {
 				if (job.getDateConstraint().isAValidDate(execDateValue))
 					launchOneJob(job);
@@ -136,7 +139,7 @@ public class PlanifDaemon implements Runnable {
     
 	private void launchOneJob(Job job) {
 		
-		logger.info("Launching Job "+job.getName());
+		logger.info("Launching Job "+job.getName()+ "("+job.getDateConstraint().getPlanifRule()+")");
 		
 		ExecStatus execStatus = new ExecStatus();
 		execStatus.setJob(job);
@@ -195,7 +198,7 @@ public class PlanifDaemon implements Runnable {
             logger.fatal(e.getMessage());
 		}
         
-        while (!shouldStop) {
+        while (!shutdownAsked) {
             try {
                 logger.info("Start of job analyze.");
                 checkJobs();
@@ -203,7 +206,7 @@ public class PlanifDaemon implements Runnable {
                 logger.info("End of job analyze.");
                 TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
-                logger.warn("PlanifDaemon is stopped.");
+            	if (!shutdownAsked) logger.warn("PlanifDaemon is stopped.");
                 logger.debug(ex.toString());
             } catch (Exception ex) {
                 logger.fatal("Error during checkJobs: " + ex.getMessage());
