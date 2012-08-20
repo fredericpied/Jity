@@ -49,17 +49,14 @@ public abstract class Protocol {
 		JityRequest request = parseRequest(xml);
 				
 		JityResponse response = null;
-		
-		if (request.getInstructionName().equals("LAUNCHJOB")) {
-			response = new LaunchJob().launch(request.getXmlInputData());
-		} else if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
+
+		// Server requests
+		if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNPLANIFDAEMON")) {
 			response = new ShutdownPlanifDaemon().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("STARTPLANIFDAEMON")) {
 			response = new StartPlanifDaemon().launch(request.getXmlInputData());
-		} else if (request.getInstructionName().equals("SHUTDOWNAGENT")) {
-			response = new ShutdownAgent().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
 			response = new AddCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("DELETECALENDAR")) {
@@ -68,6 +65,14 @@ public abstract class Protocol {
 			response = new UpdateCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("GETCALENDAR")) {
 			response = new GetCalendar().launch(request.getXmlInputData());
+
+		// Agent requests
+		} else	if (request.getInstructionName().equals("LAUNCHJOB")) {
+			response = new LaunchJob().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("SHUTDOWNAGENT")) {
+			response = new ShutdownAgent().launch(request.getXmlInputData());
+	
+		// Unknown request
 		} else {
 			response = new JityResponse();
 			response.setInstructionResultOK(false);

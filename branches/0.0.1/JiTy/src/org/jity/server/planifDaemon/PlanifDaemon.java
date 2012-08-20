@@ -38,7 +38,9 @@ import org.hibernate.Session;
 import org.jity.common.DateUtil;
 import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
+import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.referential.ExecStatus;
 import org.jity.referential.Job;
 import org.jity.referential.dateConstraint.DateConstraintException;
@@ -146,15 +148,20 @@ public class PlanifDaemon implements Runnable {
 		execStatus.setBegin(new Date());
 		execStatus.setStatus(ExecStatus.RUNNING);
 		
-		JobLaunchRequest launchRequest = new JobLaunchRequest();
+		// Construct Request
+		JityRequest request = new JityRequest();
+		request.setInstructionName("LAUNCHJOB");
+		request.setXmlInputData(XMLUtil.objectToXMLString(job));
+		
+		RequestSender requestLauncher = new RequestSender();
 
 		try {
-			launchRequest.openAgentConnection(job.getHostName(),
+			requestLauncher.openConnection(job.getHostName(),
 					ServerConfig.getInstance().getAGENT_PORT());
 
-			JityResponse response = launchRequest.sendLaunchRequest(job);
+			JityResponse response = requestLauncher.sendRequest(request);
 
-			launchRequest.closeAgentConnection();
+			requestLauncher.closeConnection();
 
 			// If response is OK
 			if (response.isInstructionResultOK()) {

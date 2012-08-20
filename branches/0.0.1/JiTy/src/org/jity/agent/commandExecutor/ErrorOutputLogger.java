@@ -24,17 +24,16 @@
  */
 package org.jity.agent.commandExecutor;
 
-import java.io.IOException;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-
+/**
+ * Log device for error output
+ *
+ */
 public class ErrorOutputLogger implements LogDevice {
 	private Logger jobLogger; 
 	
-	public ErrorOutputLogger(Logger jobLogger) throws IOException {
+	public ErrorOutputLogger(Logger jobLogger) {
 		this.jobLogger = jobLogger;
 	}
 	

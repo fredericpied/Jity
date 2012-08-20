@@ -34,10 +34,9 @@ import org.apache.log4j.Logger;
 /**
  * This class is used to log asynchronously error
  * output and standard output of the executed command
- * @author Fred
  */
-public class AsynchronousStreamReader extends Thread {
-	private static final Logger logger = Logger.getLogger(AsynchronousStreamReader.class);
+public class AsynchronousOutputReader extends Thread {
+	private static final Logger logger = Logger.getLogger(AsynchronousOutputReader.class);
 	
 	private StringBuffer fBuffer = null;
 	private InputStream fInputStream = null;
@@ -55,7 +54,7 @@ public class AsynchronousStreamReader extends Thread {
 	 * @param logDevice
 	 * @param threadId
 	 */
-	public AsynchronousStreamReader(InputStream inputStream, StringBuffer buffer,
+	public AsynchronousOutputReader(InputStream inputStream, StringBuffer buffer,
 			LogDevice logDevice, String threadId) {
 		this.fInputStream = inputStream;
 		this.fBuffer = buffer;
@@ -63,7 +62,7 @@ public class AsynchronousStreamReader extends Thread {
 		this.fNewLine = System.getProperty("line.separator");
 	}
 
-	public String getBuffer() {
+	private String getBuffer() {
 		return fBuffer.toString();
 	}
 

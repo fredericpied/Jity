@@ -22,61 +22,75 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.agent;
+package org.jity.protocol;
 
-/**
- * Thread launch for every server connexion.
- */
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import org.jity.protocol.JityResponse;
 import org.jity.protocol.Protocol;
 import org.jity.protocol.ProtocolException;
 
-public class ServeOneLaunchRequest extends Thread {
-	private static final Logger logger = Logger.getLogger(ServeOneLaunchRequest.class);
+/**
+ * Execute request
+ */
+public class RequestReceiver extends Thread {
+	private static final Logger logger = Logger.getLogger(RequestReceiver.class);
 	
     private Socket socket;
     private BufferedReader networkReader;
     private PrintWriter networkWriter;
-
+    private ArrayList<String> remoteHostnameList;
 
     /**
-     * Construct the thread and launch it
-     * @param s
+     * Initialize requestReceiver
+     * @param socket
      * @throws IOException
      */
-    public ServeOneLaunchRequest(Socket s) throws IOException {
-        this.socket = s;
-        this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    public RequestReceiver(Socket socket) throws IOException {
+    	this.socket = socket;
+    	this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.networkWriter = new PrintWriter(socket.getOutputStream());
         start();
     }
-
+   
+    /**
+     * Initialize requestReceiver whith an autorized hostnames List
+     * @param socket
+     * @throws IOException
+     */
+    public RequestReceiver(Socket socket, ArrayList<String> remoteHostnameList) throws IOException {
+    	this.socket = socket;
+    	this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.networkWriter = new PrintWriter(socket.getOutputStream());
+        this.remoteHostnameList = remoteHostnameList;
+        start();
+    }
     
     public void run() {
         String xmlInputData = null;
         String xmlOutputData;
 
         try {
-        	
-            while (true) {
-    
+        
+            	// Reading netword datagram
             	xmlInputData = networkReader.readLine();
-                
-            	if (xmlInputData == null) break;
            		
             	try {
             		logger.debug("Server data received: " + xmlInputData);
 
-            		//String serverHostname = socket.getInetAddress().getHostName();
+            		// Identifing server IP
             		String serverIP = socket.getInetAddress().getHostAddress();
             		
-            		if (AgentConfig.getInstance().hostnameListSet()) {
-						if (AgentConfig.getInstance().getHOSTNAME_LIST().contains(serverIP)) {
+            		// if HostnameList is define for the Agent, use it
+            		if (remoteHostnameList != null) {
+            			// if HostanmeList contain server IP, execute the request
+						if (remoteHostnameList.contains(serverIP)) {
 		            		xmlOutputData = Protocol.executeRequest(xmlInputData);
 						} else {
+							// Else return exception
 							JityResponse response = new JityResponse();
 							response.setInstructionResultOK(false);
 							response.setExceptionName("AgentException");
@@ -84,11 +98,11 @@ public class ServeOneLaunchRequest extends Thread {
 							xmlOutputData = response.toXML();
 						}
 					} else {
+						// if HostnameList is not define, execute the request whithout control
 	            		xmlOutputData = Protocol.executeRequest(xmlInputData);
 					}
-            		
-            		//xmlOutputData = Protocol.executeRequest(xmlInputData);
-            		
+   
+            		// Send the response to server
                 	networkWriter.println(xmlOutputData);
                     networkWriter.flush();
 
@@ -98,7 +112,7 @@ public class ServeOneLaunchRequest extends Thread {
                      logger.warn("Bad input data: " + xmlInputData);
                      logger.debug(ex.getMessage());
             	 }
-            }
+ //           }
         } catch (IOException ex) {
             logger.warn("Server communication was ended abnormally.");
             logger.debug(ex.getMessage());

@@ -50,8 +50,8 @@ public class CommandExecutor {
 	private StringBuffer cmdOutput = null;
 	private StringBuffer cmdError = null;
 
-	private AsynchronousStreamReader cmdOutputThread = null;
-	private AsynchronousStreamReader cmdErrorThread = null;
+	private AsynchronousOutputReader cmdOutputThread = null;
+	private AsynchronousOutputReader cmdErrorThread = null;
 
 	public void setOutputLogDevice(LogDevice logDevice) {
 		this.outputLogDevice = logDevice;
@@ -122,12 +122,12 @@ public class CommandExecutor {
 
 	private void startOutputAndErrorReadThreads(InputStream processOut, InputStream processErr) {
 		this.cmdOutput = new StringBuffer();
-		this.cmdOutputThread = new AsynchronousStreamReader(processOut, this.cmdOutput,
+		this.cmdOutputThread = new AsynchronousOutputReader(processOut, this.cmdOutput,
 				this.outputLogDevice, "OUTPUT");
 		this.cmdOutputThread.start();
 
 		this.cmdError = new StringBuffer();
-		this.cmdErrorThread = new AsynchronousStreamReader(processErr, this.cmdError, 
+		this.cmdErrorThread = new AsynchronousOutputReader(processErr, this.cmdError, 
 				this.errorLogDevice, "ERROR");
 		this.cmdErrorThread.start();
 	}

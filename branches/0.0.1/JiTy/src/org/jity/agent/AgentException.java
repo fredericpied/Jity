@@ -21,7 +21,8 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.agent;
+ */
+package org.jity.agent;
 
 public class AgentException extends Exception {
 

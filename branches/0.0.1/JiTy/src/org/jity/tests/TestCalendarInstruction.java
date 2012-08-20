@@ -6,11 +6,12 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
-import org.jity.UIClient.UIClient;
+import org.jity.UIClient.UIClientConfig;
 import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
@@ -98,8 +99,16 @@ public class TestCalendarInstruction extends TestCase {
 			request.setInstructionName("ADDCALENDAR");
 			request.setXmlInputData(xmlCalendar);
 			
-			UIClient client = UIClient.getInstance();
-			JityResponse response = client.sendRequest(request);
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			logger.info("Reading configuration file.");
+			clientConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+			
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
 			
 			assertTrue(response.isInstructionResultOK());
 
@@ -119,9 +128,17 @@ public class TestCalendarInstruction extends TestCase {
 			JityRequest request = new JityRequest();
 			request.setInstructionName("GETCALENDAR");
 			request.setXmlInputData(XMLUtil.objectToXMLString(idCalendar));
+
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			logger.info("Reading configuration file.");
+			clientConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
 			
-			UIClient client = UIClient.getInstance();
-			JityResponse response = client.sendRequest(request);
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
 			
 			if (!response.isInstructionResultOK()) {
 				throw new Exception(response.getExceptionMessage());

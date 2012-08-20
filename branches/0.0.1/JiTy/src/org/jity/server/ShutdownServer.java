@@ -1,13 +1,14 @@
 package org.jity.server;
 
-import org.jity.UIClient.UIClient;
+import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
 import org.jity.common.TimeUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.server.planifDaemon.PlanifDaemon;
 
-public class Shutdown {
+public class ShutdownServer {
 
 	/**
 	 * @param args
@@ -18,11 +19,14 @@ public class Shutdown {
 			JityRequest request = new JityRequest();
 			request.setInstructionName("SHUTDOWNSERVER");
 
-			UIClient client = UIClient.getInstance();
-
-			JityResponse response = client.sendRequest(request);
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			clientConfig.initialize();
 			
-			client.closeConnection();
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
 			
 			if (!response.isInstructionResultOK()) {
 				throw new Exception(response.getExceptionMessage());

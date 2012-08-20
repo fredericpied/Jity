@@ -12,9 +12,9 @@ import org.jity.common.TimeUtil;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.referential.Job;
 import org.jity.server.ServerConfig;
-import org.jity.server.planifDaemon.JobLaunchRequest;
 
 import junit.framework.TestCase;
 
@@ -61,14 +61,19 @@ public class TestLaunchJobInstruction extends TestCase {
 			job.setCommandPath("d:\\temp\\test.bat");
 			job.setHostName("localhost");
 		
-			JobLaunchRequest launchRequest = new JobLaunchRequest();
+			// Construct Request
+			JityRequest request = new JityRequest();
+			request.setInstructionName("LAUNCHJOB");
+			request.setXmlInputData(XMLUtil.objectToXMLString(job));
 			
-			launchRequest.openAgentConnection(job.getHostName(), 
+			RequestSender requestLauncher = new RequestSender();
+			
+			requestLauncher.openConnection(job.getHostName(), 
 					ServerConfig.getInstance().getAGENT_PORT());
 			
-			JityResponse response = launchRequest.sendLaunchRequest(job);
+			JityResponse response = requestLauncher.sendRequest(request);
 			
-			launchRequest.closeAgentConnection();
+			requestLauncher.closeConnection();
 			
 			if (!response.isInstructionResultOK()) {
 				throw new Exception(response.getExceptionMessage());

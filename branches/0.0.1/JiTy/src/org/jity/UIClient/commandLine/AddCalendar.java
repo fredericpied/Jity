@@ -2,11 +2,12 @@ package org.jity.UIClient.commandLine;
 
 import java.io.IOException;
 
-import org.jity.UIClient.UIClient;
+import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
 import org.jity.common.XMLUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.protocol.RequestSender;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.PersonnalCalendarException;
 import org.jity.server.instructions.InstructionException;
@@ -58,11 +59,16 @@ public class AddCalendar extends CommandLine {
 		request.setInstructionName("ADDCALENDAR");
 		request.setXmlInputData(xmlCalendar);
 		
-		UIClient client = UIClient.getInstance();
-		JityResponse response = client.sendRequest(request);
+		// Load config file
+		UIClientConfig clientConfig = UIClientConfig.getInstance();
+		clientConfig.initialize();
+		
+		RequestSender requestSender = new RequestSender();
+		requestSender.openConnection(clientConfig.getSERVER_HOSTNAME(), clientConfig.getSERVER_PORT());
+		JityResponse response = requestSender.sendRequest(request);
+		requestSender.closeConnection();
 		
 		if (response.isInstructionResultOK()) {
-			client.closeConnection();
 			returnCode = 0;
 		} else {
 			throw new InstructionException(response.getExceptionName()+": "+response.getExceptionMessage());
