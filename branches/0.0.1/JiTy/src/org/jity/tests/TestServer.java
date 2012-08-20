@@ -6,8 +6,10 @@ import org.jity.UIClient.UIClientException;
 import org.jity.common.TimeUtil;
 import org.jity.protocol.JityRequest;
 import org.jity.protocol.JityResponse;
+import org.jity.referential.PersonnalCalendarException;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
+import org.jity.server.database.DatabaseException;
 
 import junit.framework.TestCase;
 
@@ -19,6 +21,11 @@ public class TestServer extends TestCase {
 
 			Server.getInstance().startServerDaemon();
 
+			logger.info("Waiting 5 sec");
+			TimeUtil.waiting(5);
+			
+			AddDBDataForTest.launch();
+			
 			logger.info("Waiting 15 sec");
 			TimeUtil.waiting(15);
 			
@@ -26,6 +33,12 @@ public class TestServer extends TestCase {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (PersonnalCalendarException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

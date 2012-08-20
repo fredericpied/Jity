@@ -1,26 +1,59 @@
 package org.jity.tests;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.referential.PersonnalCalendar;
 import org.jity.referential.Job;
 import org.jity.referential.PersonnalCalendarException;
 import org.jity.referential.dateConstraint.DateConstraint;
+import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 
 public class AddDBDataForTest {
+	private static final Logger logger = Logger.getLogger(AddDBDataForTest.class);
+	
+	public static void launch() throws DatabaseException, PersonnalCalendarException {
 
-	public static void main(String[] args) {
+//		try {
 
-		try {
-
-			DatabaseServer.startDatabaseServer();
 			Session session = DatabaseServer.getSession();
-//			
-//			String queryDelete = "delete job from org.jity.referential.Job job";
+						
+			logger.info("Deleting Job, DateConstraint and PersonnalCalendar in DB...");
+			
+			// Delete all jobs in db
+			String queryFindJob = "select job from org.jity.referential.Job job";
+			List jobList = session.createQuery(queryFindJob).list();
+			Iterator iterJobList = jobList.iterator();
+			while (iterJobList.hasNext()) {
+				Job job = (Job) iterJobList.next();
+				session.delete(job);
+			}
+			
+			// Delete all dateConstraint in db
+			String queryFindDC = "select dateConstraint" +
+					" from org.jity.referential.dateConstraint.DateConstraint dateConstraint";
+			List dcList = session.createQuery(queryFindDC).list();
+			Iterator iterDcList = dcList.iterator();
+			while (iterDcList.hasNext()) {
+				DateConstraint dc = (DateConstraint) iterDcList.next();
+				session.delete(dc);
+			}
+			
+			// Delete all PersonnalCalendar in db
+			String queryFindPC = "select personnalCalendar" +
+					" from org.jity.referential.PersonnalCalendar personnalCalendar";
+			List pcList = session.createQuery(queryFindPC).list();
+			Iterator iterPcList = pcList.iterator();
+			while (iterPcList.hasNext()) {
+				PersonnalCalendar pc = (PersonnalCalendar) iterPcList.next();
+				session.delete(pc);
+			}
 			
 			// Calendars
 			PersonnalCalendar Cal5OpenDays2012 = new PersonnalCalendar();
@@ -43,20 +76,21 @@ public class AddDBDataForTest {
 			Cal7OpenDays2012.setYear(2012);
 			Cal7OpenDays2012.initializeWithAllDaysOpen();
 			Cal7OpenDays2012.addFrenchHolydays();
-						
-
-			
+							
 			PersonnalCalendar[] tabPersonnalCalendar = new PersonnalCalendar[3];
 			tabPersonnalCalendar[0] = Cal5OpenDays2012;
 			tabPersonnalCalendar[1] = Cal6OpenDays2012;			
 			tabPersonnalCalendar[2] = Cal7OpenDays2012;
 			
+			logger.info("Adding PersonnalCalendar");
+
 			Transaction transaction = session.beginTransaction();
 			session.save(Cal5OpenDays2012);
 			session.save(Cal6OpenDays2012);
 			session.save(Cal7OpenDays2012);
 			transaction.commit();
 
+			logger.info("Adding DateConstraints and Jobs");
 			for (int i=1;i<150;i++) {
 			
 				DateConstraint dateConstraint1 = new DateConstraint();
@@ -80,18 +114,25 @@ public class AddDBDataForTest {
 			}
 			
 			session.close();
-			DatabaseServer.stopDatabaseServer();
+			logger.info("Finish");
+			//DatabaseServer.stopDatabaseServer();
 		
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (PersonnalCalendarException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+//		} catch (DatabaseException e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		} catch (PersonnalCalendarException e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 
 	}
 	
+	/**
+	 * Generate random int
+	 * @param min
+	 * @param max
+	 * @return
+	 */
 	private  static int getRandomInt(int min, int max) {
 		Random rand = new Random();
 

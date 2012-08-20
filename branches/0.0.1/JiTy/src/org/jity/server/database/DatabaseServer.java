@@ -1,6 +1,5 @@
 package org.jity.server.database;
 
-import java.io.File;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
