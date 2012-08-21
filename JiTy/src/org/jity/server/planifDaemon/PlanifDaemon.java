@@ -35,15 +35,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jity.common.DateUtil;
-import org.jity.common.TimeUtil;
-import org.jity.common.XMLUtil;
-import org.jity.protocol.JityRequest;
-import org.jity.protocol.JityResponse;
-import org.jity.protocol.RequestSender;
-import org.jity.referential.ExecStatus;
-import org.jity.referential.Job;
-import org.jity.referential.dateConstraint.DateConstraintException;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.referential.ExecStatus;
+import org.jity.common.referential.Job;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.util.DateUtil;
+import org.jity.common.util.TimeUtil;
+import org.jity.common.util.XMLUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerConfig;
 import org.jity.server.ServerException;
@@ -112,7 +112,7 @@ public class PlanifDaemon implements Runnable {
      */
     private void checkJobs() throws DatabaseException {
 
-		String queryFind = "select job from org.jity.referential.Job job"
+		String queryFind = "select job from org.jity.common.referential.Job job"
 			+ " where job.isActived = true";
 
 		List jobList = this.databaseSession.createQuery(queryFind).list();
@@ -216,7 +216,9 @@ public class PlanifDaemon implements Runnable {
             	if (!shutdownAsked) logger.warn("PlanifDaemon is stopped.");
                 logger.debug(ex.toString());
             } catch (Exception ex) {
-                logger.fatal("Error during checkJobs: " + ex.getMessage());
+                logger.fatal("Error during checkJobs: " + ex.getClass().getSimpleName()+": "+ex.getMessage());
+                ex.printStackTrace();
+                System.exit(1);
             }
         }
         

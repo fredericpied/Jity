@@ -25,12 +25,9 @@
 package org.jity.agent;
 
 import org.apache.log4j.Logger;
-import org.jity.protocol.RequestReceiver;
-
-import com.thoughtworks.xstream.core.util.Fields;
+import org.jity.common.protocol.RequestReceiver;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.*;
 
 /**
@@ -51,7 +48,7 @@ public class Agent implements Runnable {
 
 	/**
 	 * Return the current instance of Agent (if none, create one)
-	 * @return
+	 * @return Agent
 	 */
 	public static Agent getInstance() {
 		if (instance == null) {
@@ -62,8 +59,7 @@ public class Agent implements Runnable {
 
 	/**
 	 * Return true if JitY Agent is running
-	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public synchronized boolean isRunning() {
 		if (this.daemon != null)
@@ -113,7 +109,7 @@ public class Agent implements Runnable {
 	/**
 	 * Print current Agent configuration
 	 */
-	private void showConfig() {
+	public void showConfig() {
 		AgentConfig agentConfig = AgentConfig.getInstance();
 		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
 		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
@@ -125,7 +121,7 @@ public class Agent implements Runnable {
 	 * return type of OS supporting the agent
 	 * @return String
 	 */
-	private String getOSName() {
+	public String getOSName() {
 		return System.getProperty("os.name");
 	}
 	
@@ -178,7 +174,7 @@ public class Agent implements Runnable {
 		int agentPort = AgentConfig.getInstance().getAGENT_PORT();
 		try {
 			listenSocket = new ServerSocket(agentPort);
-			logger.info("Agent running on port : " + agentPort);
+			logger.info("Agent running on port " + agentPort);
 			logger.info("JiTy Agent successfully started.");
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());

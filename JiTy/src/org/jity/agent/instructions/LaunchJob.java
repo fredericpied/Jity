@@ -25,7 +25,6 @@
 package org.jity.agent.instructions;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,12 +37,12 @@ import org.jity.agent.AgentException;
 import org.jity.agent.commandExecutor.ErrorOutputLogger;
 import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.agent.commandExecutor.CommandExecutor;
-import org.jity.common.DateUtil;
-import org.jity.common.XMLUtil;
-import org.jity.protocol.JityResponse;
-import org.jity.referential.ExecStatus;
-import org.jity.referential.Job;
-import org.jity.server.instructions.Instruction;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.referential.ExecStatus;
+import org.jity.common.referential.Job;
+import org.jity.common.util.DateUtil;
+import org.jity.common.util.XMLUtil;
 
 /**
  * Server commande to find something to launch for a client

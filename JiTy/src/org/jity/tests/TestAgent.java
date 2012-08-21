@@ -4,10 +4,10 @@ import org.apache.log4j.Logger;
 import org.jity.UIClient.UIClientException;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
-import org.jity.common.TimeUtil;
-import org.jity.protocol.JityRequest;
-import org.jity.protocol.JityResponse;
-import org.jity.protocol.RequestSender;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.util.TimeUtil;
 
 import junit.framework.TestCase;
 

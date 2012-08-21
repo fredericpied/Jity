@@ -8,12 +8,12 @@ import java.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
-import org.jity.common.DateUtil;
-import org.jity.common.TimeUtil;
-import org.jity.referential.PersonnalCalendar;
-import org.jity.referential.PersonnalCalendarException;
-import org.jity.referential.dateConstraint.DateConstraintException;
-import org.jity.referential.dateConstraint.WeekCalc;
+import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.referential.dateConstraint.WeekCalc;
+import org.jity.common.util.DateUtil;
+import org.jity.common.util.TimeUtil;
 
 import junit.framework.TestCase;
 

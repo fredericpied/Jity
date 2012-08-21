@@ -5,11 +5,12 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
-import org.jity.common.TimeUtil;
-import org.jity.protocol.JityRequest;
-import org.jity.protocol.JityResponse;
-import org.jity.protocol.RequestSender;
-import org.jity.referential.PersonnalCalendarException;
+import org.jity.agent.Agent;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.util.TimeUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseException;
@@ -24,13 +25,15 @@ public class TestServer extends TestCase {
 
 			Server.getInstance().startServerDaemon();
 
-			logger.info("Waiting 5 sec");
-			TimeUtil.waiting(5);
+			logger.info("Waiting 3 sec");
+			TimeUtil.waiting(3);
 			
 			AddDBDataForTest.launch();
 			
-			logger.info("Waiting 15 sec");
-			TimeUtil.waiting(15);
+			logger.info("Waiting 3 sec");
+			TimeUtil.waiting(3);
+			
+			Agent.getInstance().startAgentDaemon();
 			
 		} catch (ServerException e) {
 			e.printStackTrace();
@@ -71,8 +74,8 @@ public class TestServer extends TestCase {
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
 						
-			logger.info("Waiting 5 sec");
-			TimeUtil.waiting(5);
+			logger.info("Waiting 15 sec");
+			TimeUtil.waiting(15);
 		
 			assertTrue(response.isInstructionResultOK());
 						

@@ -24,8 +24,8 @@
  */
 package org.jity.server.instructions.admin;
 
-import org.jity.protocol.JityResponse;
-import org.jity.server.instructions.Instruction;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
 import org.jity.server.planifDaemon.PlanifDaemon;
 
 /**

@@ -26,10 +26,10 @@ package org.jity.server.instructions.admin;
 
 import java.util.ArrayList;
 
-import org.jity.protocol.JityResponse;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
-import org.jity.server.instructions.Instruction;
 
 /**
  * Server command to shutdown the JiTy server

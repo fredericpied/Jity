@@ -1,6 +1,6 @@
 package org.jity.server;
 
-import org.jity.common.TimeUtil;
+import org.jity.common.util.TimeUtil;
 import org.jity.server.planifDaemon.PlanifDaemon;
 
 public class StartServer {

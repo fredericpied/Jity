@@ -26,7 +26,7 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jity.protocol.RequestReceiver;
+import org.jity.common.protocol.RequestReceiver;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 import org.jity.server.planifDaemon.PlanifDaemon;
