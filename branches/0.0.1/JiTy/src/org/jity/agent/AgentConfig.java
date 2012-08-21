@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.jity.common.XMLUtil;
+import org.jity.common.util.XMLUtil;
 
 /**
  * Agent configuration Class

@@ -2,10 +2,10 @@ package org.jity.server;
 
 import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
-import org.jity.common.TimeUtil;
-import org.jity.protocol.JityRequest;
-import org.jity.protocol.JityResponse;
-import org.jity.protocol.RequestSender;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.util.TimeUtil;
 import org.jity.server.planifDaemon.PlanifDaemon;
 
 public class ShutdownServer {

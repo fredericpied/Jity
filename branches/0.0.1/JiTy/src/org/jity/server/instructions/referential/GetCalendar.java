@@ -27,12 +27,12 @@ package org.jity.server.instructions.referential;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.jity.common.XMLUtil;
-import org.jity.protocol.JityResponse;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.DatabaseServer;
 import org.jity.server.database.TooMuchDataDBException;
-import org.jity.server.instructions.Instruction;
 
 /**
  * Server command to create à new calendar

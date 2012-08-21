@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
-import org.jity.common.XMLUtil;
-import org.jity.protocol.JityRequest;
-import org.jity.protocol.JityResponse;
-import org.jity.protocol.RequestSender;
-import org.jity.referential.PersonnalCalendar;
-import org.jity.referential.PersonnalCalendarException;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.util.XMLUtil;
 import org.jity.server.instructions.InstructionException;
 
 /**

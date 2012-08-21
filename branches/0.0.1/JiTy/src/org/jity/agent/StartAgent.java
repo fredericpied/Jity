@@ -24,7 +24,7 @@
  */
 package org.jity.agent;
 
-import org.jity.common.TimeUtil;
+import org.jity.common.util.TimeUtil;
 
 /**
  * Start JiTy Agent on an execution host

@@ -7,10 +7,10 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jity.referential.PersonnalCalendar;
-import org.jity.referential.Job;
-import org.jity.referential.PersonnalCalendarException;
-import org.jity.referential.dateConstraint.DateConstraint;
+import org.jity.common.referential.Job;
+import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.DateConstraint;
 import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
@@ -27,7 +27,7 @@ public class AddDBDataForTest {
 			logger.info("Deleting Job, DateConstraint and PersonnalCalendar in DB...");
 			
 			// Delete all jobs in db
-			String queryFindJob = "select job from org.jity.referential.Job job";
+			String queryFindJob = "select job from org.jity.common.referential.Job job";
 			List jobList = session.createQuery(queryFindJob).list();
 			Iterator iterJobList = jobList.iterator();
 			while (iterJobList.hasNext()) {
@@ -37,7 +37,7 @@ public class AddDBDataForTest {
 			
 			// Delete all dateConstraint in db
 			String queryFindDC = "select dateConstraint" +
-					" from org.jity.referential.dateConstraint.DateConstraint dateConstraint";
+					" from org.jity.common.referential.dateConstraint.DateConstraint dateConstraint";
 			List dcList = session.createQuery(queryFindDC).list();
 			Iterator iterDcList = dcList.iterator();
 			while (iterDcList.hasNext()) {
@@ -47,7 +47,7 @@ public class AddDBDataForTest {
 			
 			// Delete all PersonnalCalendar in db
 			String queryFindPC = "select personnalCalendar" +
-					" from org.jity.referential.PersonnalCalendar personnalCalendar";
+					" from org.jity.common.referential.PersonnalCalendar personnalCalendar";
 			List pcList = session.createQuery(queryFindPC).list();
 			Iterator iterPcList = pcList.iterator();
 			while (iterPcList.hasNext()) {

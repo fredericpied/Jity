@@ -28,13 +28,13 @@ import java.util.ArrayList;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jity.common.XMLUtil;
-import org.jity.protocol.JityResponse;
-import org.jity.referential.PersonnalCalendar;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.util.XMLUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseServer;
-import org.jity.server.instructions.Instruction;
 
 /**
  * Server command to delete a calendar

@@ -27,7 +27,7 @@ package org.jity.server;
 import java.io.File;
 import java.io.IOException;
 
-import org.jity.common.XMLUtil;
+import org.jity.common.util.XMLUtil;
 
 /**
  * Server configuration Class

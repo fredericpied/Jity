@@ -27,9 +27,9 @@ package org.jity.agent.instructions;
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
 
-import org.jity.protocol.JityResponse;
-import org.jity.server.instructions.Instruction;
 
 /**
  * 
