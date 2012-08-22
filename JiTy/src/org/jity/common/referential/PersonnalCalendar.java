@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.referential.dateConstraint.YearCalc;
 import org.jity.common.util.DateUtil;
-import org.jity.tests.TestCalendar;
 
 public class PersonnalCalendar {
 	private static final Logger logger = Logger.getLogger(PersonnalCalendar.class);

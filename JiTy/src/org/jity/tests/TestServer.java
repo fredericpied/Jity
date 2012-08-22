@@ -20,24 +20,49 @@ import junit.framework.TestCase;
 public class TestServer extends TestCase {
 	private static final Logger logger = Logger.getLogger(TestServer.class);
 		
+	private void startServerInThread() throws InterruptedException {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Server.getInstance().startServer();
+					TimeUtil.waiting(10);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		TimeUtil.waiting(3);
+	}
+	
+	private void startAgentInThread() throws InterruptedException {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Agent.getInstance().startAgent();
+					TimeUtil.waiting(2);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		TimeUtil.waiting(3);
+	}
+	
 	public void testStartServerDaemon() {
 		try {
 
-			Server.getInstance().startServerDaemon();
-
-			logger.info("Waiting 3 sec");
-			TimeUtil.waiting(3);
+			startServerInThread();
 			
 			AddDBDataForTest.launch();
-			
-			logger.info("Waiting 3 sec");
+
 			TimeUtil.waiting(3);
 			
-			Agent.getInstance().startAgentDaemon();
-			
-		} catch (ServerException e) {
-			e.printStackTrace();
-			System.exit(1);
+			startAgentInThread();
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);

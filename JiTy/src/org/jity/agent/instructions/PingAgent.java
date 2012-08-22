@@ -57,8 +57,7 @@ public class PingAgent implements Instruction {
 		String timestamp = dateFormat.format(new Date());
 
 		response.addXmlOutputData(XMLUtil.objectToXMLString(timestamp));
-		
-		
+				
 		response.setInstructionResultOK(true);
 
 		return response;

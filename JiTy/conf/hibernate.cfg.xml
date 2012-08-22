@@ -54,10 +54,10 @@
         <!-- Drop and re-create the database schema on startup -->
          <property name="hbm2ddl.auto">create</property>
 
-        <mapping resource="org/jity/common/referential/PersonnalCalendar.hbm.xml"/>
-        <mapping resource="org/jity/common/referential/Job.hbm.xml"/>
-        <mapping resource="org/jity/common/referential/ExecStatus.hbm.xml"/>
-        <mapping resource="org/jity/common/referential/dateConstraint/DateConstraint.hbm.xml"/>
+        <mapping resource="PersonnalCalendar.hbm.xml"/>
+        <mapping resource="Job.hbm.xml"/>
+        <mapping resource="ExecStatus.hbm.xml"/>
+        <mapping resource="DateConstraint.hbm.xml"/>
     </session-factory>
 
 </hibernate-configuration>

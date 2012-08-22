@@ -24,6 +24,8 @@
  */
 package org.jity.agent.instructions;
 
+import java.net.SocketException;
+
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
@@ -38,22 +40,25 @@ import org.jity.common.protocol.JityResponse;
  */
 public class ShutdownAgent implements Instruction {
 	private static final Logger logger = Logger.getLogger(ShutdownAgent.class);
-	
+
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
+
+
+		logger.info("Stopping the agent...");
+
 		try {
-			logger.info("Stopping the agent...");
-			
-			Agent.getInstance().stopAgentDaemon();
+			Agent.getInstance().stopAgent();
 
 			response.setInstructionResultOK(true);
 
 			logger.info("Agent Stopped.");
+			
 
 		} catch (AgentException e) {
 			response.setException(e);
 		}
+
 
 		return response;
 	}

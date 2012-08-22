@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.DataException;
 import org.jity.UIClient.UIClientConfig;
+import org.jity.agent.Agent;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
@@ -22,16 +23,27 @@ import junit.framework.TestCase;
 public class TestCalendarInstruction extends TestCase {
 	private static final Logger logger = Logger.getLogger(TestCalendarInstruction.class);
 
+	
+	private void startServerInThread() throws InterruptedException {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Server.getInstance().startServer();
+					TimeUtil.waiting(10);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		TimeUtil.waiting(3);
+	}
+	
 	public void setUp() {
 		try {
-			Server.getInstance().startServerDaemon();
-			
-			logger.info("Waiting 10 sec");
-			TimeUtil.waiting(10);
-			
-		} catch (ServerException e) {
-			e.printStackTrace();
-			System.exit(1);
+			startServerInThread();
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -42,7 +54,7 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 			
-			Server.getInstance().stopServerDaemon();
+			Server.getInstance().stopServer();
 
 			logger.info("Waiting 5 sec");
 			TimeUtil.waiting(5);

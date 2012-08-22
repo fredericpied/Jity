@@ -26,6 +26,7 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.jity.agent.AgentException;
 import org.jity.common.protocol.RequestReceiver;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
@@ -38,16 +39,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class Server implements Runnable {
+public class Server {
 	private static final Logger logger = Logger.getLogger(Server.class);
 
 	private static Server instance = null;
 
 	private ServerSocket listenSocket;
 
-	private Thread daemon = null;
-
-	private boolean shutdownAsked = false;
+	private boolean isRunning = false;
+	
+	private boolean shutdowning = false;
 	
 	private Date execDate;
 	
@@ -63,78 +64,18 @@ public class Server implements Runnable {
 	 * 
 	 * @return
 	 */
-	public synchronized boolean isRunning() {
-		if (this.daemon != null)
-			return this.daemon.isAlive();
-		else
-			return false;
+	public boolean isRunning() {
+		return isRunning;
 	}
 
 	/**
-	 * Start the server in a Thread.
-	 * 
-	 * @throws ServerException
+	 * Start the server.
 	 */
-	public synchronized void startServerDaemon() throws ServerException {
-		if (daemon == null) {
-			daemon = new Thread(this);
-			daemon.start();
-		}
-	}
-
-	/**
-	 * Stop current server if running.
-	 * 
-	 * @throws ServerException
-	 */
-	public synchronized void stopServerDaemon() throws ServerException {
-		if (daemon != null) {
-			logger.info("Shutdown of server asked.");
-
-			try {
-				shutdownAsked = true;
-				logger.info("Shutdowning planification daemon.");
-				PlanifDaemon.getInstance().stopPlanifDaemon();
-				
-				logger.info("Closing Database server.");
-				DatabaseServer.stopDatabaseServer();
-				
-				logger.info("Closing Network socket.");
-				listenSocket.close();
-
-				daemon.interrupt();
-				daemon = null;
-
-				logger.info("Server successfuly shutdowned");
-
-			} catch (IOException e) {
-				throw new ServerException("Shutdown of server failed.");
-			}
-
-		}
-	}
-
-	/**
-	 * Loading the server config file
-	 * 
-	 * @throws ServerException
-	 */
-	private void loadConfigFile() throws ServerException {
-		// Load config file
-		try {
-			ServerConfig serverConfig = ServerConfig.getInstance();
-			logger.info("Reading configuration file.");
-			serverConfig.initialize();
-			logger.info("Configuration File successfully loaded.");
-		} catch (IOException e) {
-			throw new ServerException("Failed to read configuration file ("
-					+ e.getMessage() + ").");
-		}
-	}
-
-	public void run() {
+	public void startServer() {
 		Socket client = null;
-
+		
+		shutdowning = false;
+		
 		logger.info("JiTy Server starting process.");
 
 		// Loading config File
@@ -143,7 +84,7 @@ public class Server implements Runnable {
 		} catch (ServerException e1) {
 			logger.fatal(e1.getMessage());
 			try {
-				this.stopServerDaemon();
+				this.stopServer();
 			} catch (ServerException e) {}
 			System.exit(1);
 		}
@@ -191,7 +132,8 @@ public class Server implements Runnable {
 		}
 
 		try {
-
+			isRunning = true;
+			
 			while (true) {
 				client = listenSocket.accept();
 				try {
@@ -205,9 +147,10 @@ public class Server implements Runnable {
 			}
 
 		} catch (IOException e) {
-			if (!shutdownAsked) logger.warn("Problem during client connection.");
+			if (!shutdowning) logger.warn("Problem during client connection.");
 			logger.debug(e.getMessage());
 		} finally {
+			isRunning = false;
 			try {
 				if (listenSocket != null)
 					listenSocket.close();
@@ -216,6 +159,57 @@ public class Server implements Runnable {
 				logger.debug(e.getMessage());
 			}
 			logger.info("JiTy Server shutdowned correctly.");
+		}
+	}
+
+	/**
+	 * Stop current server if running.
+	 * 
+	 * @throws ServerException
+	 */
+	public void stopServer() throws ServerException {
+		if (this.isRunning) {
+			logger.info("Shutdown of server asked.");
+			shutdowning = true;
+			
+			try {
+				
+				logger.info("Shutdowning planification daemon.");
+				PlanifDaemon.getInstance().stopPlanifDaemon();
+				
+				logger.info("Closing Database server.");
+				DatabaseServer.stopDatabaseServer();
+				
+				logger.info("Closing Network socket.");
+				listenSocket.close();
+
+				isRunning = false;
+				logger.info("Server successfuly shutdowned");
+
+			} catch (IOException e) {
+				throw new ServerException("Shutdown of server failed.");
+			}
+		} else {
+			throw new ServerException("Server is not running");
+		}
+		
+	}
+
+	/**
+	 * Loading the server config file
+	 * 
+	 * @throws ServerException
+	 */
+	private void loadConfigFile() throws ServerException {
+		// Load config file
+		try {
+			ServerConfig serverConfig = ServerConfig.getInstance();
+			logger.info("Reading configuration file.");
+			serverConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+		} catch (IOException e) {
+			throw new ServerException("Failed to read configuration file ("
+					+ e.getMessage() + ").");
 		}
 	}
 

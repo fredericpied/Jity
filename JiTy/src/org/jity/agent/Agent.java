@@ -35,16 +35,16 @@ import java.net.*;
  * @author Fred
  *
  */
-public class Agent implements Runnable {
+public class Agent {
 	private static final Logger logger = Logger.getLogger(Agent.class);
 
 	private static Agent instance = null;
 
 	private ServerSocket listenSocket;
-
-	private Thread daemon = null;
 	
-	private boolean shutwdownAsked = false;
+	private boolean isRunning = false;
+	
+	private boolean shutdownning = false;
 
 	/**
 	 * Return the current instance of Agent (if none, create one)
@@ -57,97 +57,19 @@ public class Agent implements Runnable {
 		return instance;
 	}
 
-	/**
-	 * Return true if JitY Agent is running
-	 * @return boolean
-	 */
-	public synchronized boolean isRunning() {
-		if (this.daemon != null)
-			return this.daemon.isAlive();
-		else
-			return false;
-	}
-
-	/**
-	 * Start the agent in a Thread.
-	 * 
-	 */
-	public synchronized void startAgentDaemon() {
-		if (daemon == null) {
-			daemon = new Thread(this);
-			//daemon.setDaemon(true);
-			daemon.start();
-		}
-	}
-
-	/**
-	 * Stop current agent if running.
-	 * 
-	 * @throws AgentException
-	 */
-	public synchronized void stopAgentDaemon() throws AgentException {
-		if (daemon != null) {
-			logger.info("Shutdown of agent asked.");
-
-			try {
-				shutwdownAsked = true;
-				logger.info("Closing Network socket.");
-				listenSocket.close();
-
-				daemon.interrupt();
-				daemon = null;
-
-				logger.info("Agent successfuly shutdowned.");
-
-			} catch (IOException e) {
-				throw new AgentException("Shutdown of agent failed.");
-			}
-
-		}
-	}
-
-	/**
-	 * Print current Agent configuration
-	 */
-	public void showConfig() {
-		AgentConfig agentConfig = AgentConfig.getInstance();
-		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
-		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
-		logger.info("HOSTNAME_LIST = "+agentConfig.getHOSTNAME_LIST());
-		logger.info("JOBS_LOGS_DIR = "+agentConfig.getJOBS_LOGS_DIR());
+	public boolean isRunning() {
+		return isRunning;
 	}
 	
 	/**
-	 * return type of OS supporting the agent
-	 * @return String
-	 */
-	public String getOSName() {
-		return System.getProperty("os.name");
-	}
-	
-	/**
-	 * Loading the agent config file
+	 * Start the agent
 	 * 
-	 * @throws AgentException
 	 */
-	private void loadConfigFile() throws AgentException {
-		try {
-			AgentConfig agentConfig = AgentConfig.getInstance();
-			logger.info("Reading configuration file.");
-			agentConfig.initialize();
-			logger.info("Configuration File successfully loaded.");
-		} catch (IOException e) {
-			throw new AgentException("Failed to read configuration file ("
-					+ e.getMessage() + ").");
-		}
-	}
-
-	/**
-	 * Thread code
-	 */
-	public void run() {
+	public void startAgent() {
 		Socket socket = null;
-
+		
+		shutdownning = false;
+		
 		logger.info("JiTy Agent starting process.");
 
 		// Loading config File
@@ -183,6 +105,8 @@ public class Agent implements Runnable {
 
 		try {
 
+			isRunning = true;
+			
 			while (true) {
 				socket = listenSocket.accept();
 				try {
@@ -199,9 +123,10 @@ public class Agent implements Runnable {
 			}
 
 		} catch (IOException e) {
-			if (!shutwdownAsked) logger.warn("Problem during client connection.");
+			if (!shutdownning) logger.warn("Problem during client connection.");
 			logger.debug(e.getMessage());
 		} finally {
+			isRunning = false;
 			try {
 				if (listenSocket != null)
 					listenSocket.close();
@@ -210,6 +135,70 @@ public class Agent implements Runnable {
 				logger.debug(e.getMessage());
 			}
 			logger.info("JiTy Agent shutdowned correctly.");
+		}
+	}
+
+	/**
+	 * Stop current agent if running.
+	 * 
+	 * @throws AgentException
+	 */
+	public void stopAgent() throws AgentException {
+		if (this.isRunning) {
+			logger.info("Shutdown of agent asked.");
+			shutdownning = true;
+			
+			try {
+				logger.info("Closing Network socket.");
+
+				listenSocket.close();
+
+				isRunning = false;
+				
+				logger.info("Agent successfuly shutdowned.");
+
+			} catch (IOException e) {
+				throw new AgentException("Shutdown of agent failed.");
+			}
+		} else {
+			throw new AgentException("Agent is not running");
+		}
+
+	}
+
+	/**
+	 * Print current Agent configuration
+	 */
+	public void showConfig() {
+		AgentConfig agentConfig = AgentConfig.getInstance();
+		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
+		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
+		logger.info("HOSTNAME_LIST = "+agentConfig.getHOSTNAME_LIST());
+		logger.info("JOBS_LOGS_DIR = "+agentConfig.getJOBS_LOGS_DIR());
+	}
+	
+	/**
+	 * return type of OS supporting the agent
+	 * @return String
+	 */
+	public String getOSName() {
+		return System.getProperty("os.name");
+	}
+	
+	/**
+	 * Loading the agent config file
+	 * 
+	 * @throws AgentException
+	 */
+	private void loadConfigFile() throws AgentException {
+		try {
+			AgentConfig agentConfig = AgentConfig.getInstance();
+			logger.info("Reading configuration file.");
+			agentConfig.initialize();
+			logger.info("Configuration File successfully loaded.");
+		} catch (IOException e) {
+			throw new AgentException("Failed to read configuration file ("
+					+ e.getMessage() + ").");
 		}
 	}
 
