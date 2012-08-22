@@ -13,12 +13,26 @@ import junit.framework.TestCase;
 
 public class TestAgent extends TestCase {
 	private static final Logger logger = Logger.getLogger(TestAgent.class);
-		
+	
+	private void startAgentInThread() throws InterruptedException {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Agent.getInstance().startAgent();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		TimeUtil.waiting(3);
+	}
+	
 	public void testStartAgentDaemon() {
 		try {
 
-			Agent.getInstance().startAgentDaemon();
-			TimeUtil.waiting(5);
+			startAgentInThread();
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -34,7 +48,7 @@ public class TestAgent extends TestCase {
 	public void testStopAgentDaemon() {
 		try {
 			
-			Agent.getInstance().stopAgentDaemon();
+			Agent.getInstance().stopAgent();
 			
 		} catch (AgentException e) {
 			e.printStackTrace();
@@ -50,8 +64,7 @@ public class TestAgent extends TestCase {
 	public void testStartAgentDaemon2() {
 		try {
 
-			Agent.getInstance().startAgentDaemon();
-			TimeUtil.waiting(3);
+			startAgentInThread();
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();

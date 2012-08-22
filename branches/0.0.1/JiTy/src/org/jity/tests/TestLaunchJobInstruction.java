@@ -21,13 +21,26 @@ import junit.framework.TestCase;
 public class TestLaunchJobInstruction extends TestCase {
 	private static final Logger logger = Logger.getLogger(TestLaunchJobInstruction.class);
 
+	private void startAgentInThread() throws InterruptedException {
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Agent.getInstance().startAgent();
+					TimeUtil.waiting(2);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
+
+		TimeUtil.waiting(3);
+	}
+	
 	public void setUp() {
 		try {
 
-			Agent.getInstance().startAgentDaemon();
-			
-			logger.info("Waiting 5 sec");
-			TimeUtil.waiting(5);
+			startAgentInThread();
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -38,7 +51,7 @@ public class TestLaunchJobInstruction extends TestCase {
 	public void tearDown() {
 
 		try {
-			Agent.getInstance().stopAgentDaemon();
+			Agent.getInstance().stopAgent();
 			
 			logger.info("Waiting 5 sec");
 			TimeUtil.waiting(5);

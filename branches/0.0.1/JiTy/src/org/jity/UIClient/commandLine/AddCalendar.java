@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
+import org.jity.common.commandLine.BadArgCLException;
+import org.jity.common.commandLine.CommandLine;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
