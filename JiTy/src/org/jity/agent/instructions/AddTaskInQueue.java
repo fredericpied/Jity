@@ -61,13 +61,8 @@ public class AddTaskInQueue implements Instruction {
 			}
 			
 			// Initializing ExecTask
-			ExecTask execTask = new ExecTask();
-			
-			// Setting Job with XML flow
-			Job job = (Job)XMLUtil.XMLStringToObject(xmlInputData);
-			execTask.setJob(job);
-			execTask.setStatus(ExecTask.IN_QUEUE);
-			
+			ExecTask execTask = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
+
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_DATETIME_FORMAT);
 			String timestamp = dateFormat.format(new Date());
 			execTask.setStatusMessage("Added to queue at "+timestamp);

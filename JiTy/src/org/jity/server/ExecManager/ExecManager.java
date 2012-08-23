@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
@@ -110,7 +111,7 @@ public class ExecManager implements Runnable {
      * state.
      * @throws DatabaseException 
      */
-    private void checkJobs() throws DatabaseException {
+    private void analyzeJobsForExecute() throws DatabaseException {
 
 		String queryFind = "select job from org.jity.common.referential.Job job"
 			+ " where job.isActived = true";
@@ -131,15 +132,14 @@ public class ExecManager implements Runnable {
 // à modifier certainnement
 			try {
 				if (job.getDateConstraint().isAValidDate(execDateValue))
-					addingOnJobToExecute(job);
+					addOneJobForExecute(job);
 			} catch (DateConstraintException e) {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
 			}			
 		}
-		
     }
     
-	private void addingOnJobToExecute(Job job) {
+	private void addOneJobForExecute(Job job) {
 		
 		logger.info("Adding Job "+job.getName()+ "("+job.getDateConstraint().getPlanifRule()+") to agent "+job.getHostName());
 		
@@ -150,7 +150,7 @@ public class ExecManager implements Runnable {
 		// Construct Request
 		JityRequest request = new JityRequest();
 		request.setInstructionName("ADDTASKINQUEUE");
-		request.setXmlInputData(XMLUtil.objectToXMLString(job));
+		request.setXmlInputData(XMLUtil.objectToXMLString(execTask));
 		
 		RequestSender requestLauncher = new RequestSender();
 
@@ -164,7 +164,9 @@ public class ExecManager implements Runnable {
 
 			// If response is OK
 			if (response.isInstructionResultOK()) {
-				execTask.setStatus(ExecTask.IN_QUEUE);
+				Transaction transaction = this.databaseSession.beginTransaction();
+				this.databaseSession.save(execTask);
+				transaction.commit();
 			} else {
 				// Is response is KO
 				execTask.setStatus(ExecTask.KO);
@@ -182,7 +184,52 @@ public class ExecManager implements Runnable {
 			execTask.setStatus(ExecTask.KO);
 			execTask.setStatusMessage(e.getMessage());
 		}
+		
 	}
+	
+	
+//	public void getTasksStatus() {
+//		
+//		
+//		
+//		
+//		// Construct Request
+//		JityRequest request = new JityRequest();
+//		request.setInstructionName("GETTASKSTATUS");
+//		
+//		RequestSender requestLauncher = new RequestSender();
+//		try {
+//			requestLauncher.openConnection(job.getHostName(),
+//					ServerConfig.getInstance().getAGENT_PORT());
+//
+//			JityResponse response = requestLauncher.sendRequest(request);
+//
+//			requestLauncher.closeConnection();
+//
+//			// If response is OK
+//			if (response.isInstructionResultOK()) {
+//				// TODO save task status in DB
+//			} else {
+//				// Is response is KO
+//				execTask.setStatus(ExecTask.KO);
+//				execTask.setStatusMessage("Cannot add in queue "+response.getExceptionMessage());
+//			}
+//			
+//		} catch (UnknownHostException e) {
+//			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
+//			execTask.setEnd(new Date());
+//			execTask.setStatus(ExecTask.KO);
+//			execTask.setStatusMessage(e.getMessage());
+//		} catch (IOException e) {
+//			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
+//			execTask.setEnd(new Date());
+//			execTask.setStatus(ExecTask.KO);
+//			execTask.setStatusMessage(e.getMessage());
+//		}
+//		
+//		
+//	}
+	
 	
     /**
      * Launch jobs analyse each X seconds.
@@ -201,7 +248,7 @@ public class ExecManager implements Runnable {
         while (!shutdownAsked) {
             try {
                 logger.info("Start of job analyze.");
-                checkJobs();
+                analyzeJobsForExecute();
                 //testOneJob();
                 logger.info("End of job analyze.");
                 TimeUtil.waiting(cycle);
