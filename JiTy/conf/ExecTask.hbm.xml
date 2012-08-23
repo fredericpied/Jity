@@ -30,9 +30,9 @@
 
 <hibernate-mapping package="org.jity.common.referential">
 
-    <class name="ExecStatus" table="EXEC_STATUS">
+    <class name="ExecTask" table="EXEC_TASK">
         <id name="id" type="long">
-        	<column name="ID" not-null="true" unique="true" index="PK_EXEC_STATUS" />  
+        	<column name="ID" not-null="true" unique="true" index="PK_EXEC_TASK" />  
             <generator class="increment"/>
         </id>
         <property name="execDate" not-null="true" type="timestamp" column="DATE"/>

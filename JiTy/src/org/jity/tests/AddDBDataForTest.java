@@ -104,7 +104,7 @@ public class AddDBDataForTest {
 				Job job = new Job();
 				job.setName("JOB"+i);
 				job.setHostName("localhost");
-				job.setCommandPath("d:\\temp\test.bat");
+				job.setCommandPath("d:\\temp\\test.bat");
 				job.setIsActived(true);
 				job.setDateConstraint(dateConstraint1);
 				

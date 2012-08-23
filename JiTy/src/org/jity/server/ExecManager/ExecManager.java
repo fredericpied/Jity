@@ -21,7 +21,7 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server.planifDaemon;
+ */package org.jity.server.ExecManager;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -38,7 +38,7 @@ import org.hibernate.Session;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
-import org.jity.common.referential.ExecStatus;
+import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.util.DateUtil;
@@ -50,10 +50,10 @@ import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 
-public class PlanifDaemon implements Runnable {
-	private static final Logger logger = Logger.getLogger(PlanifDaemon.class);
+public class ExecManager implements Runnable {
+	private static final Logger logger = Logger.getLogger(ExecManager.class);
 
-	private static PlanifDaemon instance = null;
+	private static ExecManager instance = null;
 	
 	private Session databaseSession;
 	
@@ -62,15 +62,15 @@ public class PlanifDaemon implements Runnable {
 
     private boolean shutdownAsked = false;
     
-	public static PlanifDaemon getInstance() {
+	public static ExecManager getInstance() {
 		if (instance == null) {
-			instance = new PlanifDaemon();
+			instance = new ExecManager();
 		}
 		return instance;
 	}
 	
 	/**
-	 * Return true if planification engine is running
+	 * Return true if ExecManager is running
 	 * 
 	 * @return
 	 */
@@ -82,9 +82,9 @@ public class PlanifDaemon implements Runnable {
 	}
 	
     /**
-     * Start the planifDaemon in a Thread.
+     * Start the ExecManager in a Thread.
      */
-    public synchronized void startPlanifDaemon() {
+    public synchronized void startExecManager() {
         if (daemon == null) {
             daemon = new Thread(this);
             daemon.start();
@@ -92,16 +92,16 @@ public class PlanifDaemon implements Runnable {
     }
 
     /**
-     * Stop current planifDaemon if running.
+     * Stop current ExecManager if running.
      */
-    public synchronized void stopPlanifDaemon() {
+    public synchronized void stopExecManager() {
         if (daemon != null) {
-        	logger.info("Shutdown of PlanifDaemon asked.");
+        	logger.info("Shutdown of ExecManager asked.");
             shutdownAsked = true;
     		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
-			logger.info("PlanifDaemon successfuly shutdowned");
+			logger.info("ExecManager successfuly shutdowned");
         }
     }
     
@@ -131,7 +131,7 @@ public class PlanifDaemon implements Runnable {
 // à modifier certainnement
 			try {
 				if (job.getDateConstraint().isAValidDate(execDateValue))
-					launchOneJob(job);
+					addingOnJobToExecute(job);
 			} catch (DateConstraintException e) {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
 			}			
@@ -139,18 +139,17 @@ public class PlanifDaemon implements Runnable {
 		
     }
     
-	private void launchOneJob(Job job) {
+	private void addingOnJobToExecute(Job job) {
 		
-		logger.info("Launching Job "+job.getName()+ "("+job.getDateConstraint().getPlanifRule()+")");
+		logger.info("Adding Job "+job.getName()+ "("+job.getDateConstraint().getPlanifRule()+") to agent "+job.getHostName());
 		
-		ExecStatus execStatus = new ExecStatus();
-		execStatus.setJob(job);
-		execStatus.setBegin(new Date());
-		execStatus.setStatus(ExecStatus.RUNNING);
+		ExecTask execTask = new ExecTask();
+		execTask.setJob(job);
+		execTask.setStatus(ExecTask.PLANED);
 		
 		// Construct Request
 		JityRequest request = new JityRequest();
-		request.setInstructionName("LAUNCHJOB");
+		request.setInstructionName("ADDTASKINQUEUE");
 		request.setXmlInputData(XMLUtil.objectToXMLString(job));
 		
 		RequestSender requestLauncher = new RequestSender();
@@ -165,33 +164,25 @@ public class PlanifDaemon implements Runnable {
 
 			// If response is OK
 			if (response.isInstructionResultOK()) {
-				execStatus.setStatus(ExecStatus.OK);
+				execTask.setStatus(ExecTask.IN_QUEUE);
 			} else {
 				// Is response is KO
-				execStatus.setStatus(ExecStatus.KO);
+				execTask.setStatus(ExecTask.KO);
+				execTask.setStatusMessage("Cannot add in queue "+response.getExceptionMessage());
 			}
-			
-			execStatus.setEnd(new Date());
-			
-			ExecStatus returnExecStatus = (ExecStatus)XMLUtil.XMLStringToObject(response.getXmlOutputData());
-			execStatus.setStatus(returnExecStatus.getStatus());
-			execStatus.setStatusMessage(returnExecStatus.getStatusMessage());
-			execStatus.setLogFile(returnExecStatus.getLogFile());
 			
 		} catch (UnknownHostException e) {
 			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
-			execStatus.setEnd(new Date());
-			execStatus.setStatus(ExecStatus.KO);
-			execStatus.setStatusMessage(e.getMessage());
+			execTask.setEnd(new Date());
+			execTask.setStatus(ExecTask.KO);
+			execTask.setStatusMessage(e.getMessage());
 		} catch (IOException e) {
 			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
-			execStatus.setEnd(new Date());
-			execStatus.setStatus(ExecStatus.KO);
-			execStatus.setStatusMessage(e.getMessage());
+			execTask.setEnd(new Date());
+			execTask.setStatus(ExecTask.KO);
+			execTask.setStatusMessage(e.getMessage());
 		}
 	}
-
-	
 	
     /**
      * Launch jobs analyse each X seconds.
@@ -205,6 +196,8 @@ public class PlanifDaemon implements Runnable {
             logger.fatal(e.getMessage());
 		}
         
+		logger.info("Starting ExecManager");
+		
         while (!shutdownAsked) {
             try {
                 logger.info("Start of job analyze.");
@@ -213,7 +206,7 @@ public class PlanifDaemon implements Runnable {
                 logger.info("End of job analyze.");
                 TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
-            	if (!shutdownAsked) logger.warn("PlanifDaemon is stopped.");
+            	if (!shutdownAsked) logger.warn("ExecManager is stopped.");
                 logger.debug(ex.toString());
             } catch (Exception ex) {
                 logger.fatal("Error during checkJobs: " + ex.getClass().getSimpleName()+": "+ex.getMessage());

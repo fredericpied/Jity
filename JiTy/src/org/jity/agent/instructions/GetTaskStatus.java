@@ -22,27 +22,49 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.admin;
+package org.jity.agent.instructions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.jity.agent.taskManager.TaskManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.planifDaemon.PlanifDaemon;
+import org.jity.common.referential.ExecTask;
+import org.jity.common.util.XMLUtil;
 
 /**
- * Server command to shutdown the Planif Daemon
- * @author Fred
+ * 
+ * @author 09344A
  *
  */
-public class StartPlanifDaemon implements Instruction {
+public class GetTaskStatus implements Instruction {
+	private static final Logger logger = Logger.getLogger(GetTaskStatus.class);
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		PlanifDaemon.getInstance().startPlanifDaemon();
-		response.setInstructionResultOK(true);
+		try {
+			
+			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
 
+			 // Select terminate tasks in queue
+			Iterator<ExecTask> iterTask = TaskManager.getInstance().getTaskQueueIterator();
+	    	while (iterTask.hasNext()) {
+	    		ExecTask task = iterTask.next();
+	    		
+	    		if (task.getStatus() != ExecTask.IN_QUEUE) taskQueueExtract.add(task);
+	    	}
+			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(taskQueueExtract));
+	    	response.setInstructionResultOK(true);
+		
+		} catch (Exception e) {
+			response.setException(e);
+		}
+		
 		return response;
 	}
 	
-
 }

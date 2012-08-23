@@ -2,7 +2,7 @@ package org.jity.common.referential;
 
 import java.util.Date;
 
-public class ExecStatus {
+public class ExecTask {
 
 	private long id;
 	private Date execDate;
@@ -23,11 +23,12 @@ public class ExecStatus {
 
 	public static final int NOT_PLANED = 1;
 	public static final int PLANED = 2;
-	public static final int RUNNING = 3;
-	public static final int OK = 4;
-	public static final int KO = 5;
+	public static final int IN_QUEUE = 3;
+	public static final int RUNNING = 4;
+	public static final int OK = 5;
+	public static final int KO = 6;
 
-	public ExecStatus() {
+	public ExecTask() {
 
 	}
 

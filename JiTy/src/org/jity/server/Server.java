@@ -28,9 +28,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jity.agent.AgentException;
 import org.jity.common.protocol.RequestReceiver;
+import org.jity.server.ExecManager.ExecManager;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
-import org.jity.server.planifDaemon.PlanifDaemon;
 
 import java.io.*;
 import java.net.*;
@@ -175,7 +175,7 @@ public class Server {
 			try {
 				
 				logger.info("Shutdowning planification daemon.");
-				PlanifDaemon.getInstance().stopPlanifDaemon();
+				ExecManager.getInstance().stopExecManager();
 				
 				logger.info("Closing Database server.");
 				DatabaseServer.stopDatabaseServer();

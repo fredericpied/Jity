@@ -1,10 +1,7 @@
 package org.jity.tests;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.jity.UIClient.UIClientConfig;
-import org.jity.UIClient.UIClientException;
 import org.jity.agent.Agent;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
@@ -12,7 +9,6 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.PersonnalCalendarException;
 import org.jity.common.util.TimeUtil;
 import org.jity.server.Server;
-import org.jity.server.ServerException;
 import org.jity.server.database.DatabaseException;
 
 import junit.framework.TestCase;
@@ -99,8 +95,7 @@ public class TestServer extends TestCase {
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
 						
-			logger.info("Waiting 15 sec");
-			TimeUtil.waiting(15);
+			TimeUtil.waiting(30);
 		
 			assertTrue(response.isInstructionResultOK());
 						
