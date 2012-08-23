@@ -25,7 +25,9 @@
 package org.jity.agent;
 
 import org.apache.log4j.Logger;
+import org.jity.agent.taskManager.TaskManager;
 import org.jity.common.protocol.RequestReceiver;
+import org.jity.common.util.TimeUtil;
 
 import java.io.*;
 import java.net.*;
@@ -63,6 +65,7 @@ public class Agent {
 	
 	/**
 	 * Start the agent
+	 * @throws InterruptedException 
 	 * 
 	 */
 	public void startAgent() {
@@ -73,6 +76,7 @@ public class Agent {
 		logger.info("JiTy Agent starting process.");
 
 		// Loading config File
+		logger.info("Loading Agent configuration file.");
 		try {
 			this.loadConfigFile();
 		} catch (AgentException e1) {
@@ -81,7 +85,7 @@ public class Agent {
 		}
 
 		this.showConfig();
-		
+			
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
@@ -97,15 +101,36 @@ public class Agent {
 		try {
 			listenSocket = new ServerSocket(agentPort);
 			logger.info("Agent running on port " + agentPort);
-			logger.info("JiTy Agent successfully started.");
+
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			System.exit(1);
 		}
 
+
+		// Get Log files directory from Agent Config
+		if (AgentConfig.getInstance().getJOBS_LOGS_DIR().trim().length() == 0) {
+			logger.fatal("Parameters \"JOBS_LOGS_DIR\" not set for this agent");
+			System.exit(1);
+		}
+		
+		// Can't acces to log files directory
+		File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
+		if (! logDir.isDirectory() || ! logDir.exists()) {
+			logger.fatal("Unable to write job logs into \"JOBS_LOGS_DIR\" ("+logDir.getAbsolutePath()+")");
+			System.exit(1);
+		}
+
+		TaskManager.getInstance().startTaskManager();
+		try {
+			TimeUtil.waiting(2);
+		} catch (InterruptedException e1) { }
+		
 		try {
 
 			isRunning = true;
+			
+			logger.info("JiTy Agent successfully started.");
 			
 			while (true) {
 				socket = listenSocket.accept();
@@ -149,6 +174,11 @@ public class Agent {
 			shutdownning = true;
 			
 			try {
+
+				
+				logger.info("Stoping TaskManager...");
+				TaskManager.getInstance().stopTaskManager();
+				
 				logger.info("Closing Network socket.");
 
 				listenSocket.close();

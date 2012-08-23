@@ -22,23 +22,27 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.planifDaemon;
+package org.jity.server.instructions.admin;
 
-public class PlanifDaemonException extends Exception {
+import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityResponse;
+import org.jity.server.ExecManager.ExecManager;
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1034270238243994342L;
+/**
+ * Server command to shutdown the Planif Daemon
+ * @author Fred
+ *
+ */
+public class StartExecManager implements Instruction {
 
-	/**
-     * Constructs a ServerException with the specified detail message. A detail
-     * message is a String that describes this particular exception.
-     * @param msg the detail message
-     * @param nested the exception or error that caused this exception to be
-     *            thrown.
-     */
-    public PlanifDaemonException(String msg) {
-        super(msg);
-    }
+	public JityResponse launch(String xmlInputData) {
+		JityResponse response = new JityResponse();
+		
+		ExecManager.getInstance().startExecManager();
+		response.setInstructionResultOK(true);
+
+		return response;
+	}
+	
+
 }

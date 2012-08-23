@@ -56,7 +56,7 @@
 
         <mapping resource="PersonnalCalendar.hbm.xml"/>
         <mapping resource="Job.hbm.xml"/>
-        <mapping resource="ExecStatus.hbm.xml"/>
+        <mapping resource="ExecTask.hbm.xml"/>
         <mapping resource="DateConstraint.hbm.xml"/>
     </session-factory>
 
