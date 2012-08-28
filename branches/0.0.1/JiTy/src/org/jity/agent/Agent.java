@@ -123,7 +123,7 @@ public class Agent {
 
 		TaskManager.getInstance().startTaskManager();
 		try {
-			TimeUtil.waiting(2);
+			TimeUtil.waiting(1);
 		} catch (InterruptedException e1) { }
 		
 		try {
@@ -174,7 +174,6 @@ public class Agent {
 			shutdownning = true;
 			
 			try {
-
 				
 				logger.info("Stoping TaskManager...");
 				TaskManager.getInstance().stopTaskManager();

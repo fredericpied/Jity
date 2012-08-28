@@ -18,7 +18,18 @@
 		</layout>
 	</appender>
 	
-	
+	<logger name="org.hibernate">
+   		<level value="warn"/>
+	</logger>
+
+	<logger name="org.hibernate.SQL">
+    	<level value="warn"/>
+	</logger>
+
+	<logger name="org.hibernate.type">
+    	<level value="warn"/>
+	</logger>
+		
 	<root>  
 		<priority value = "INFO" />  
 		<appender-ref ref = "CONSOLE_APP" />  

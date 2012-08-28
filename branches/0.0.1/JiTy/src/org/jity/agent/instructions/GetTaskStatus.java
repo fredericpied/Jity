@@ -25,7 +25,9 @@
 package org.jity.agent.instructions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jity.agent.taskManager.TaskManager;
@@ -49,14 +51,18 @@ public class GetTaskStatus implements Instruction {
 			
 			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
 
-			 // Select terminate tasks in queue
-			Iterator<ExecTask> iterTask = TaskManager.getInstance().getTaskQueueIterator();
-	    	while (iterTask.hasNext()) {
-	    		ExecTask task = iterTask.next();
-	    		
-	    		if (task.getStatus() != ExecTask.IN_QUEUE) taskQueueExtract.add(task);
+		     synchronized(TaskManager.getInstance().getTaskQueue()) {
+			 
+				 // Select terminate tasks in queue
+				Iterator<ExecTask> iterTask = TaskManager.getInstance().getTaskQueueIterator();
+		    	while (iterTask.hasNext()) {
+		    		ExecTask task = iterTask.next();
+		    		
+		    		if (task.getStatus() != ExecTask.IN_QUEUE)
+		    			taskQueueExtract.add(task);
+		    	}
 	    	}
-			
+
 			response.setXmlOutputData(XMLUtil.objectToXMLString(taskQueueExtract));
 	    	response.setInstructionResultOK(true);
 		

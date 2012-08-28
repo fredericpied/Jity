@@ -264,7 +264,6 @@ public abstract class YearCalc {
 		int numeroAnnee = getYearNumber(date);
 	
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-		logger.debug("Date to test: "+dateFormat.format(calToTest.getTime()));
 		
 		// For Calendar, month of year start à 0 (January)
 		
@@ -272,56 +271,56 @@ public abstract class YearCalc {
 		Calendar calDate1Janvier = new GregorianCalendar();
 		calDate1Janvier.clear(); // suppress hours, minutes, seconds ...
 		calDate1Janvier.set(numeroAnnee, 0, 1);
-		logger.debug("Jour de l'an: "+dateFormat.format(calDate1Janvier.getTime()));
+		logger.trace("Jour de l'an: "+dateFormat.format(calDate1Janvier.getTime()));
 		if (calToTest.equals(calDate1Janvier)) return true;
 
 		// It's 01/05 (Fète du travail) ?		
 		Calendar calDate1Mai = new GregorianCalendar();
 		calDate1Mai.clear();
 		calDate1Mai.set(numeroAnnee, 4, 1, 0, 0, 0);
-		logger.debug("Fete du travail:"+dateFormat.format(calDate1Mai.getTime()));
+		logger.trace("Fete du travail:"+dateFormat.format(calDate1Mai.getTime()));
 		if (calToTest.equals(calDate1Mai)) return true;
 		
 		// It's 01/05 (Victoire 1945) ?	
 		Calendar calDate8Mai = new GregorianCalendar();
 		calDate8Mai.clear();
 		calDate8Mai.set(numeroAnnee, 4, 8, 0, 0, 0);
-		logger.debug("Victoire 1945:"+dateFormat.format(calDate8Mai.getTime()));
+		logger.trace("Victoire 1945:"+dateFormat.format(calDate8Mai.getTime()));
 		if (calToTest.equals(calDate8Mai)) return true;
 		
 		// It's 14/07 (Fête Nationnale) ?
 		Calendar calDate14Juillet = new GregorianCalendar();
 		calDate14Juillet.clear();
 		calDate14Juillet.set(numeroAnnee, 6, 14);
-		logger.debug("14 juillet: "+dateFormat.format(calDate14Juillet.getTime()));
+		logger.trace("14 juillet: "+dateFormat.format(calDate14Juillet.getTime()));
 		if (calToTest.equals(calDate14Juillet)) return true;
 		
 		// It's 15/08 (Assomption) ?
 		Calendar calDate15Aout = new GregorianCalendar();
 		calDate15Aout.clear();
 		calDate15Aout.set(numeroAnnee, 7, 15);
-		logger.debug("15 aout: "+dateFormat.format(calDate15Aout.getTime()));
+		logger.trace("15 aout: "+dateFormat.format(calDate15Aout.getTime()));
 		if (calToTest.equals(calDate15Aout)) return true;
 		
 		// It's 01/11 (Toussaint) ?
 		Calendar calDate1Novembre = new GregorianCalendar();
 		calDate1Novembre.clear();
 		calDate1Novembre.set(numeroAnnee, 10, 1);
-		logger.debug("Toussaint: "+dateFormat.format(calDate1Novembre.getTime()));
+		logger.trace("Toussaint: "+dateFormat.format(calDate1Novembre.getTime()));
 		if (calToTest.equals(calDate1Novembre)) return true;
 		
 		// It's 11/11 (Armistice 1918) ?
 		Calendar calDate11Novembre = new GregorianCalendar();
 		calDate11Novembre.clear();
 		calDate11Novembre.set(numeroAnnee, 10, 11);
-		logger.debug("Armistice: "+dateFormat.format(calDate11Novembre.getTime()));
+		logger.trace("Armistice: "+dateFormat.format(calDate11Novembre.getTime()));
 		if (calToTest.equals(calDate11Novembre)) return true;
 		
 		// It's 25/12 (Noel) ?
 		Calendar calDate25Decembre = new GregorianCalendar();
 		calDate25Decembre.clear();
 		calDate25Decembre.set(numeroAnnee, 11, 25);
-		logger.debug("Noel: "+dateFormat.format(calDate25Decembre.getTime()));
+		logger.trace("Noel: "+dateFormat.format(calDate25Decembre.getTime()));
 		if (calToTest.equals(calDate25Decembre)) return true;
 	
 		// It's Lundi de paques ?
@@ -329,7 +328,7 @@ public abstract class YearCalc {
 		Calendar calDateLundiPaques = new GregorianCalendar();
 		calDateLundiPaques.setTime(getEasterEggsSyndayDate(numeroAnnee));
 		calDateLundiPaques.add(Calendar.DAY_OF_MONTH, 1);
-		logger.debug("Lundi de Paques: "+dateFormat.format(calDateLundiPaques.getTime()));
+		logger.trace("Lundi de Paques: "+dateFormat.format(calDateLundiPaques.getTime()));
 		if (calToTest.equals(calDateLundiPaques)) return true;
 
 		// It's Ascension ?
@@ -337,7 +336,7 @@ public abstract class YearCalc {
 		Calendar calDateJeudiAscension = new GregorianCalendar();
 		calDateJeudiAscension.setTime(getEasterEggsSyndayDate(numeroAnnee));
 		calDateJeudiAscension.add(Calendar.DAY_OF_MONTH, 39);
-		logger.debug("Jeudi de l'Ascension: "+dateFormat.format(calDateJeudiAscension.getTime()));
+		logger.trace("Jeudi de l'Ascension: "+dateFormat.format(calDateJeudiAscension.getTime()));
 		if (calToTest.equals(calDateJeudiAscension)) return true;
 		
 //		// It's Lundi de Pentecote
@@ -345,7 +344,7 @@ public abstract class YearCalc {
 //		Calendar calDateLundiPentecote = new GregorianCalendar();
 //		calDateLundiPentecote.setTime(getEasterEggsSyndayDate(numeroAnnee));
 //		calDateLundiPentecote.add(Calendar.DAY_OF_MONTH, 50);
-//		logger.debug("Lundi de Pentecote: "+dateFormat.format(calDateLundiPentecote.getTime()));
+//		logger.trace("Lundi de Pentecote: "+dateFormat.format(calDateLundiPentecote.getTime()));
 //		if (calToTest.equals(calDateLundiPentecote)) return true;
 				
 		return false;

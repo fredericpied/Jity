@@ -29,7 +29,7 @@ import org.jity.agent.instructions.GetTaskStatus;
 import org.jity.agent.instructions.ShutdownAgent;
 import org.jity.agent.instructions.PingAgent;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.instructions.admin.ShutdownPlanifDaemon;
+import org.jity.server.instructions.admin.ShutdownExecManager;
 import org.jity.server.instructions.admin.ShutdownServer;
 import org.jity.server.instructions.admin.StartExecManager;
 import org.jity.server.instructions.referential.AddCalendar;
@@ -66,9 +66,9 @@ public abstract class Protocol {
 		// Server requests
 		if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(request.getXmlInputData());
-		} else if (request.getInstructionName().equals("SHUTDOWNPLANIFDAEMON")) {
-			response = new ShutdownPlanifDaemon().launch(request.getXmlInputData());
-		} else if (request.getInstructionName().equals("STARTPLANIFDAEMON")) {
+		} else if (request.getInstructionName().equals("SHUTDOWNEXECMANAGER")) {
+			response = new ShutdownExecManager().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("STARTEXECMANAGER")) {
 			response = new StartExecManager().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
 			response = new AddCalendar().launch(request.getXmlInputData());

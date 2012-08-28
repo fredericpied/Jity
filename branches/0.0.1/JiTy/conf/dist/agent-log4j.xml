@@ -17,8 +17,7 @@
 			<param name="ConversionPattern" value="%d{yyyyMMdd HH:mm:ss} %-5p %c{1}: %m%n"/>
 		</layout>
 	</appender>
-	
-	
+		
 	<root>  
 		<priority value = "INFO" />  
 		<appender-ref ref = "CONSOLE_APP" />  

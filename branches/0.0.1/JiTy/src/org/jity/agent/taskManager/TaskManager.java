@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
@@ -31,12 +33,17 @@ public class TaskManager implements Runnable {
 
     private boolean shutdownAsked = false;
     
-    private ArrayList<ExecTask> taskQueue = new ArrayList<ExecTask>();
+    //private ArrayList<ExecTask> taskQueue = new ArrayList<ExecTask>();
+    private List<ExecTask> taskQueue = Collections.synchronizedList(new ArrayList());
     
     private int maxNumTaskInQueue = 50;
     
     private int maxNumTaskExecution = 10;
     private int currentNumTaskExection = 0;
+    
+    public List<ExecTask> getTaskQueue() {
+    	return this.taskQueue;
+    }
     
     /**
      * Return an Iterator on taskQueue
@@ -110,69 +117,75 @@ public class TaskManager implements Runnable {
      */
     public void addTaskInQueue(ExecTask execTask) {
     	logger.debug("Adding job "+execTask.getJob().getName()+" to execution Queue");
-    	this.taskQueue.add(execTask);
+
+    	synchronized(this.taskQueue) {
+    		this.taskQueue.add(execTask);
+    	}
     }
     
     public void taskQueueAnalyze() throws AgentException, IOException {
-    	
-    	Iterator<ExecTask> iterTask = this.taskQueue.iterator();
-    	while (iterTask.hasNext()) {
-    		ExecTask task = iterTask.next();
-    		
-    		if (task.getStatus() != ExecTask.IN_QUEUE) continue;
-    		
-    		Job job = task.getJob();
-    		
-			// Initializing exitStatus
-			int exitStatus = -1;
-		
-			// Initializing log file name whith timestamp
-			File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
-			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
-			String timestamp = dateFormat.format(new Date());
-			File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
-			
-			// Create a specific log4j logger for this execution
-			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
-			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
-			Logger jobLogger = Logger.getLogger(job.getName());
-			jobLogger.setAdditivity(false);
-			jobLogger.addAppender(jobLoggerAppender);
-			
-			CommandExecutor cmdExecutor = new CommandExecutor();
 
-			// initializing output loggers
-			cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
-			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
-			
-			//TODO cmdExecutor.setWorkingDirectory(workingDirectory);
-			
-			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
-			
-			// Running command
-			try {
-				exitStatus = cmdExecutor.runCommand(job.getCommandPath());
-				
-				logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
+    	synchronized(this.taskQueue) {
 
-				// Setting execStatus
-				if (exitStatus == 0) task.setStatus(ExecTask.OK);
-				else task.setStatus(ExecTask.KO);
-				task.setLogFile(jobLogFile.getAbsolutePath());
-			
-			} catch (Exception e) {
-				logger.info("Exception "+e.getClass().getName()+
-						" while executing "+job.getName()+"("+e.getMessage()+")");
+    		Iterator<ExecTask> iterTask = this.taskQueue.iterator();
+    		while (iterTask.hasNext()) {
+    			ExecTask task = iterTask.next();
 
-				// Setting execStatus
-				task.setStatus(ExecTask.KO);
-				task.setStatusMessage("Exception: "+e.getMessage());
-				task.setLogFile(jobLogFile.getAbsolutePath());
-				
-			}
-    		
-    	}
-    	
+    			if (task.getStatus() != ExecTask.IN_QUEUE) continue;
+
+    			Job job = task.getJob();
+
+    			// Initializing exitStatus
+    			int exitStatus = -1;
+
+    			// Initializing log file name whith timestamp
+    			File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
+    			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
+    			String timestamp = dateFormat.format(new Date());
+    			File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
+
+    			// Create a specific log4j logger for this execution
+    			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
+    			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
+    			Logger jobLogger = Logger.getLogger(job.getName());
+    			jobLogger.setAdditivity(false);
+    			jobLogger.addAppender(jobLoggerAppender);
+
+    			CommandExecutor cmdExecutor = new CommandExecutor();
+
+    			// initializing output loggers
+    			cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
+    			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
+
+    			//TODO cmdExecutor.setWorkingDirectory(workingDirectory);
+
+    			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
+
+    			// Running command
+    			try {
+    				exitStatus = cmdExecutor.runCommand(job.getCommandPath());
+
+    				logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
+
+    				// Setting execStatus
+    				if (exitStatus == 0) task.setStatus(ExecTask.OK);
+    				else task.setStatus(ExecTask.KO);
+    				task.setLogFile(jobLogFile.getAbsolutePath());
+
+    			} catch (Exception e) {
+    				logger.info("Exception "+e.getClass().getName()+
+    						" while executing "+job.getName()+"("+e.getMessage()+")");
+
+    				// Setting execStatus
+    				task.setStatus(ExecTask.KO);
+    				task.setStatusMessage("Exception: "+e.getMessage());
+    				task.setLogFile(jobLogFile.getAbsolutePath());
+
+    			}
+
+    		}
+    	} //     	  synchronized(taskQueueSynchro) {
+
     }
     
     /**
@@ -190,7 +203,7 @@ public class TaskManager implements Runnable {
             	TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked) logger.warn("TaskManager is stopped.");
-                logger.debug(ex.toString());
+            	if (!shutdownAsked) logger.debug(ex.toString());
             } catch (Exception ex) {
                 logger.fatal("Error during queue analyse: " + ex.getClass().getSimpleName()+": "+ex.getMessage());
                 ex.printStackTrace();

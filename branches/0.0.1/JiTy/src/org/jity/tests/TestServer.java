@@ -79,7 +79,7 @@ public class TestServer extends TestCase {
 		try {
 			
 			JityRequest request = new JityRequest();
-			request.setInstructionName("STARTPLANIFDAEMON");
+			request.setInstructionName("STARTEXECMANAGER");
 			
 			// Load config file
 			UIClientConfig clientConfig = UIClientConfig.getInstance();
@@ -95,10 +95,12 @@ public class TestServer extends TestCase {
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
 						
-			TimeUtil.waiting(30);
+
 		
 			assertTrue(response.isInstructionResultOK());
-						
+
+			TimeUtil.waiting(30);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -109,7 +111,7 @@ public class TestServer extends TestCase {
 		try {
 			
 			JityRequest request = new JityRequest();
-			request.setInstructionName("SHUTDOWNPLANIFDAEMON");
+			request.setInstructionName("SHUTDOWNEXECMANAGER");
 			
 			// Load config file
 			UIClientConfig clientConfig = UIClientConfig.getInstance();
@@ -124,8 +126,7 @@ public class TestServer extends TestCase {
 			
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
-						
-			logger.info("Waiting 5 sec");
+
 			TimeUtil.waiting(5);
 		
 			assertTrue(response.isInstructionResultOK());
@@ -156,8 +157,7 @@ public class TestServer extends TestCase {
 			
 			if (!response.isInstructionResultOK())
 				throw new Exception(response.getExceptionMessage());
-						
-			logger.info("Waiting 5 sec");
+			
 			TimeUtil.waiting(5);
 		
 			assertTrue(response.isInstructionResultOK());

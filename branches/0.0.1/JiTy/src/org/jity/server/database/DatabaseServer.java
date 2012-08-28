@@ -3,7 +3,6 @@ package org.jity.server.database;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
-import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -11,31 +10,55 @@ import org.hibernate.cfg.Configuration;
 public class DatabaseServer {
 	private static final Logger logger = Logger.getLogger(DatabaseServer.class);
 	
+	private static DatabaseServer instance = null;
+	
 	private static SessionFactory sessionFactory;
 	
-	private static Server databaseServer = null;;
+	private static org.h2.tools.Server H2DBServer = null;;
 	
-	public static void startDatabaseServer() throws DatabaseException {
+	public static DatabaseServer getInstance() {
+		if (instance == null) {
+			instance = new DatabaseServer();
+		}
+		return instance;
+	}
+	
+	/**
+	 * Start embeded H2 Database server
+	 * @throws DatabaseException
+	 */
+	public void startDatabaseServer() throws DatabaseException {
 		// start the TCP Server
 		try {
-			databaseServer = org.h2.tools.Server.createTcpServer().start();
+			H2DBServer = org.h2.tools.Server.createTcpServer().start();
+			logger.info(H2DBServer.getStatus());
 		} catch (SQLException e) {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
 	
-	public static void stopDatabaseServer() {
-
-		terminateSessionFactory();
+	/**
+	 * Stop H2 Database server
+	 */
+	public void stopDatabaseServer() {
+		
+		// stop sessionFactory
+		if (sessionFactory != null) sessionFactory.close();
+		sessionFactory = null;
 		
 		// stop the TCP Server
-		if (databaseServer != null) databaseServer.stop();
+		if (H2DBServer != null) H2DBServer.stop();
 		
 	}
 	
-	public static Session getSession() throws DatabaseException {
+	/**
+	 * Open and return a new H2 Database session
+	 * @return Session
+	 * @throws DatabaseException
+	 */
+	public Session getSession() throws DatabaseException {
 		
-		if (databaseServer == null) {
+		if (H2DBServer == null) {
 			throw new DatabaseException("Database server is not running.");
 		}
 		
@@ -51,8 +74,4 @@ public class DatabaseServer {
 		}
 	}
 	
-	private static void terminateSessionFactory() {
-		if (sessionFactory != null) sessionFactory.close();
-		sessionFactory = null;
-	}
 }

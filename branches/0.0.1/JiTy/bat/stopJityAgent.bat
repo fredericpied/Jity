@@ -7,4 +7,4 @@ cd ..
 
 java -jar jityAgent.jar -stop
 
-pause
+@if errorlevel 1 pause

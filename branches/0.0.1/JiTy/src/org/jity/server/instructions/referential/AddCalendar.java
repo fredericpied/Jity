@@ -47,7 +47,7 @@ public class AddCalendar implements Instruction {
 
 			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
 
-			Session session = DatabaseServer.getSession();
+			Session session = DatabaseServer.getInstance().getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);

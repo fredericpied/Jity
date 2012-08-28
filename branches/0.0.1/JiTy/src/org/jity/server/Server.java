@@ -91,18 +91,18 @@ public class Server {
 
 		try {
 			
-			DatabaseServer.startDatabaseServer();
+			DatabaseServer.getInstance().startDatabaseServer();
 			
 			// Init database connection
 			logger.info("Init of DB connection...");
-			Session sess = DatabaseServer.getSession();
+			Session sess = DatabaseServer.getInstance().getSession();
 			sess.close();
 			logger.info("Connection to database: OK");
 
 		} catch (DatabaseException e) {
 			logger.fatal(e.getMessage());
 
-			DatabaseServer.stopDatabaseServer();
+			DatabaseServer.getInstance().stopDatabaseServer();
 			
 			System.exit(1);
 		}
@@ -126,7 +126,7 @@ public class Server {
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			
-			DatabaseServer.stopDatabaseServer();
+			DatabaseServer.getInstance().stopDatabaseServer();
 			
 			System.exit(1);
 		}
@@ -178,7 +178,7 @@ public class Server {
 				ExecManager.getInstance().stopExecManager();
 				
 				logger.info("Closing Database server.");
-				DatabaseServer.stopDatabaseServer();
+				DatabaseServer.getInstance().stopDatabaseServer();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();

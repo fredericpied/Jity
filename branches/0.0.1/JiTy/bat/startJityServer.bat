@@ -7,4 +7,4 @@ cd ..
 
 java -jar jityServer.jar -start
 
-pause
+@if errorlevel 1 pause

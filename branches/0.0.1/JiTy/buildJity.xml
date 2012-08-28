@@ -106,7 +106,8 @@
 		<mkdir dir="${dist.server.dir}/lib" />
 		<mkdir dir="${dist.server.dir}/conf" />
 		<mkdir dir="${dist.server.dir}/bin" />
-
+		<mkdir dir="${dist.server.dir}/db" />
+			
 		<manifestclasspath property="classpath.server" jarfile="jityServer.jar">
 			<classpath refid="jity.classpath" />
 		</manifestclasspath>

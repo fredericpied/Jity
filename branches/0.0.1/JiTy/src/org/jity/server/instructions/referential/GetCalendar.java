@@ -51,7 +51,7 @@ public class GetCalendar implements Instruction {
 			String queryFind = "select cal from org.jity.referential.PersonnalCalendar cal"
 	                + " where cal.id = " + id;
 
-			Session session = DatabaseServer.getSession();
+			Session session = DatabaseServer.getInstance().getSession();
 
 			List list = session.createQuery(queryFind).list();
 	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
