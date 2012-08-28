@@ -27,7 +27,10 @@ package org.jity.agent.instructions;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
@@ -35,6 +38,7 @@ import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
 import org.jity.agent.taskManager.TaskManager;
 import org.jity.common.protocol.Instruction;
+import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
@@ -63,16 +67,18 @@ public class AddTaskInQueue implements Instruction {
 			// Initializing ExecTask
 			ExecTask execTask = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
 
+			TaskManager.getInstance().addTaskInQueue(execTask);
+		    
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_DATETIME_FORMAT);
 			String timestamp = dateFormat.format(new Date());
 			execTask.setStatusMessage("Added to queue at "+timestamp);
-			
-			TaskManager.getInstance().addTaskInQueue(execTask);
+			execTask.setStatus(ExecTask.IN_QUEUE);
 			
 			response.setInstructionResultOK(true);
 			response.setXmlOutputData(XMLUtil.objectToXMLString(execTask));
 		
 		} catch (Exception e) {
+			logger.warn(e.getMessage());
 			response.setException(e);
 		}
 		

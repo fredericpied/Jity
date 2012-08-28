@@ -35,7 +35,7 @@
  <!--       <property name="connection.url">jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE</property> -->
 <!-- 		<property name="connection.url">jdbc:h2:db/jitydb</property>  -->
 		
-		<property name="connection.url">jdbc:h2:tcp://localhost/~/jitydb</property>
+		<property name="connection.url">jdbc:h2:tcp://localhost/./db/jitydb</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"/>
 

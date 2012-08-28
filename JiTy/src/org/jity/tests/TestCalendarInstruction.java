@@ -78,7 +78,7 @@ public class TestCalendarInstruction extends TestCase {
 			calendar.setYear(2012);
 			calendar.initializeWithAllDaysOpen();
 
-			Session session = DatabaseServer.getSession();
+			Session session = DatabaseServer.getInstance().getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);
@@ -86,7 +86,7 @@ public class TestCalendarInstruction extends TestCase {
 			transaction.commit();
 			session.close();
 			
-			DatabaseServer.stopDatabaseServer();
+			//DatabaseServer.getInstance().stopDatabaseServer();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -83,7 +83,7 @@ public class RequestReceiver extends Thread {
             	xmlInputData = networkReader.readLine();
            		
             	try {
-            		logger.debug("Data received: " + xmlInputData);
+            		logger.trace("Request received: " + xmlInputData);
 
             		// Identifing server IP
             		String serverIP = socket.getInetAddress().getHostAddress();
@@ -110,7 +110,7 @@ public class RequestReceiver extends Thread {
                 	networkWriter.println(xmlOutputData);
                     networkWriter.flush();
 
-                    logger.debug("Data send: " + xmlOutputData);
+                    logger.trace("Response send: " + xmlOutputData);
 
             	 } catch (ProtocolException ex) {
                      logger.warn("Bad input data: " + xmlInputData);

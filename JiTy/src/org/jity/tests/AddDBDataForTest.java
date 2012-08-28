@@ -22,7 +22,7 @@ public class AddDBDataForTest {
 
 //		try {
 
-			Session session = DatabaseServer.getSession();
+			Session session = DatabaseServer.getInstance().getSession();
 						
 			logger.info("Deleting Job, DateConstraint and PersonnalCalendar in DB...");
 			
@@ -112,6 +112,26 @@ public class AddDBDataForTest {
 				session.save(job);
 				transaction.commit();
 			}
+			
+			// adding one job only execute
+			DateConstraint dateConstraint2 = new DateConstraint();
+			dateConstraint2.setCalendar(tabPersonnalCalendar[getRandomInt(0,2)]);
+			dateConstraint2.setPlanifRule("");
+ 						
+			transaction = session.beginTransaction();
+			session.save(dateConstraint2);
+			transaction.commit();
+
+			Job job = new Job();
+			job.setName("JOB_ALL_DAYS");
+			job.setHostName("localhost");
+			job.setCommandPath("d:\\temp\\test.bat");
+			job.setIsActived(true);
+			job.setDateConstraint(dateConstraint2);
+			
+			transaction = session.beginTransaction();
+			session.save(job);
+			transaction.commit();
 			
 			session.close();
 			logger.info("Finish");

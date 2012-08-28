@@ -50,7 +50,7 @@ public class DeleteCalendar implements Instruction {
 
 			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
 
-			Session session = DatabaseServer.getSession();
+			Session session = DatabaseServer.getInstance().getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.delete(calendar);

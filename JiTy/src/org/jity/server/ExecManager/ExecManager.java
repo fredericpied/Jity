@@ -25,6 +25,7 @@
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.common.protocol.JityRequest;
@@ -57,11 +59,35 @@ public class ExecManager implements Runnable {
 	private static ExecManager instance = null;
 	
 	private Session databaseSession;
-	
-	
+		
     private Thread daemon = null;
 
     private boolean shutdownAsked = false;
+
+    private Date exploitDate;
+    
+    public Date getExploitDate() {
+    	if (this.exploitDate == null) this.exploitDate = this.getCurrentDate();
+    	return this.exploitDate;
+    }
+    
+    /**
+     * Return Date initilaze whith current day Date (whithout hour, minutes, seconds ans milliseconds)
+     * @return Date
+     */
+    private static Date getCurrentDate() {
+
+    	Calendar cal = new GregorianCalendar();
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+    }
+    
+    
+    
     
 	public static ExecManager getInstance() {
 		if (instance == null) {
@@ -116,22 +142,32 @@ public class ExecManager implements Runnable {
 		String queryFind = "select job from org.jity.common.referential.Job job"
 			+ " where job.isActived = true";
 
-		List jobList = this.databaseSession.createQuery(queryFind).list();
+		List<Job> jobList = this.databaseSession.createQuery(queryFind).list();
 		
-		logger.info("Found "+jobList.size()+" activated jobs in database");
+		logger.debug("Found "+jobList.size()+" activated jobs in database");
 		
-		Calendar cal = new GregorianCalendar();
-		Date execDateValue = cal.getTime();
-		
-		Iterator iterJobList = jobList.iterator();
+		Iterator<Job> iterJobList = jobList.iterator();
 		while (iterJobList.hasNext()) {
 			Job job = (Job) iterJobList.next();
-//TODO ne pas lancer un job qui est déja en cours d'exécution
-// il faudra affiner la requete en ajoutant un execStatus != RUNNING
-// Mais l'execstatus n'est pas mis à jour avant le lancement de l'exécution
-// à modifier certainnement
+//
+//			String SQLQueryFindExecTask = "SELECT E.ID FROM EXEC_TASK E, JOB J" +
+//					" WHERE E.JOB_ID = J.ID"
+//					+" AND E.EXEC_DATE = TO_DATE("+this.getExploitDate();
+//			
+//			
+//			SQLQuery s = this.databaseSession.createSQLQuery(SQLQueryFindExecTask)
+//				.addEntity("execTask",ExecTask.class)
+//				.addJoin("execTask","job");
+//			
+//			Iterator<ExecTask> iterExecTaskList = execTaskList.iterator();
+//			while (iterExecTaskList.hasNext()) {
+//				ExecTask e = (ExecTask)iterExecTaskList.next();
+//				logger.debug(e.getJob().getName()+" "+e.getExecDate());
+//			}
+//			if (execTaskList.size() > 0) continue; // If exectask, exist
+						
 			try {
-				if (job.getDateConstraint().isAValidDate(execDateValue))
+				if (job.getDateConstraint().isAValidDate(this.getExploitDate()))
 					addOneJobForExecute(job);
 			} catch (DateConstraintException e) {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
@@ -141,11 +177,15 @@ public class ExecManager implements Runnable {
     
 	private void addOneJobForExecute(Job job) {
 		
-		logger.info("Adding Job "+job.getName()+ "("+job.getDateConstraint().getPlanifRule()+") to agent "+job.getHostName());
-		
 		ExecTask execTask = new ExecTask();
 		execTask.setJob(job);
+		execTask.setExecDate(getCurrentDate());
 		execTask.setStatus(ExecTask.PLANED);
+		
+		// Saving ExecTask state
+		Transaction transaction = this.databaseSession.beginTransaction();
+		this.databaseSession.save(execTask);
+		transaction.commit();
 		
 		// Construct Request
 		JityRequest request = new JityRequest();
@@ -162,73 +202,117 @@ public class ExecManager implements Runnable {
 
 			requestLauncher.closeConnection();
 
-			// If response is OK
 			if (response.isInstructionResultOK()) {
-				Transaction transaction = this.databaseSession.beginTransaction();
-				this.databaseSession.save(execTask);
-				transaction.commit();
+				ExecTask receivedExecTask = (ExecTask)XMLUtil.XMLStringToObject(response.getXmlOutputData());
+				execTask.setStatusMessage(receivedExecTask.getStatusMessage());
+				execTask.setStatus(receivedExecTask.getStatus());
 			} else {
-				// Is response is KO
+				// If response is KO
+				execTask.setBegin(new Date());
+				execTask.setEnd(new Date());
 				execTask.setStatus(ExecTask.KO);
 				execTask.setStatusMessage("Cannot add in queue "+response.getExceptionMessage());
+				logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +response.getExceptionMessage());
 			}
 			
 		} catch (UnknownHostException e) {
 			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
+			execTask.setBegin(new Date());
 			execTask.setEnd(new Date());
 			execTask.setStatus(ExecTask.KO);
-			execTask.setStatusMessage(e.getMessage());
+			execTask.setStatusMessage(e.getClass().getName()+": "+e.getMessage());
 		} catch (IOException e) {
 			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
 			execTask.setEnd(new Date());
 			execTask.setStatus(ExecTask.KO);
-			execTask.setStatusMessage(e.getMessage());
+			execTask.setStatusMessage(e.getClass().getName()+": "+e.getMessage());
 		}
+
+		logger.debug("Exec task "+execTask.getId()+" save to db");
+		
+		// Saving ExecTask state
+		transaction = this.databaseSession.beginTransaction();
+		this.databaseSession.save(execTask);
+		transaction.commit();
 		
 	}
 	
-	
-//	public void getTasksStatus() {
-//		
-//		
-//		
-//		
-//		// Construct Request
-//		JityRequest request = new JityRequest();
-//		request.setInstructionName("GETTASKSTATUS");
-//		
-//		RequestSender requestLauncher = new RequestSender();
-//		try {
-//			requestLauncher.openConnection(job.getHostName(),
-//					ServerConfig.getInstance().getAGENT_PORT());
-//
-//			JityResponse response = requestLauncher.sendRequest(request);
-//
-//			requestLauncher.closeConnection();
-//
-//			// If response is OK
-//			if (response.isInstructionResultOK()) {
-//				// TODO save task status in DB
-//			} else {
-//				// Is response is KO
-//				execTask.setStatus(ExecTask.KO);
-//				execTask.setStatusMessage("Cannot add in queue "+response.getExceptionMessage());
-//			}
-//			
-//		} catch (UnknownHostException e) {
-//			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
-//			execTask.setEnd(new Date());
-//			execTask.setStatus(ExecTask.KO);
-//			execTask.setStatusMessage(e.getMessage());
-//		} catch (IOException e) {
-//			logger.warn("Job "+job.getName()+" on "+job.getHostName()+": " +e.getMessage());
-//			execTask.setEnd(new Date());
-//			execTask.setStatus(ExecTask.KO);
-//			execTask.setStatusMessage(e.getMessage());
-//		}
-//		
-//		
-//	}
+	/**
+	 * Update task status in DB
+	 */
+	public void updateTasksStatus() {
+				
+		ArrayList<String> hostnameList = new ArrayList<String>();
+
+		// Finding ExecTask whith status IN_QUEUE
+		String queryFind = "select execTask from org.jity.common.referential.ExecTask execTask"
+			+ " where execTask.status = "+ExecTask.IN_QUEUE;
+
+		List execTaskList = this.databaseSession.createQuery(queryFind).list();
+		
+		logger.debug("Found "+execTaskList.size()+" in_queue tasks in db");
+		
+		// Create hostnameList
+		Iterator iterExecTaskList = execTaskList.iterator();
+		while (iterExecTaskList.hasNext()) {
+			ExecTask execTask = (ExecTask) iterExecTaskList.next();
+			String hostname = execTask.getJob().getHostName();
+			
+			if (! hostnameList.contains(hostname)) hostnameList.add(hostname);
+		}
+		
+		logger.debug("Found "+hostnameList.size()+" hostnames to pool");
+		
+		// For each hostname, getTasksStatus
+		Iterator<String> iterHostnameList = hostnameList.iterator();
+		while (iterHostnameList.hasNext()) {
+			String hostname = iterHostnameList.next();
+			
+			// Construct Request
+			JityRequest request = new JityRequest();
+			request.setInstructionName("GETTASKSTATUS");
+			
+			logger.debug("Pooling "+hostname+" agent");
+			
+			RequestSender requestLauncher = new RequestSender();
+			try {
+				requestLauncher.openConnection(hostname,
+						ServerConfig.getInstance().getAGENT_PORT());
+
+				JityResponse response = requestLauncher.sendRequest(request);
+
+				requestLauncher.closeConnection();
+				
+				// If response is OK
+				if (response.isInstructionResultOK()) {
+
+					ArrayList<ExecTask> taskQueueExtract =
+						(ArrayList<ExecTask>)XMLUtil.XMLStringToObject(response.getXmlOutputData());
+					Iterator<ExecTask> iterTaskQueueExtract = taskQueueExtract.iterator();
+					while (iterHostnameList.hasNext()) {
+						ExecTask receviedExecTask = (ExecTask) iterExecTaskList.next();
+						
+						// Saving ExecTask state
+						Transaction transaction = this.databaseSession.beginTransaction();
+						this.databaseSession.save(receviedExecTask);
+						transaction.commit();
+						
+						logger.debug("Exec task "+receviedExecTask.getId()+" updated in db");
+					}
+					
+				} else {
+					logger.warn("Can't get tasks status for agent "+hostname);
+				}
+				
+			} catch (UnknownHostException e) {
+				logger.warn("Can't get tasks status for agent "+hostname);
+			} catch (IOException e) {
+				logger.warn("Can't get tasks status for agent "+hostname);
+			}
+		
+		}
+		
+	}
 	
 	
     /**
@@ -238,7 +322,7 @@ public class ExecManager implements Runnable {
         int cycle = ServerConfig.getInstance().getSERVER_POOLING_CYCLE();
         
         try {
-			this.databaseSession = DatabaseServer.getSession();
+			this.databaseSession = DatabaseServer.getInstance().getSession();
 		} catch (DatabaseException e) {
             logger.fatal(e.getMessage());
 		}
@@ -247,14 +331,16 @@ public class ExecManager implements Runnable {
 		
         while (!shutdownAsked) {
             try {
-                logger.info("Start of job analyze.");
                 analyzeJobsForExecute();
-                //testOneJob();
-                logger.info("End of job analyze.");
-                TimeUtil.waiting(cycle);
+                TimeUtil.waiting(cycle/2);
+                updateTasksStatus();
+                TimeUtil.waiting(cycle/2);
             } catch (InterruptedException ex) {
-            	if (!shutdownAsked) logger.warn("ExecManager is stopped.");
-                logger.debug(ex.toString());
+            	if (!shutdownAsked)  {
+            		logger.warn("ExecManager is stopped.");
+            		logger.debug(ex.toString());
+            	}
+                
             } catch (Exception ex) {
                 logger.fatal("Error during checkJobs: " + ex.getClass().getSimpleName()+": "+ex.getMessage());
                 ex.printStackTrace();

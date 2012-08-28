@@ -33,7 +33,7 @@ import org.jity.server.ExecManager.ExecManager;
  * @author Fred
  *
  */
-public class ShutdownPlanifDaemon implements Instruction {
+public class ShutdownExecManager implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();

@@ -85,12 +85,16 @@ public class RequestSender {
 		
 		try {
 	
+    		logger.trace("Request send: " + request.toXML());
+			
 			// Send request
 			this.sout.println(request.toXML());
 			this.sout.flush();
 			
 			// Reading response
 			response = (JityResponse) XMLUtil.XMLStringToObject(this.sin.readLine());
+			
+            logger.trace("Response received: " + response.toXML());
 			
 		} catch (IOException e) {
 			response = new JityResponse();
