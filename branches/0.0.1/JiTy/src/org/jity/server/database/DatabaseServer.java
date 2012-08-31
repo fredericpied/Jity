@@ -56,6 +56,7 @@ public class DatabaseServer {
 	 * @return Session
 	 * @throws DatabaseException
 	 */
+	@SuppressWarnings("deprecation")
 	public Session getSession() throws DatabaseException {
 		
 		if (H2DBServer == null) {

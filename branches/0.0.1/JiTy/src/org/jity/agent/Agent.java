@@ -25,7 +25,7 @@
 package org.jity.agent;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.taskManager.TaskManager;
+import org.jity.agent.taskManager.AgentTaskManager;
 import org.jity.common.protocol.RequestReceiver;
 import org.jity.common.util.TimeUtil;
 
@@ -121,7 +121,7 @@ public class Agent {
 			System.exit(1);
 		}
 
-		TaskManager.getInstance().startTaskManager();
+		AgentTaskManager.getInstance().startTaskManager();
 		try {
 			TimeUtil.waiting(1);
 		} catch (InterruptedException e1) { }
@@ -176,7 +176,7 @@ public class Agent {
 			try {
 				
 				logger.info("Stoping TaskManager...");
-				TaskManager.getInstance().stopTaskManager();
+				AgentTaskManager.getInstance().stopTaskManager();
 				
 				logger.info("Closing Network socket.");
 
