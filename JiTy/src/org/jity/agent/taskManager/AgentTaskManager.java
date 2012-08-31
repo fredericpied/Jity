@@ -24,16 +24,23 @@ import org.jity.common.util.DateUtil;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 
-public class TaskManager implements Runnable {
-	private static final Logger logger = Logger.getLogger(TaskManager.class);
+/**
+ * Launch execution regarding to task in taskQueue
+ * @author 09344a
+ *
+ */
+public class AgentTaskManager implements Runnable {
+	private static final Logger logger = Logger.getLogger(AgentTaskManager.class);
 
-	private static TaskManager instance = null;
+	private static AgentTaskManager instance = null;
 	
     private Thread daemon = null;
 
     private boolean shutdownAsked = false;
-    
-    //private ArrayList<ExecTask> taskQueue = new ArrayList<ExecTask>();
+
+    /**
+     * taskQueue (Synchronized)
+     */
     private List<ExecTask> taskQueue = Collections.synchronizedList(new ArrayList());
     
     private int maxNumTaskInQueue = 50;
@@ -41,13 +48,17 @@ public class TaskManager implements Runnable {
     private int maxNumTaskExecution = 10;
     private int currentNumTaskExection = 0;
     
+    /**
+     * Return taskQueue
+     * @return List<ExecTask>
+     */
     public List<ExecTask> getTaskQueue() {
     	return this.taskQueue;
     }
     
     /**
      * Return an Iterator on taskQueue
-     * @return Iterator <ExecTask>
+     * @return Iterator<ExecTask>
      */
     public Iterator<ExecTask> getTaskQueueIterator() {
     	return this.taskQueue.iterator();
@@ -55,7 +66,7 @@ public class TaskManager implements Runnable {
     
     /**
      * Return current numbers of tasks in queue
-     * @return
+     * @return int
      */
     public int getCurrentNumTaskInQueue() {
     	return this.taskQueue.size();
@@ -69,17 +80,17 @@ public class TaskManager implements Runnable {
     	return maxNumTaskInQueue;
     }
     
-	public static TaskManager getInstance() {
+	public static AgentTaskManager getInstance() {
 		if (instance == null) {
-			instance = new TaskManager();
+			instance = new AgentTaskManager();
 		}
 		return instance;
 	}
 	
 	/**
-	 * Return true if launchManger is running
+	 * Return true if AgentTaskManager is running
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public synchronized boolean isRunning() {
 		if (this.daemon != null)
@@ -89,7 +100,7 @@ public class TaskManager implements Runnable {
 	}
 	
     /**
-     * Start the TaskManager in a Thread.
+     * Start the AgentTaskManager in a Thread.
      */
     public synchronized void startTaskManager() {
         if (daemon == null) {
@@ -103,11 +114,11 @@ public class TaskManager implements Runnable {
      */
     public synchronized void stopTaskManager() {
         if (daemon != null) {
-        	logger.info("Shutdown of TaskManager asked.");
+        	logger.info("Shutdown of AgentTaskManager asked.");
             shutdownAsked = true;
             daemon.interrupt();
             daemon = null;
-			logger.info("TaskManager successfuly shutdowned");
+			logger.info("AgentTaskManager successfuly shutdowned");
         }
     }
     
@@ -168,8 +179,12 @@ public class TaskManager implements Runnable {
     				logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
 
     				// Setting execStatus
-    				if (exitStatus == 0) task.setStatus(ExecTask.OK);
-    				else task.setStatus(ExecTask.KO);
+    				if (exitStatus == 0) {
+    					task.setStatus(ExecTask.OK);
+    				} else {
+    					task.setStatus(ExecTask.KO);
+    				}
+    				task.setStatusMessage("Command exit status = "+exitStatus);
     				task.setLogFile(jobLogFile.getAbsolutePath());
 
     			} catch (Exception e) {
@@ -192,9 +207,9 @@ public class TaskManager implements Runnable {
      * Launch queue analyse each X seconds.
      */
     public void run() {
-        int cycle = 10;
+        int cycle = 10; //TODO Add to AgentConfig
 		
-        logger.info("TaskManager started.");
+        logger.info("AgentTaskManager started.");
 		
         while (!shutdownAsked) {
 
@@ -202,7 +217,7 @@ public class TaskManager implements Runnable {
             	taskQueueAnalyze(); 
             	TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
-            	if (!shutdownAsked) logger.warn("TaskManager is stopped.");
+            	if (!shutdownAsked) logger.warn("AgentTaskManager is stopped.");
             	if (!shutdownAsked) logger.debug(ex.toString());
             } catch (Exception ex) {
                 logger.fatal("Error during queue analyse: " + ex.getClass().getSimpleName()+": "+ex.getMessage());

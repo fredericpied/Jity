@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
-import org.jity.agent.taskManager.TaskManager;
+import org.jity.agent.taskManager.AgentTaskManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
@@ -58,16 +58,16 @@ public class AddTaskInQueue implements Instruction {
 		
 		try {
 		
-			if (TaskManager.getInstance().getCurrentNumTaskInQueue() >=
-				TaskManager.getInstance().getMaxNumTaskInQueue()) {
+			if (AgentTaskManager.getInstance().getCurrentNumTaskInQueue() >=
+				AgentTaskManager.getInstance().getMaxNumTaskInQueue()) {
 				throw new AgentException("Max number of tasks in queue reached ("+
-						TaskManager.getInstance().getMaxNumTaskInQueue()+")");
+						AgentTaskManager.getInstance().getMaxNumTaskInQueue()+")");
 			}
 			
 			// Initializing ExecTask
 			ExecTask execTask = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
 
-			TaskManager.getInstance().addTaskInQueue(execTask);
+			AgentTaskManager.getInstance().addTaskInQueue(execTask);
 		    
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_DATETIME_FORMAT);
 			String timestamp = dateFormat.format(new Date());

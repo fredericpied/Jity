@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.taskManager.TaskManager;
+import org.jity.agent.taskManager.AgentTaskManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.ExecTask;
@@ -51,15 +51,24 @@ public class GetTaskStatus implements Instruction {
 			
 			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
 
-		     synchronized(TaskManager.getInstance().getTaskQueue()) {
+		     synchronized(AgentTaskManager.getInstance().getTaskQueue()) {
 			 
 				 // Select terminate tasks in queue
-				Iterator<ExecTask> iterTask = TaskManager.getInstance().getTaskQueueIterator();
+				Iterator<ExecTask> iterTask = AgentTaskManager.getInstance().getTaskQueueIterator();
 		    	while (iterTask.hasNext()) {
 		    		ExecTask task = iterTask.next();
 		    		
-		    		if (task.getStatus() != ExecTask.IN_QUEUE)
+		    		if (task.getStatus() != ExecTask.IN_QUEUE) {
 		    			taskQueueExtract.add(task);
+//		    			long id = task.getId();
+//		    			int status = task.getStatus();
+//		    			String statusMess = task.getStatusMessage();
+//		    			String logFile = task.getLogFile();
+//		    			response.setXmlOutputData(XMLUtil.objectToXMLString(id));
+//		    			response.addXmlOutputData(XMLUtil.objectToXMLString(status));
+//		    			response.addXmlOutputData(XMLUtil.objectToXMLString(statusMess));
+//		    			response.addXmlOutputData(XMLUtil.objectToXMLString(logFile));
+		    		}
 		    	}
 	    	}
 
