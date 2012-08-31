@@ -196,7 +196,8 @@ public class AddDBDataForTest {
 		planifRule = DateConstraint.OPERATOR_KEYWORDS[operatorInd]+"_"+
 			dayNumInd+"_"+
 			DateConstraint.DAY_TYPE_KEYWORDS[dayTypeInd]+"_"+
-			DateConstraint.DAY_NAME_KEYWORDS[dayNameInd]+"_"+
+			"day"+"_"+
+			//DateConstraint.DAY_NAME_KEYWORDS[dayNameInd]+"_"+
 			DateConstraint.PERIOD_KEYWORDS[periodInd];
 		
 		return planifRule;

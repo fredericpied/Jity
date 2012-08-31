@@ -26,7 +26,7 @@ package org.jity.server.instructions.admin;
 
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.ExecManager.ServerExecManager;
+import org.jity.server.ServerTaskManager;
 
 /**
  * Server command to shutdown the Planif Daemon
@@ -38,7 +38,7 @@ public class ShutdownExecManager implements Instruction {
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerExecManager.getInstance().stopExecManager();
+		ServerTaskManager.getInstance().stopTaskManager();
 		response.setInstructionResultOK(true);
 
 		return response;

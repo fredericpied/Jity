@@ -26,8 +26,11 @@ package org.jity.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
+import org.apache.log4j.Logger;
 import org.jity.common.util.XMLUtil;
+import org.jity.tests.TestServer;
 
 /**
  * Server configuration Class
@@ -36,18 +39,29 @@ import org.jity.common.util.XMLUtil;
  * 
  */
 public class ServerConfig {
-
+	private static final Logger logger = Logger.getLogger(ServerConfig.class);
+	
 	private static ServerConfig instance = null;
 
 	/**
 	 * XML File
 	 */
-	private static final String XML_FILE_NAME = "conf/ServerConfig.xml";
+	public static final String XML_FILE_NAME = "conf/ServerConfig.xml";
 
+	/**
+	 * Server logical name
+	 */
+	public String SERVER_NAME;
+
+	/**
+	 * Server description
+	 */
+	public String SERVER_DESCRIPTION;
+	
 	/**
 	 * Listening port (default 2610)
 	 */
-	public int SERVER_PORT = 2610;
+	public int SERVER_UI_PORT = 2610;
 	
 	/**
 	 * Job constraints pooling cycle in second (default 10)
@@ -75,8 +89,34 @@ public class ServerConfig {
 		XMLUtil.objectToXMLFile(instance, xmlFile);
 	}
 
-	public int getSERVER_PORT() {
-		return SERVER_PORT;
+	public void showConfig() {
+		
+		for (int i=0;i<this.getClass().getDeclaredFields().length;i++) {
+			String fieldName = this.getClass().getDeclaredFields()[i].getName();
+			String fieldType = this.getClass().getDeclaredFields()[i].getType().getSimpleName();
+			try {
+				if (fieldName.equals("logger") || fieldName.equals("instance")) continue;
+				
+				if (fieldType.equals("String")) {
+					logger.info(fieldName+"="+this.getClass().getField(fieldName).get(this));
+				} else if (fieldType.equals("int")) {
+					logger.info(fieldName+"="+String.valueOf(this.getClass().getField(fieldName).get(this)));
+				}
+			} catch (IllegalArgumentException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (SecurityException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (IllegalAccessException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (NoSuchFieldException e) {
+				logger.warn(fieldName+" can't access to field value");
+			}
+
+		}
+	}
+	
+	public int getSERVER_UI_PORT() {
+		return SERVER_UI_PORT;
 	}
 
 	public int getSERVER_POOLING_CYCLE() {
@@ -91,4 +131,14 @@ public class ServerConfig {
 		return XML_FILE_NAME;
 	}
 
+	public String getSERVER_NAME() {
+		return SERVER_NAME;
+	}
+
+	public String getSERVER_DESCRIPTION() {
+		return SERVER_DESCRIPTION;
+	}
+
+	
+	
 }

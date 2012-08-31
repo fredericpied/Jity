@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
-import org.jity.agent.taskManager.AgentTaskManager;
+import org.jity.agent.AgentTaskManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
@@ -57,12 +57,6 @@ public class AddTaskInQueue implements Instruction {
 		JityResponse response = new JityResponse();
 		
 		try {
-		
-			if (AgentTaskManager.getInstance().getCurrentNumTaskInQueue() >=
-				AgentTaskManager.getInstance().getMaxNumTaskInQueue()) {
-				throw new AgentException("Max number of tasks in queue reached ("+
-						AgentTaskManager.getInstance().getMaxNumTaskInQueue()+")");
-			}
 			
 			// Initializing ExecTask
 			ExecTask execTask = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);

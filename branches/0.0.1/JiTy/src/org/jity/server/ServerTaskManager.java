@@ -21,7 +21,7 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server.ExecManager;
+ */package org.jity.server;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -44,7 +44,6 @@ import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.ServerConfig;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 
@@ -52,10 +51,10 @@ import org.jity.server.database.DatabaseServer;
  * Pool jobs constraints and create execTask for agents. Get task status to update state in DB
  *
  */
-public class ServerExecManager implements Runnable {
-	private static final Logger logger = Logger.getLogger(ServerExecManager.class);
+public class ServerTaskManager implements Runnable {
+	private static final Logger logger = Logger.getLogger(ServerTaskManager.class);
 
-	private static ServerExecManager instance = null;
+	private static ServerTaskManager instance = null;
 	
 	private Session databaseSession;
 		
@@ -101,9 +100,9 @@ public class ServerExecManager implements Runnable {
      * Create one if none
      * @return ServerExecManager
      */
-	public static ServerExecManager getInstance() {
+	public static ServerTaskManager getInstance() {
 		if (instance == null) {
-			instance = new ServerExecManager();
+			instance = new ServerTaskManager();
 		}
 		return instance;
 	}
@@ -120,9 +119,9 @@ public class ServerExecManager implements Runnable {
 	}
 	
     /**
-     * Start the ExecManager in a Thread.
+     * Start the taskManager in a Thread.
      */
-    public synchronized void startExecManager() {
+    public synchronized void startTaskManager() {
         if (daemon == null) {
             daemon = new Thread(this);
             daemon.start();
@@ -132,14 +131,14 @@ public class ServerExecManager implements Runnable {
     /**
      * Stop current ExecManager if running.
      */
-    public synchronized void stopExecManager() {
+    public synchronized void stopTaskManager() {
         if (daemon != null) {
-        	logger.info("Shutdown of ServerExecManager asked.");
+        	logger.info("Shutdown of ServerTaskManager asked.");
             shutdownAsked = true;
     		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
-			logger.info("ServerExecManager successfuly shutdowned");
+			logger.info("ServerTaskManager successfuly shutdowned");
         }
     }
     
@@ -352,7 +351,7 @@ public class ServerExecManager implements Runnable {
             logger.fatal(e.getMessage());
 		}
         
-		logger.info("Starting ServerExecManager");
+		logger.info("Starting ServerTaskManager");
 		
 		if (this.getExploitDate() == null) this.initializeExploitDateWithCurrentDate();
 		
@@ -364,7 +363,7 @@ public class ServerExecManager implements Runnable {
                 TimeUtil.waiting(cycle/2);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked)  {
-            		logger.warn("ServerExecManager is stopped.");
+            		logger.warn("ServerTaskManager is stopped.");
             		logger.debug(ex.toString());
             	}
                 

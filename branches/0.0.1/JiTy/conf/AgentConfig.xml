@@ -1,8 +1,12 @@
 <org.jity.agent.AgentConfig>
+  <AGENT__NAME>AGENT1</AGENT__NAME>
   <AGENT__PORT>2611</AGENT__PORT>
   <AGENT__DESC>Agent description</AGENT__DESC>
- <HOSTNAME__LIST> 
+  <AGENT_POOLING_CYCLE>10</AGENT_POOLING_CYCLE>
+  <MAX_JOBS_IN_QUEUE>50</MAX_JOBS_IN_QUEUE>
+  <MAX_CONCURRENT_JOBS>10</MAX_CONCURRENT_JOBS>
+  <HOSTNAME__LIST> 
      <string>127.0.0.1</string>
-   </HOSTNAME__LIST>
-   <JOBS__LOGS__DIR>D:\temp</JOBS__LOGS__DIR>
- </org.jity.agent.AgentConfig>
+  </HOSTNAME__LIST>
+  <JOBS__LOGS__DIR>D:\temp</JOBS__LOGS__DIR>
+</org.jity.agent.AgentConfig>
