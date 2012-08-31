@@ -2,6 +2,7 @@ package org.jity.tests;
 
 import org.apache.log4j.Logger;
 import org.jity.UIClient.UIClientConfig;
+import org.jity.UIClient.UIClientException;
 import org.jity.agent.Agent;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
@@ -59,6 +60,7 @@ public class TestServer extends TestCase {
 			
 			startAgentInThread();
 
+			System.exit(0);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -137,6 +139,33 @@ public class TestServer extends TestCase {
 		}
 	}
 	
+	public void testServerShutdownAgent() {
+		try {
+			
+			JityRequest request = new JityRequest();
+			request.setInstructionName("SHUTDOWNAGENT");
+			
+			RequestSender requestLauncher = new RequestSender();
+			requestLauncher.openConnection("localhost", 2611);
+			JityResponse response = requestLauncher.sendRequest(request);
+			requestLauncher.closeConnection();
+			
+			if (!response.isInstructionResultOK())
+				throw new Exception(response.getExceptionMessage());
+		
+			assertTrue(response.isInstructionResultOK());
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (UIClientException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	public void testUIClientStopServerDaemon() {
 		try {

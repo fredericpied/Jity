@@ -25,7 +25,6 @@
 package org.jity.agent;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.taskManager.AgentTaskManager;
 import org.jity.common.protocol.RequestReceiver;
 import org.jity.common.util.TimeUtil;
 
@@ -83,9 +82,7 @@ public class Agent {
 			logger.fatal(e1.getMessage());
 			System.exit(1);
 		}
-
-		this.showConfig();
-			
+	
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
@@ -95,7 +92,6 @@ public class Agent {
 			logger.warn(e1.getMessage());
 			logger.info("Starting agent...");
 		}
-
 
 		int agentPort = AgentConfig.getInstance().getAGENT_PORT();
 		try {
@@ -194,18 +190,7 @@ public class Agent {
 		}
 
 	}
-
-	/**
-	 * Print current Agent configuration
-	 */
-	public void showConfig() {
-		AgentConfig agentConfig = AgentConfig.getInstance();
-		logger.info("AGENT_PORT = "+agentConfig.getAGENT_PORT());
-		logger.info("AGENT_DESC = "+agentConfig.getAGENT_DESC());
-		logger.info("HOSTNAME_LIST = "+agentConfig.getHOSTNAME_LIST());
-		logger.info("JOBS_LOGS_DIR = "+agentConfig.getJOBS_LOGS_DIR());
-	}
-	
+		
 	/**
 	 * return type of OS supporting the agent
 	 * @return String
@@ -225,6 +210,7 @@ public class Agent {
 			logger.info("Reading configuration file.");
 			agentConfig.initialize();
 			logger.info("Configuration File successfully loaded.");
+			agentConfig.showConfig();
 		} catch (IOException e) {
 			throw new AgentException("Failed to read configuration file ("
 					+ e.getMessage() + ").");

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.jity.agent.AgentTaskManager;
 
 /**
  * Execute the job command path on the agent host and strean standard and error output 
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class CommandExecutor {
 	private static final Logger logger = Logger.getLogger(CommandExecutor.class);
-	
+	 
 	private LogDevice outputLogDevice = null;
 	private LogDevice errorLogDevice = null;
 	

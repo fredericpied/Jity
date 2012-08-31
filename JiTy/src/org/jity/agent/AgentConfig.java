@@ -28,7 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.jity.common.util.XMLUtil;
+import org.jity.server.ServerConfig;
 
 /**
  * Agent configuration Class
@@ -36,14 +38,20 @@ import org.jity.common.util.XMLUtil;
  * 
  */
 public class AgentConfig {
-
+	private static final Logger logger = Logger.getLogger(AgentConfig.class);
+	
 	private static AgentConfig instance = null;
 
 	/**
 	 * XML File
 	 */
-	private static final String XML_FILE_NAME = "conf/AgentConfig.xml";
+	public static final String XML_FILE_NAME = "conf/AgentConfig.xml";
 
+	/**
+	 * Agent logical name
+	 */
+	public String AGENT_NAME;
+	
 	/**
 	 * Listening port (default 2611)
 	 */
@@ -55,17 +63,60 @@ public class AgentConfig {
 	public String AGENT_DESC;
 	
 	/**
+	 * Task queue pooling cycle in second (default 10)
+	 */
+	public int AGENT_POOLING_CYCLE = 10;
+	
+	/**
 	 * List of the server hostname who are autorized to launch task
 	 * on this agent
 	 */
 	public ArrayList<String> HOSTNAME_LIST;
 	
 	/**
+	 * Number max of jobs in queue (default 50)
+	 */
+	public int MAX_JOBS_IN_QUEUE = 50;
+	
+	/**
+	 * Number max of jobs executing at same time (default 10)
+	 */
+	public int MAX_CONCURRENT_JOBS = 50;
+	
+	/**
 	 * Root directory of jobs log file
 	 */
 	public String JOBS_LOGS_DIR;
 	
+
+	public void showConfig() {
+		
+		for (int i=0;i<this.getClass().getDeclaredFields().length;i++) {
+			String fieldName = this.getClass().getDeclaredFields()[i].getName();
+			String fieldType = this.getClass().getDeclaredFields()[i].getType().getSimpleName();
+			try {
+				if (fieldName.equals("logger") || fieldName.equals("instance")) continue;
+				
+				if (fieldType.equals("String")) {
+					logger.info(fieldName+"="+this.getClass().getField(fieldName).get(this));
+				} else if (fieldType.equals("int")) {
+					logger.info(fieldName+"="+String.valueOf(this.getClass().getField(fieldName).get(this)));
+				}
+			} catch (IllegalArgumentException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (SecurityException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (IllegalAccessException e) {
+				logger.warn(fieldName+" can't access to field value");
+			} catch (NoSuchFieldException e) {
+				logger.warn(fieldName+" can't access to field value");
+			}
+
+		}
+	}
 	
+
+
 	public boolean hostnameListSet() {
 		if (this.HOSTNAME_LIST ==  null) {
 			return false;
@@ -104,29 +155,24 @@ public class AgentConfig {
 		return AGENT_DESC;
 	}
 
-	public void setAGENT_DESC(String aGENTDESC) {
-		AGENT_DESC = aGENTDESC;
-	}
-
 	public ArrayList<String> getHOSTNAME_LIST() {
 		return HOSTNAME_LIST;
-	}
-
-	public void setHOSTNAME_LIST(ArrayList<String> hOSTNAMELIST) {
-		HOSTNAME_LIST = hOSTNAMELIST;
-	}
-
-	public void setAGENT_PORT(int aGENTPORT) {
-		AGENT_PORT = aGENTPORT;
 	}
 
 	public String getJOBS_LOGS_DIR() {
 		return JOBS_LOGS_DIR;
 	}
-
-	public void setJOBS_LOGS_DIR(String jOBSLOGSDIR) {
-		JOBS_LOGS_DIR = jOBSLOGSDIR;
-	}
 	
+	public int getAGENT_POOLING_CYCLE() {
+		return AGENT_POOLING_CYCLE;
+	}
+
+	public int getMAX_JOBS_IN_QUEUE() {
+		return MAX_JOBS_IN_QUEUE;
+	}
+
+	public int getMAX_CONCURRENT_JOBS() {
+		return MAX_CONCURRENT_JOBS;
+	}
 
 }

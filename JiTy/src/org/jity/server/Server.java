@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.jity.agent.AgentException;
 import org.jity.common.protocol.RequestReceiver;
-import org.jity.server.ExecManager.ServerExecManager;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
 
@@ -118,7 +117,7 @@ public class Server {
 			logger.info("Starting the server...");
 		}
 		
-		int serverPort = ServerConfig.getInstance().getSERVER_PORT();
+		int serverPort = ServerConfig.getInstance().getSERVER_UI_PORT();
 		try {
 			listenSocket = new ServerSocket(serverPort);
 			logger.info("Server running on port : " + serverPort);
@@ -175,7 +174,7 @@ public class Server {
 			try {
 				
 				logger.info("Shutdowning planification daemon.");
-				ServerExecManager.getInstance().stopExecManager();
+				ServerTaskManager.getInstance().stopTaskManager();
 				
 				logger.info("Closing Database server.");
 				DatabaseServer.getInstance().stopDatabaseServer();
@@ -207,6 +206,7 @@ public class Server {
 			logger.info("Reading configuration file.");
 			serverConfig.initialize();
 			logger.info("Configuration File successfully loaded.");
+			serverConfig.showConfig();
 		} catch (IOException e) {
 			throw new ServerException("Failed to read configuration file ("
 					+ e.getMessage() + ").");
