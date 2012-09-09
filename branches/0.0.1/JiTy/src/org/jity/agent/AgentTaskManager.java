@@ -1,24 +1,14 @@
 package org.jity.agent;
 
-import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.jity.agent.commandExecutor.CommandExecutor;
-import org.jity.agent.commandExecutor.ErrorOutputLogger;
-import org.jity.agent.commandExecutor.StandardOutputLogger;
 import org.jity.common.referential.ExecTask;
-import org.jity.common.referential.Job;
-import org.jity.common.util.DateUtil;
 import org.jity.common.util.TimeUtil;
 
 /**
@@ -39,10 +29,7 @@ public class AgentTaskManager implements Runnable {
      * taskQueue (Synchronized)
      */
     private List<ExecTask> taskQueue = Collections.synchronizedList(new ArrayList());
-    
-    //private int maxNumTaskInQueue = 50;
-    
- //   private int maxNumTaskExecution = 10;
+
     private int currentJobsExection = 0;
     
     /**
@@ -125,6 +112,14 @@ public class AgentTaskManager implements Runnable {
     	}
     }
     
+    public void incrementCurrentJobsExecution() {
+    	this.currentJobsExection++;
+    }
+    
+    public void decrementCurrentJobsExecution() {
+    	this.currentJobsExection--;
+    }
+    
     /**
      * Analyse task queue to execute jobs
      * @throws AgentException
@@ -138,75 +133,19 @@ public class AgentTaskManager implements Runnable {
     	if (this.currentJobsExection <= maxConcurrentJob) {
     	
 	    	synchronized(this.taskQueue) {
-	    		//TODO chaque execution bloque la boucle.
 	    		Iterator<ExecTask> iterTask = this.taskQueue.iterator();
 	    		while (iterTask.hasNext()) {
 	    			ExecTask task = iterTask.next();
 	
 	    			if (task.getStatus() != ExecTask.IN_QUEUE) continue;
 	    			
-	    			Job job = task.getJob();
-	
-	    			// Initializing exitStatus
-	    			int exitStatus = -1;
-	
-	    			// Initializing log file name whith timestamp
-	    			File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
-	    			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
-	    			String timestamp = dateFormat.format(new Date());
-	    			File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
-	
-	    			// Create a specific log4j logger for this execution
-	    			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
-	    			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
-	    			Logger jobLogger = Logger.getLogger(job.getName());
-	    			jobLogger.setAdditivity(false);
-	    			jobLogger.addAppender(jobLoggerAppender);
-	
-	    			CommandExecutor cmdExecutor = new CommandExecutor();
-	
-	    			// initializing output loggers
-	    			cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
-	    			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
-	
-	    			//TODO cmdExecutor.setWorkingDirectory(workingDirectory);
-	
-	    			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
-	
-	    			// Running command
-	    			try {
-	    				this.currentJobsExection++;
-
-	    				exitStatus = cmdExecutor.runCommand(job.getCommandPath());
-	
-	    				logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
-	
-	    				// Setting execStatus
-	    				if (exitStatus == 0) {
-	    					task.setStatus(ExecTask.OK);
-	    				} else {
-	    					task.setStatus(ExecTask.KO);
-	    				}
-	    				task.setStatusMessage("Command exit status = "+exitStatus);
-	    				task.setLogFile(jobLogFile.getAbsolutePath());
-	    				
-	    				this.currentJobsExection--;
-	    			
-	    			} catch (Exception e) {
-	    				logger.info("Exception "+e.getClass().getName()+
-	    						" while executing "+job.getName()+"("+e.getMessage()+")");
-	
-	    				// Setting execStatus
-	    				task.setStatus(ExecTask.KO);
-	    				task.setStatusMessage("Exception: "+e.getMessage());
-	    				task.setLogFile(jobLogFile.getAbsolutePath());
-	
-	    			}
-	
+	    			CommandExecutor commandExecutor = new CommandExecutor();
+	    			commandExecutor.execute(task);
 	    		}
-	    	} //     	  synchronized(taskQueueSynchro) {
+
+	    	} // synchronized(taskQueueSynchro) {
     	} else {
-    		logger.warn("Max concurent job reached");
+    		logger.debug("Max concurent jobs reached ("+maxConcurrentJob+")");
     	}
     }
     

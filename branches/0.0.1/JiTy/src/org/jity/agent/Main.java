@@ -38,7 +38,7 @@ public class Main extends CommandLine {
 		
 		try {
 			RequestSender requestLauncher = new RequestSender();
-			requestLauncher.openConnection("localhost", AgentConfig.getInstance().getAGENT_PORT());
+			requestLauncher.openConnection("localhost", AgentConfig.getInstance().getAGENT_INPUT_PORT());
 			JityResponse response = requestLauncher.sendRequest(request);
 			requestLauncher.closeConnection();
 			

@@ -33,12 +33,12 @@ import org.jity.server.ServerTaskManager;
  * @author Fred
  *
  */
-public class ShutdownExecManager implements Instruction {
+public class StartServerTaskManager implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerTaskManager.getInstance().stopTaskManager();
+		ServerTaskManager.getInstance().startTaskManager();
 		response.setInstructionResultOK(true);
 
 		return response;

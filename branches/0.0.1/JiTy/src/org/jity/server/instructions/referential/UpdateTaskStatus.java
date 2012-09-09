@@ -22,27 +22,49 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.admin;
+package org.jity.server.instructions.referential;
 
+import java.util.ArrayList;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.ServerTaskManager;
+import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.util.XMLUtil;
+import org.jity.server.Server;
+import org.jity.server.ServerException;
+import org.jity.server.database.DatabaseServer;
 
 /**
- * Server command to shutdown the Planif Daemon
- * @author Fred
+ * Server command to update a calendar
+ * @author 09344A
  *
  */
-public class StartExecManager implements Instruction {
+public class UpdateTaskStatus implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
-		ServerTaskManager.getInstance().startTaskManager();
-		response.setInstructionResultOK(true);
+
+		try {
+
+			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
+
+			Session session = DatabaseServer.getInstance().getSession();
+			Transaction transaction = session.beginTransaction();
+
+			session.update(calendar);
+			
+			transaction.commit();
+			session.close();
+
+			response.setInstructionResultOK(true);
+
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }

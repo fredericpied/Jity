@@ -60,7 +60,6 @@ public class TestServer extends TestCase {
 			
 			startAgentInThread();
 
-			System.exit(0);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);

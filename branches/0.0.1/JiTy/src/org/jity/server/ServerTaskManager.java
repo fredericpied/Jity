@@ -211,7 +211,7 @@ public class ServerTaskManager implements Runnable {
 			RequestSender requestLauncher = new RequestSender();
 
 			requestLauncher.openConnection(job.getHostName(),
-					ServerConfig.getInstance().getAGENT_PORT());
+					ServerConfig.getInstance().getAGENT_INPUT_PORT());
 
 			// Send request to agent
 			JityResponse response = requestLauncher.sendRequest(request);
@@ -256,7 +256,7 @@ public class ServerTaskManager implements Runnable {
 	/**
 	 * Update tasks status in DB by pooling agent
 	 */
-	public void updateTasksStatus() {
+	public void updateTasksStatusForDMZ() {
 				
 		ArrayList<String> hostnameList = new ArrayList<String>();
 
@@ -294,7 +294,7 @@ public class ServerTaskManager implements Runnable {
 			
 			try {
 				requestLauncher.openConnection(hostname,
-						ServerConfig.getInstance().getAGENT_PORT());
+						ServerConfig.getInstance().getAGENT_INPUT_PORT());
 
 				JityResponse response = requestLauncher.sendRequest(request);
 
@@ -359,7 +359,7 @@ public class ServerTaskManager implements Runnable {
             try {
                 analyzeJobsForExecute();
                 TimeUtil.waiting(cycle/2);
-                updateTasksStatus();
+                updateTasksStatusForDMZ();
                 TimeUtil.waiting(cycle/2);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked)  {

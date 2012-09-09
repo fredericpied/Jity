@@ -26,11 +26,9 @@ package org.jity.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 
 import org.apache.log4j.Logger;
 import org.jity.common.util.XMLUtil;
-import org.jity.tests.TestServer;
 
 /**
  * Server configuration Class
@@ -59,9 +57,14 @@ public class ServerConfig {
 	public String SERVER_DESCRIPTION;
 	
 	/**
-	 * Listening port (default 2610)
+	 * Server listening port for UI (default 2610)
 	 */
-	public int SERVER_UI_PORT = 2610;
+	public int SERVER_UI_INPUT_PORT = 2610;
+
+	/**
+	 * Server listening port for agent (default 2612)
+	 */
+	public int SERVER_INPUT_PORT = 2612;
 	
 	/**
 	 * Job constraints pooling cycle in second (default 10)
@@ -69,9 +72,9 @@ public class ServerConfig {
 	public int SERVER_POOLING_CYCLE = 10;
 
 	/**
-	 * Port to pool agent (default 2611)
+	 * Agent listening port (default 2611)
 	 */
-	public int AGENT_PORT = 2611;
+	public int AGENT_INPUT_PORT = 2611;
 
 	
 	public static ServerConfig getInstance() {
@@ -90,41 +93,24 @@ public class ServerConfig {
 	}
 
 	public void showConfig() {
-		
-		for (int i=0;i<this.getClass().getDeclaredFields().length;i++) {
-			String fieldName = this.getClass().getDeclaredFields()[i].getName();
-			String fieldType = this.getClass().getDeclaredFields()[i].getType().getSimpleName();
-			try {
-				if (fieldName.equals("logger") || fieldName.equals("instance")) continue;
-				
-				if (fieldType.equals("String")) {
-					logger.info(fieldName+"="+this.getClass().getField(fieldName).get(this));
-				} else if (fieldType.equals("int")) {
-					logger.info(fieldName+"="+String.valueOf(this.getClass().getField(fieldName).get(this)));
-				}
-			} catch (IllegalArgumentException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (SecurityException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (IllegalAccessException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (NoSuchFieldException e) {
-				logger.warn(fieldName+" can't access to field value");
-			}
-
-		}
+		logger.info("SERVER_NAME="+ServerConfig.getInstance().getSERVER_NAME());
+		logger.info("SERVER_DESCRIPTION="+ServerConfig.getInstance().getSERVER_DESCRIPTION());
+		logger.info("SERVER_UI_INPUT_PORT="+ServerConfig.getInstance().getSERVER_UI_INPUT_PORT());
+		logger.info("SERVER_INPUT_PORT="+ServerConfig.getInstance().getSERVER_INPUT_PORT());
+		logger.info("SERVER_POOLING_CYCLE="+ServerConfig.getInstance().getSERVER_POOLING_CYCLE());
+		logger.info("AGENT_INPUT_PORT="+ServerConfig.getInstance().getAGENT_INPUT_PORT());
 	}
 	
-	public int getSERVER_UI_PORT() {
-		return SERVER_UI_PORT;
+	public int getSERVER_UI_INPUT_PORT() {
+		return SERVER_UI_INPUT_PORT;
 	}
 
 	public int getSERVER_POOLING_CYCLE() {
 		return SERVER_POOLING_CYCLE;
 	}
 
-	public int getAGENT_PORT() {
-		return AGENT_PORT;
+	public int getAGENT_INPUT_PORT() {
+		return AGENT_INPUT_PORT;
 	}
 
 	public static String getXmlFileName() {
@@ -138,7 +124,10 @@ public class ServerConfig {
 	public String getSERVER_DESCRIPTION() {
 		return SERVER_DESCRIPTION;
 	}
-
+	
+	public int getSERVER_INPUT_PORT() {
+		return SERVER_INPUT_PORT;
+	}
 	
 	
 }
