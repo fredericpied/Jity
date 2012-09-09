@@ -29,13 +29,14 @@ import org.jity.agent.instructions.GetTaskStatus;
 import org.jity.agent.instructions.ShutdownAgent;
 import org.jity.agent.instructions.PingAgent;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.instructions.admin.ShutdownExecManager;
+import org.jity.server.instructions.admin.ShutdownServerTaskManager;
 import org.jity.server.instructions.admin.ShutdownServer;
-import org.jity.server.instructions.admin.StartExecManager;
+import org.jity.server.instructions.admin.StartServerTaskManager;
 import org.jity.server.instructions.referential.AddCalendar;
 import org.jity.server.instructions.referential.DeleteCalendar;
 import org.jity.server.instructions.referential.GetCalendar;
 import org.jity.server.instructions.referential.UpdateCalendar;
+import org.jity.server.instructions.referential.UpdateTaskStatus;
 
 public abstract class Protocol {
 	
@@ -67,9 +68,9 @@ public abstract class Protocol {
 		if (request.getInstructionName().equals("SHUTDOWNSERVER")) {
 			response = new ShutdownServer().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNEXECMANAGER")) {
-			response = new ShutdownExecManager().launch(request.getXmlInputData());
+			response = new ShutdownServerTaskManager().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("STARTEXECMANAGER")) {
-			response = new StartExecManager().launch(request.getXmlInputData());
+			response = new StartServerTaskManager().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("ADDCALENDAR")) {
 			response = new AddCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("DELETECALENDAR")) {
@@ -78,6 +79,8 @@ public abstract class Protocol {
 			response = new UpdateCalendar().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("GETCALENDAR")) {
 			response = new GetCalendar().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("UPDTASKSTATUS")) {
+			response = new UpdateTaskStatus().launch(request.getXmlInputData());
 
 		// Agent requests
 		} else	if (request.getInstructionName().equals("ADDTASKINQUEUE")) {

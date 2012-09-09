@@ -27,18 +27,27 @@ package org.jity.agent.commandExecutor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
+import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentTaskManager;
+import org.jity.common.referential.ExecTask;
+import org.jity.common.referential.Job;
+import org.jity.common.util.DateUtil;
 
 /**
  * Execute the job command path on the agent host and strean standard and error output 
  * @author Fred
  *
  */
-public class CommandExecutor {
+public class CommandExecutor implements Runnable {
 	private static final Logger logger = Logger.getLogger(CommandExecutor.class);
 	 
 	private LogDevice outputLogDevice = null;
@@ -53,7 +62,11 @@ public class CommandExecutor {
 
 	private AsynchronousOutputReader cmdOutputThread = null;
 	private AsynchronousOutputReader cmdErrorThread = null;
-
+	
+    private Thread daemon = null;
+    
+    private ExecTask currentTask;
+    
 	public void setOutputLogDevice(LogDevice logDevice) {
 		this.outputLogDevice = logDevice;
 	}
@@ -87,7 +100,7 @@ public class CommandExecutor {
 	 * @return exitStatus
 	 * @throws Exception
 	 */
-	public int runCommand(String commandLine) throws Exception {
+	private int runCommand(String commandLine) throws Exception {
 		// run command
 		Process process = runCommandHelper(commandLine);
 
@@ -154,4 +167,74 @@ public class CommandExecutor {
 
 		return envTokenArray;
 	}
+	
+	public void execute(ExecTask task) {
+		daemon = new Thread(this);
+		currentTask = task;
+		daemon.start();
+	}
+	
+	public void run() {
+		
+		Job job = currentTask.getJob();
+		
+		currentTask.setStatus(ExecTask.RUNNING);
+		
+		// Initializing exitStatus
+		int exitStatus = -1;
+
+		// Initializing log file name whith timestamp
+		File logDir = new File(AgentConfig.getInstance().getJOBS_LOGS_DIR());
+		DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_TIMESTAMP_FORMAT);
+		String timestamp = dateFormat.format(new Date());
+		File jobLogFile = new File(logDir.getAbsolutePath()+File.separator+"LOG_"+job.getName()+"_"+timestamp+".log");
+
+		try {
+		
+			// Create a specific log4j logger for this execution
+			Layout layout = new org.apache.log4j.PatternLayout("%d{yyyyMMdd HH:mm:ss} %c{1}: %m%n");
+			Appender jobLoggerAppender = new org.apache.log4j.FileAppender(layout, jobLogFile.getAbsolutePath() , true); 
+			Logger jobLogger = Logger.getLogger(job.getName());
+			jobLogger.setAdditivity(false);
+			jobLogger.addAppender(jobLoggerAppender);
+	
+			CommandExecutor cmdExecutor = new CommandExecutor();
+	
+			// initializing output loggers
+			cmdExecutor.setOutputLogDevice(new StandardOutputLogger(jobLogger));			
+			cmdExecutor.setErrorLogDevice(new ErrorOutputLogger(jobLogger));
+	
+			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
+	
+			AgentTaskManager.getInstance().incrementCurrentJobsExecution();
+
+			// Running command
+			exitStatus = cmdExecutor.runCommand(job.getCommandPath());
+
+			AgentTaskManager.getInstance().decrementCurrentJobsExecution();
+			
+			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
+
+			// Setting execStatus
+			if (exitStatus == 0) {
+				currentTask.setStatus(ExecTask.OK);
+			} else {
+				currentTask.setStatus(ExecTask.KO);
+			}
+			currentTask.setStatusMessage("Command exit status = "+exitStatus);
+			currentTask.setLogFile(jobLogFile.getAbsolutePath());
+		
+		} catch (Exception e) {
+			logger.info("Exception "+e.getClass().getName()+
+					" while executing "+job.getName()+"("+e.getMessage()+")");
+
+			// Setting execStatus
+			currentTask.setStatus(ExecTask.KO);
+			currentTask.setStatusMessage("Exception: "+e.getMessage());
+			currentTask.setLogFile(jobLogFile.getAbsolutePath());
+
+		}
+		
+	}
+	
 }

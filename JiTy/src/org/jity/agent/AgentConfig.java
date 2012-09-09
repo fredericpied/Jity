@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
+import org.jity.common.util.ListUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.ServerConfig;
 
@@ -45,77 +46,71 @@ public class AgentConfig {
 	/**
 	 * XML File
 	 */
-	public static final String XML_FILE_NAME = "conf/AgentConfig.xml";
+	private static final String XML_FILE_NAME = "conf/AgentConfig.xml";
 
 	/**
 	 * Agent logical name
 	 */
-	public String AGENT_NAME;
+	private String AGENT_NAME;
 	
 	/**
 	 * Listening port (default 2611)
 	 */
-	public int AGENT_PORT = 2611;
+	private int AGENT_INPUT_PORT = 2611;
 	
+	/**
+	 * Server listening port for agent (default 2612)
+	 */
+	public int SERVER_INPUT_PORT = 2612;
+
 	/**
 	 * Agent description
 	 */
-	public String AGENT_DESC;
+	private String AGENT_DESC;
 	
 	/**
 	 * Task queue pooling cycle in second (default 10)
 	 */
-	public int AGENT_POOLING_CYCLE = 10;
+	private int AGENT_POOLING_CYCLE = 10;
 	
 	/**
 	 * List of the server hostname who are autorized to launch task
 	 * on this agent
 	 */
-	public ArrayList<String> HOSTNAME_LIST;
+	private ArrayList<String> HOSTNAME_LIST = new ArrayList<String>();
 	
 	/**
 	 * Number max of jobs in queue (default 50)
 	 */
-	public int MAX_JOBS_IN_QUEUE = 50;
+	private int MAX_JOBS_IN_QUEUE = 50;
 	
 	/**
 	 * Number max of jobs executing at same time (default 10)
 	 */
-	public int MAX_CONCURRENT_JOBS = 50;
+	private int MAX_CONCURRENT_JOBS = 50;
 	
 	/**
 	 * Root directory of jobs log file
 	 */
-	public String JOBS_LOGS_DIR;
+	private String JOBS_LOGS_DIR;
 	
 
 	public void showConfig() {
-		
-		for (int i=0;i<this.getClass().getDeclaredFields().length;i++) {
-			String fieldName = this.getClass().getDeclaredFields()[i].getName();
-			String fieldType = this.getClass().getDeclaredFields()[i].getType().getSimpleName();
-			try {
-				if (fieldName.equals("logger") || fieldName.equals("instance")) continue;
-				
-				if (fieldType.equals("String")) {
-					logger.info(fieldName+"="+this.getClass().getField(fieldName).get(this));
-				} else if (fieldType.equals("int")) {
-					logger.info(fieldName+"="+String.valueOf(this.getClass().getField(fieldName).get(this)));
-				}
-			} catch (IllegalArgumentException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (SecurityException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (IllegalAccessException e) {
-				logger.warn(fieldName+" can't access to field value");
-			} catch (NoSuchFieldException e) {
-				logger.warn(fieldName+" can't access to field value");
-			}
-
-		}
+		logger.info("XML_FILE_NAME="+AgentConfig.getInstance().getXmlFileName());
+		logger.info("AGENT_NAME="+AgentConfig.getInstance().getAGENT_NAME());
+		logger.info("AGENT_DESC="+AgentConfig.getInstance().getAGENT_DESC());
+		logger.info("AGENT_INPUT_PORT="+AgentConfig.getInstance().getAGENT_INPUT_PORT());
+		logger.info("SERVER_INPUT_PORT="+AgentConfig.getInstance().getSERVER_INPUT_PORT());
+		logger.info("AGENT_POOLING_CYCLE="+AgentConfig.getInstance().getAGENT_POOLING_CYCLE());
+		logger.info("HOSTNAME_LIST="+ListUtil.ArrayListToString(AgentConfig.getInstance().getHOSTNAME_LIST()));
+		logger.info("JOBS_LOGS_DIR="+AgentConfig.getInstance().getJOBS_LOGS_DIR());
+		logger.info("MAX_CONCURRENT_JOBS="+AgentConfig.getInstance().getMAX_CONCURRENT_JOBS());
+		logger.info("MAX_JOBS_IN_QUEUE="+AgentConfig.getInstance().getMAX_JOBS_IN_QUEUE()); 
 	}
 	
-
+	public String getAGENT_NAME() {
+		return AGENT_NAME;
+	}
 
 	public boolean hostnameListSet() {
 		if (this.HOSTNAME_LIST ==  null) {
@@ -143,8 +138,8 @@ public class AgentConfig {
 		XMLUtil.objectToXMLFile(instance, xmlFile);
 	}
 
-	public int getAGENT_PORT() {
-		return AGENT_PORT;
+	public int getAGENT_INPUT_PORT() {
+		return AGENT_INPUT_PORT;
 	}
 
 	public static String getXmlFileName() {
@@ -174,5 +169,9 @@ public class AgentConfig {
 	public int getMAX_CONCURRENT_JOBS() {
 		return MAX_CONCURRENT_JOBS;
 	}
-
+	
+	public int getSERVER_INPUT_PORT() {
+		return SERVER_INPUT_PORT;
+	}
+	
 }

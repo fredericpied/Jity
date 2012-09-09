@@ -93,7 +93,7 @@ public class Agent {
 			logger.info("Starting agent...");
 		}
 
-		int agentPort = AgentConfig.getInstance().getAGENT_PORT();
+		int agentPort = AgentConfig.getInstance().getAGENT_INPUT_PORT();
 		try {
 			listenSocket = new ServerSocket(agentPort);
 			logger.info("Agent running on port " + agentPort);

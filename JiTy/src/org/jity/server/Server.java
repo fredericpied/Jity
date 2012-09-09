@@ -107,6 +107,9 @@ public class Server {
 		}
 
 		
+		ServerTaskStatusListener.getInstance().startTaskStatusListener();
+		
+		
 		try {
 			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
 			
@@ -117,7 +120,10 @@ public class Server {
 			logger.info("Starting the server...");
 		}
 		
-		int serverPort = ServerConfig.getInstance().getSERVER_UI_PORT();
+		
+		
+		
+		int serverPort = ServerConfig.getInstance().getSERVER_UI_INPUT_PORT();
 		try {
 			listenSocket = new ServerSocket(serverPort);
 			logger.info("Server running on port : " + serverPort);

@@ -82,7 +82,7 @@ public class TestLaunchJobInstruction extends TestCase {
 			RequestSender requestLauncher = new RequestSender();
 			
 			requestLauncher.openConnection(job.getHostName(), 
-					ServerConfig.getInstance().getAGENT_PORT());
+					ServerConfig.getInstance().getAGENT_INPUT_PORT());
 			
 			JityResponse response = requestLauncher.sendRequest(request);
 			
