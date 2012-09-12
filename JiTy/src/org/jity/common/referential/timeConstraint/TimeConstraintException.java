@@ -21,11 +21,11 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.common.referential;
+ */package org.jity.common.referential.timeConstraint;
 
-public class PersonnalCalendarException extends Exception {
+public class TimeConstraintException extends Exception {
 
-    public PersonnalCalendarException(String msg) {
+    public TimeConstraintException(String msg) {
         super(msg);
     }
 }

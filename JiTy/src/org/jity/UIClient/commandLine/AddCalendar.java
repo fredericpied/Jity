@@ -9,8 +9,8 @@ import org.jity.common.commandLine.CommandLine;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
+import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.instructions.InstructionException;
 

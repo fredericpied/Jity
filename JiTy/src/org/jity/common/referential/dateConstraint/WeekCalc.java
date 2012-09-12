@@ -28,8 +28,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
 
 public abstract class WeekCalc {
 

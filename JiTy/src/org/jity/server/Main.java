@@ -28,7 +28,7 @@ public class Main extends CommandLine {
 	}
 
 	private static int start() {
-		Server.getInstance().startServer();
+		Server.getInstance().start();
 		return 0;
 	}
 	

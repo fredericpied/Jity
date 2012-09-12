@@ -40,6 +40,10 @@ import org.jity.server.instructions.referential.UpdateTaskStatus;
 
 public abstract class Protocol {
 	
+	public static String executeRequest(String xml) throws ProtocolException {
+		return executeRequest(xml, null);
+	}
+	
 	/**
 	 * Parse XML request datagram, execute instructions and generate XML stream for response
 	 * for the client.
@@ -47,11 +51,10 @@ public abstract class Protocol {
 	 * @return
 	 * @throws ProtocolException
 	 */
-	public static String executeRequest(String xml) throws ProtocolException {
+	public static String executeRequest(String xml, String remoteIP) throws ProtocolException {
 		
 		JityRequest request = parseRequest(xml);
-		
-		
+				
 		JityResponse response = null;
 		
 		// Check if its same Datagram version
@@ -84,7 +87,7 @@ public abstract class Protocol {
 
 		// Agent requests
 		} else	if (request.getInstructionName().equals("ADDTASKINQUEUE")) {
-			response = new AddTaskInQueue().launch(request.getXmlInputData());
+			response = new AddTaskInQueue().launch(request.getXmlInputData(), remoteIP);
 		} else	if (request.getInstructionName().equals("GETTASKSTATUS")) {
 			response = new GetTaskStatus().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("SHUTDOWNAGENT")) {

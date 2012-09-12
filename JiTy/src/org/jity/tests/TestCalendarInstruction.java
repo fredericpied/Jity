@@ -11,7 +11,7 @@ import org.jity.agent.Agent;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
-import org.jity.common.referential.PersonnalCalendar;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.Server;
@@ -28,7 +28,7 @@ public class TestCalendarInstruction extends TestCase {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					Server.getInstance().startServer();
+					Server.getInstance().start();
 					TimeUtil.waiting(10);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,7 +54,7 @@ public class TestCalendarInstruction extends TestCase {
 
 		try {
 			
-			Server.getInstance().stopServer();
+			Server.getInstance().stop();
 
 			logger.info("Waiting 5 sec");
 			TimeUtil.waiting(5);

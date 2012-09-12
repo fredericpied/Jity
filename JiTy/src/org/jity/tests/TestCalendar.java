@@ -5,8 +5,8 @@ import java.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
+import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.util.TimeUtil;
 
 import junit.framework.TestCase;

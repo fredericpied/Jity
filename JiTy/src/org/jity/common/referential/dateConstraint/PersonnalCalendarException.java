@@ -21,46 +21,11 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */
-package org.jity.agent.instructions;
+ */package org.jity.common.referential.dateConstraint;
 
-import java.net.SocketException;
+public class PersonnalCalendarException extends Exception {
 
-import org.apache.log4j.Logger;
-import org.jity.agent.Agent;
-import org.jity.agent.AgentException;
-import org.jity.common.protocol.Instruction;
-import org.jity.common.protocol.JityResponse;
-
-
-/**
- * 
- * @author 09344A
- *
- */
-public class ShutdownAgent implements Instruction {
-	private static final Logger logger = Logger.getLogger(ShutdownAgent.class);
-
-	public JityResponse launch(String xmlInputData) {
-		JityResponse response = new JityResponse();
-
-
-		logger.info("Stopping the agent...");
-
-		try {
-			Agent.getInstance().stop();
-
-			response.setInstructionResultOK(true);
-
-			logger.info("Agent Stopped.");
-			
-
-		} catch (AgentException e) {
-			response.setException(e);
-		}
-
-
-		return response;
-	}
-	
+    public PersonnalCalendarException(String msg) {
+        super(msg);
+    }
 }

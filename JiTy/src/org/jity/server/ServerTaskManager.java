@@ -42,6 +42,8 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.referential.timeConstraint.TimeConstraint;
+import org.jity.common.referential.timeConstraint.TimeConstraintException;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DatabaseException;
@@ -121,7 +123,7 @@ public class ServerTaskManager implements Runnable {
     /**
      * Start the taskManager in a Thread.
      */
-    public synchronized void startTaskManager() {
+    public synchronized void start() {
         if (daemon == null) {
             daemon = new Thread(this);
             daemon.start();
@@ -131,7 +133,7 @@ public class ServerTaskManager implements Runnable {
     /**
      * Stop current ExecManager if running.
      */
-    public synchronized void stopTaskManager() {
+    public synchronized void stop() {
         if (daemon != null) {
         	logger.info("Shutdown of ServerTaskManager asked.");
             shutdownAsked = true;
@@ -175,10 +177,12 @@ public class ServerTaskManager implements Runnable {
 			Job job = (Job) iterJobList.next();
 						
 			try {
-				// If DateConstraint is valid for current ExploitDate, Add job du execute
-				if (job.getDateConstraint().isAValidDate(this.getExploitDate()))
-					submitJobToAgent(job);
+
+				if (job.checkConstraint(this.exploitDate)) submitJobToAgent(job);
+					
 			} catch (DateConstraintException e) {
+				logger.warn("Job "+job.getName()+": "+e.getMessage());
+			} catch (TimeConstraintException e) {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
 			}			
 		}
@@ -358,9 +362,10 @@ public class ServerTaskManager implements Runnable {
         while (!shutdownAsked) {
             try {
                 analyzeJobsForExecute();
-                TimeUtil.waiting(cycle/2);
-                updateTasksStatusForDMZ();
-                TimeUtil.waiting(cycle/2);
+                TimeUtil.waiting(cycle);
+                //TimeUtil.waiting(cycle/2);
+                //updateTasksStatusForDMZ();
+                //TimeUtil.waiting(cycle/2);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked)  {
             		logger.warn("ServerTaskManager is stopped.");

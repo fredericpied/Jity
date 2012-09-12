@@ -8,9 +8,9 @@ import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.common.referential.Job;
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
 import org.jity.common.referential.dateConstraint.DateConstraint;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
+import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
 import org.jity.server.database.DatabaseServer;
@@ -47,7 +47,7 @@ public class AddDBDataForTest {
 			
 			// Delete all PersonnalCalendar in db
 			String queryFindPC = "select personnalCalendar" +
-					" from org.jity.common.referential.PersonnalCalendar personnalCalendar";
+					" from org.jity.common.referential.dateConstraint.PersonnalCalendar personnalCalendar";
 			List pcList = session.createQuery(queryFindPC).list();
 			Iterator iterPcList = pcList.iterator();
 			while (iterPcList.hasNext()) {
@@ -104,7 +104,7 @@ public class AddDBDataForTest {
 				Job job = new Job();
 				job.setName("JOB"+i);
 				job.setHostName("localhost");
-				job.setCommandPath("d:\\temp\\test.bat");
+				job.setCommandPath("/tmp/test.ksh");
 				job.setIsActived(true);
 				job.setDateConstraint(dateConstraint1);
 				

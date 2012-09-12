@@ -1,11 +1,9 @@
-package org.jity.common.referential;
+package org.jity.common.referential.dateConstraint;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
-import org.jity.common.referential.dateConstraint.DateConstraintException;
-import org.jity.common.referential.dateConstraint.YearCalc;
 import org.jity.common.util.DateUtil;
 
 public class PersonnalCalendar {

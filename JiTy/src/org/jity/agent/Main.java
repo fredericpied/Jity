@@ -25,7 +25,7 @@ public class Main extends CommandLine {
 	}
 
 	private static int start() {
-		Agent.getInstance().startAgent();
+		Agent.getInstance().start();
 		return 0;
 	}
 	

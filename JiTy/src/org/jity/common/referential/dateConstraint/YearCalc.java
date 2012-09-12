@@ -32,8 +32,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.log4j.Logger;
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
 
 public abstract class YearCalc {
 	private static final Logger logger = Logger.getLogger(YearCalc.class);

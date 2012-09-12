@@ -7,7 +7,7 @@ import org.jity.agent.Agent;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
-import org.jity.common.referential.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.util.TimeUtil;
 import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
@@ -21,7 +21,7 @@ public class TestServer extends TestCase {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					Server.getInstance().startServer();
+					Server.getInstance().start();
 					TimeUtil.waiting(10);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,7 +37,7 @@ public class TestServer extends TestCase {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					Agent.getInstance().startAgent();
+					Agent.getInstance().start();
 					TimeUtil.waiting(2);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,6 +60,9 @@ public class TestServer extends TestCase {
 			
 			startAgentInThread();
 
+			TimeUtil.waiting(2);
+
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);

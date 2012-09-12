@@ -36,8 +36,9 @@ import java.util.Iterator;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
+import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
-import org.jity.agent.AgentTaskManager;
+import org.jity.agent.AgentQueueManager;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.util.DateUtil;
@@ -206,12 +207,12 @@ public class CommandExecutor implements Runnable {
 	
 			logger.info("Launching job "+job.getName()+" (job log file: "+jobLogFile.getAbsolutePath()+")");
 	
-			AgentTaskManager.getInstance().incrementCurrentJobsExecution();
+			Agent.getInstance().incrementCurrentJobsExecution();
 
 			// Running command
 			exitStatus = cmdExecutor.runCommand(job.getCommandPath());
 
-			AgentTaskManager.getInstance().decrementCurrentJobsExecution();
+			Agent.getInstance().decrementCurrentJobsExecution();
 			
 			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
 
@@ -226,8 +227,10 @@ public class CommandExecutor implements Runnable {
 		
 		} catch (Exception e) {
 			logger.info("Exception "+e.getClass().getName()+
-					" while executing "+job.getName()+"("+e.getMessage()+")");
-
+					" while executing "+job.getName()+" ("+e.getMessage()+")");
+			
+			Agent.getInstance().decrementCurrentJobsExecution();
+			
 			// Setting execStatus
 			currentTask.setStatus(ExecTask.KO);
 			currentTask.setStatusMessage("Exception: "+e.getMessage());

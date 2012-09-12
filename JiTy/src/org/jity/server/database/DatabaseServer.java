@@ -27,7 +27,7 @@ public class DatabaseServer {
 	 * Start embeded H2 Database server
 	 * @throws DatabaseException
 	 */
-	public void startDatabaseServer() throws DatabaseException {
+	public void start() throws DatabaseException {
 		// start the TCP Server
 		try {
 			H2DBServer = org.h2.tools.Server.createTcpServer().start();
@@ -40,7 +40,7 @@ public class DatabaseServer {
 	/**
 	 * Stop H2 Database server
 	 */
-	public void stopDatabaseServer() {
+	public void stop() {
 		
 		// stop sessionFactory
 		if (sessionFactory != null) sessionFactory.close();
