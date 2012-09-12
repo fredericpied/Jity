@@ -2,8 +2,6 @@ package org.jity.common.referential.dateConstraint;
 
 import java.util.Date;
 
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
 import org.jity.common.util.ListUtil;
 
 /**
@@ -122,7 +120,7 @@ public class DateConstraint {
 			
 			// If sentence not compose of 5 characters sequence, throw Exception
 			if (planifRuleSplit.length != 5)
-				throw new DateConstraintException("Syntax error in Planification Rule");
+				throw new DateConstraintException("Syntax error in Planification Rule: "+this.planifRule);
 			
 			String operator = planifRuleSplit[0];
 			String stringDayNumber = planifRuleSplit[1];

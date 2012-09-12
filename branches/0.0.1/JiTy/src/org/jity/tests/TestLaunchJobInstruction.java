@@ -25,7 +25,7 @@ public class TestLaunchJobInstruction extends TestCase {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					Agent.getInstance().startAgent();
+					Agent.getInstance().start();
 					TimeUtil.waiting(2);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,7 +51,7 @@ public class TestLaunchJobInstruction extends TestCase {
 	public void tearDown() {
 
 		try {
-			Agent.getInstance().stopAgent();
+			Agent.getInstance().stop();
 			
 			logger.info("Waiting 5 sec");
 			TimeUtil.waiting(5);

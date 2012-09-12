@@ -38,7 +38,7 @@ public class StartServerTaskManager implements Instruction {
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerTaskManager.getInstance().startTaskManager();
+		ServerTaskManager.getInstance().start();
 		response.setInstructionResultOK(true);
 
 		return response;

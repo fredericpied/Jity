@@ -42,7 +42,6 @@ public class RequestReceiver extends Thread {
     private Socket socket;
     private BufferedReader networkReader;
     private PrintWriter networkWriter;
-    private ArrayList<String> autorizedHostsList;
 
     /**
      * Initialize requestReceiver
@@ -55,21 +54,7 @@ public class RequestReceiver extends Thread {
         this.networkWriter = new PrintWriter(socket.getOutputStream());
         start();
     }
-   
-    /**
-     * Initialize requestReceiver whith an autorized hostnames List
-     * @param socket
-     * @param autorizedHostsList 
-     * @throws IOException
-     */
-    public RequestReceiver(Socket socket, ArrayList<String> autorizedHostsList) throws IOException {
-    	this.socket = socket;
-    	this.networkReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.networkWriter = new PrintWriter(socket.getOutputStream());
-        this.autorizedHostsList = autorizedHostsList;
-        start();
-    }
-    
+       
     /**
      * Thread code
      */
@@ -85,26 +70,10 @@ public class RequestReceiver extends Thread {
             	try {
             		logger.trace("Request received: " + xmlInputData);
 
-            		// Identifing server IP
-            		String serverIP = socket.getInetAddress().getHostAddress();
-            		
-            		// if autorizedHostsList is define, use it
-            		if (autorizedHostsList != null) {
-            			// if autorizedHostsList contain server IP, execute the request
-						if (autorizedHostsList.contains(serverIP)) {
-		            		xmlOutputData = Protocol.executeRequest(xmlInputData);
-						} else {
-							// Else return exception
-							JityResponse response = new JityResponse();
-							response.setInstructionResultOK(false);
-							response.setExceptionName("AgentException");
-							response.setExceptionMessage("Server IP "+serverIP+" not allowed for this agent. Closing connection");
-							xmlOutputData = response.toXML();
-						}
-					} else {
-						// if autorizedHostsList is not define, execute the request whithout control
-	            		xmlOutputData = Protocol.executeRequest(xmlInputData);
-					}
+            		// Identifing remote IP
+            		String remoteIP = socket.getInetAddress().getHostAddress();
+
+            		xmlOutputData = Protocol.executeRequest(xmlInputData, remoteIP);
    
             		// Send the response to server
                 	networkWriter.println(xmlOutputData);

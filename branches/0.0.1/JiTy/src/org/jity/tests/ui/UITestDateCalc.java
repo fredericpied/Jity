@@ -22,10 +22,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.jity.common.referential.PersonnalCalendar;
-import org.jity.common.referential.PersonnalCalendarException;
 import org.jity.common.referential.dateConstraint.DateConstraint;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
+import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 
 public class UITestDateCalc {
 	private static final Logger logger = Logger.getLogger(UITestDateCalc.class);  

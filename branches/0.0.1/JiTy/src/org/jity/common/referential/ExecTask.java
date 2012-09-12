@@ -12,6 +12,7 @@ public class ExecTask {
 	private Job job;
 	private String statusMessage;
 	private String logFile;
+	private String serverHost;
 	
 	public String getLogFile() {
 		return logFile;
@@ -86,6 +87,14 @@ public class ExecTask {
 
 	public void setExecDate(Date execDate) {
 		this.execDate = execDate;
+	}
+
+	public String getServerHost() {
+		return serverHost;
+	}
+
+	public void setServerHost(String serverHost) {
+		this.serverHost = serverHost;
 	}
 
 	

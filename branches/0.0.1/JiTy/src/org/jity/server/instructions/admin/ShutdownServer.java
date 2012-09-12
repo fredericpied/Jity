@@ -42,7 +42,7 @@ public class ShutdownServer implements Instruction {
 		JityResponse response = new JityResponse();
 		
 		try {
-			Server.getInstance().stopServer();
+			Server.getInstance().stop();
 			response.setInstructionResultOK(true);
 
 		} catch (ServerException e) {

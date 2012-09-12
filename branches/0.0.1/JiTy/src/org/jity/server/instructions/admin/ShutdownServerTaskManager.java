@@ -38,7 +38,7 @@ public class ShutdownServerTaskManager implements Instruction {
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerTaskManager.getInstance().stopTaskManager();
+		ServerTaskManager.getInstance().stop();
 		response.setInstructionResultOK(true);
 
 		return response;

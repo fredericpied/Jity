@@ -44,7 +44,7 @@ public abstract class DateUtil {
 	/**
 	 * Default String format for file timestamp
 	 */
-	public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyyMMdd-HHmmss";
+	public static final String DEFAULT_TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
 
 	
 	/**

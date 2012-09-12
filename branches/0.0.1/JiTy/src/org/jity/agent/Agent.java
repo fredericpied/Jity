@@ -26,10 +26,14 @@ package org.jity.agent;
 
 import org.apache.log4j.Logger;
 import org.jity.common.protocol.RequestReceiver;
+import org.jity.common.referential.ExecTask;
 import org.jity.common.util.TimeUtil;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The JiTy Agent run on host to execute task
@@ -48,6 +52,13 @@ public class Agent {
 	private boolean shutdownning = false;
 
 	/**
+     * taskQueue (Synchronized)
+     */
+    private List<ExecTask> taskQueue = Collections.synchronizedList(new ArrayList());
+	
+    private int currentJobsExection = 0;
+    
+	/**
 	 * Return the current instance of Agent (if none, create one)
 	 * @return Agent
 	 */
@@ -57,7 +68,58 @@ public class Agent {
 		}
 		return instance;
 	}
+	
+    /**
+     * Return taskQueue
+     * @return List<ExecTask>
+     */
+    public List<ExecTask> getTaskQueue() {
+    	return this.taskQueue;
+    }
+     
+    /**
+     * Return current numbers of tasks in queue
+     * @return int
+     */
+    public int getCurrentNumTaskInQueue() {
+    	return this.taskQueue.size();
+    }
+	
+    /**
+     * Add a task to execute in queue
+     * @param ExecTask
+     * @throws AgentException 
+     */
+    public void addTaskInQueue(ExecTask execTask) throws AgentException {
+    			
+		int maxJobsInQueue = AgentConfig.getInstance().getMAX_JOBS_IN_QUEUE();
+		
+		if (Agent.getInstance().getCurrentNumTaskInQueue() >=
+			maxJobsInQueue) {
+			throw new AgentException("Max number of tasks in queue reached ("+
+					maxJobsInQueue+")");
+		}
+    	
+    	logger.debug("Adding job "+execTask.getJob().getName()+" to execution queue");
 
+    	synchronized(Agent.getInstance().getTaskQueue()) {
+    		Agent.getInstance().getTaskQueue().add(execTask);
+    	}
+    }
+    
+    public void incrementCurrentJobsExecution() {
+    	this.currentJobsExection++;
+    }
+    
+    public void decrementCurrentJobsExecution() {
+    	this.currentJobsExection--;
+    }
+    
+    public int getCurrentJobsExecution() {
+    	return this.currentJobsExection;
+    }
+    
+    
 	public boolean isRunning() {
 		return isRunning;
 	}
@@ -67,7 +129,7 @@ public class Agent {
 	 * @throws InterruptedException 
 	 * 
 	 */
-	public void startAgent() {
+	public void start() {
 		Socket socket = null;
 		
 		shutdownning = false;
@@ -117,7 +179,12 @@ public class Agent {
 			System.exit(1);
 		}
 
-		AgentTaskManager.getInstance().startTaskManager();
+		AgentQueueManager.getInstance().start();
+		try {
+			TimeUtil.waiting(1);
+		} catch (InterruptedException e1) { }
+
+		AgentTaskStatusManager.getInstance().start();
 		try {
 			TimeUtil.waiting(1);
 		} catch (InterruptedException e1) { }
@@ -133,11 +200,10 @@ public class Agent {
 				try {
 					String serverHostname = socket.getInetAddress().getHostName();
 					
-					logger.info("New connection from "+serverHostname+" ("
+					logger.debug("New connection from "+serverHostname+" ("
 							+ socket.getInetAddress() + ").");
 
-					//new ServeOneServerRequest(socket);
-					new RequestReceiver(socket, AgentConfig.getInstance().getHOSTNAME_LIST());
+					new RequestReceiver(socket);
 				} catch (IOException e) {
 					socket.close();
 				}
@@ -164,15 +230,16 @@ public class Agent {
 	 * 
 	 * @throws AgentException
 	 */
-	public void stopAgent() throws AgentException {
+	public void stop() throws AgentException {
 		if (this.isRunning) {
 			logger.info("Shutdown of agent asked.");
 			shutdownning = true;
 			
 			try {
+
+				AgentQueueManager.getInstance().stop();
 				
-				logger.info("Stoping TaskManager...");
-				AgentTaskManager.getInstance().stopTaskManager();
+				AgentTaskStatusManager.getInstance().stop();
 				
 				logger.info("Closing Network socket.");
 

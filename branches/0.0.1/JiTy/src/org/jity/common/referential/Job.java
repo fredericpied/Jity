@@ -1,6 +1,11 @@
 package org.jity.common.referential;
 
+import java.util.Date;
+
 import org.jity.common.referential.dateConstraint.DateConstraint;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.referential.timeConstraint.TimeConstraint;
+import org.jity.common.referential.timeConstraint.TimeConstraintException;
 
 public class Job {
 
@@ -13,6 +18,7 @@ public class Job {
 	private String commandPath;
 	private boolean isActived;
 	private DateConstraint dateConstraint;
+	private String startTime;
 
 	public Job() {
 	}
@@ -89,4 +95,27 @@ public class Job {
 		this.dateConstraint = dateConstraint;
 	}
 
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	
+	public boolean checkConstraint(Date execDate) throws DateConstraintException, TimeConstraintException {
+		
+		// If DateConstraint is valid for current execDate
+		if (this.getDateConstraint().isAValidDate(execDate)) {
+			
+			if (TimeConstraint.isAValidWithCurrentTime(this.startTime)) {
+				return true;
+			}
+				
+		}
+		
+		return false;
+		
+	}
+	
 }

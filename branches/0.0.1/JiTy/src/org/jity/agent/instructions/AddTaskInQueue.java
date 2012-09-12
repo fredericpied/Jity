@@ -36,10 +36,11 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
-import org.jity.agent.AgentTaskManager;
+import org.jity.agent.AgentQueueManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.Protocol;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.util.DateUtil;
@@ -50,23 +51,34 @@ import org.jity.common.util.XMLUtil;
  * @author 09344A
  *
  */
-public class AddTaskInQueue implements Instruction {
+public class AddTaskInQueue {
 	private static final Logger logger = Logger.getLogger(AddTaskInQueue.class);
 
-	public JityResponse launch(String xmlInputData) {
+	public JityResponse launch(String xmlInputData, String remoteIP) {
 		JityResponse response = new JityResponse();
 		
 		try {
 			
+			// if hostnameList is define, use it
+    		if (AgentConfig.getInstance().getHOSTNAME_LIST() != null) {
+    			
+    			// if hostnameList not contain server IP, raise Exception
+				if ( ! AgentConfig.getInstance().getHOSTNAME_LIST().contains(remoteIP)) {
+					throw new AgentException("Server IP "+remoteIP+" not allowed to submit job to this agent. Closing connection");
+				}
+
+    		}
+			
 			// Initializing ExecTask
 			ExecTask execTask = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
 
-			AgentTaskManager.getInstance().addTaskInQueue(execTask);
+			Agent.getInstance().addTaskInQueue(execTask);
 		    
 			DateFormat dateFormat = new SimpleDateFormat(DateUtil.DEFAULT_DATETIME_FORMAT);
 			String timestamp = dateFormat.format(new Date());
 			execTask.setStatusMessage("Added to queue at "+timestamp);
 			execTask.setStatus(ExecTask.IN_QUEUE);
+			execTask.setServerHost(remoteIP);
 			
 			response.setInstructionResultOK(true);
 			response.setXmlOutputData(XMLUtil.objectToXMLString(execTask));

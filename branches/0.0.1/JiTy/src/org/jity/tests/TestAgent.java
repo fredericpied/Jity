@@ -18,7 +18,7 @@ public class TestAgent extends TestCase {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					Agent.getInstance().startAgent();
+					Agent.getInstance().start();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,7 +48,7 @@ public class TestAgent extends TestCase {
 	public void testStopAgentDaemon() {
 		try {
 			
-			Agent.getInstance().stopAgent();
+			Agent.getInstance().stop();
 			
 		} catch (AgentException e) {
 			e.printStackTrace();

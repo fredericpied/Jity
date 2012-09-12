@@ -30,7 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.AgentTaskManager;
+import org.jity.agent.Agent;
+import org.jity.agent.AgentQueueManager;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.ExecTask;
@@ -51,10 +52,10 @@ public class GetTaskStatus implements Instruction {
 			
 			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
 
-		     synchronized(AgentTaskManager.getInstance().getTaskQueue()) {
+		     synchronized(Agent.getInstance().getTaskQueue()) {
 			 
 				 // Select terminate tasks in queue
-				Iterator<ExecTask> iterTask = AgentTaskManager.getInstance().getTaskQueue().iterator();
+				Iterator<ExecTask> iterTask = Agent.getInstance().getTaskQueue().iterator();
 		    	while (iterTask.hasNext()) {
 		    		ExecTask task = iterTask.next();
 		    		

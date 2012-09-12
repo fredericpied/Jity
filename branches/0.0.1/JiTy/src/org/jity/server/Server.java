@@ -70,7 +70,7 @@ public class Server {
 	/**
 	 * Start the server.
 	 */
-	public void startServer() {
+	public void start() {
 		Socket client = null;
 		
 		shutdowning = false;
@@ -83,14 +83,14 @@ public class Server {
 		} catch (ServerException e1) {
 			logger.fatal(e1.getMessage());
 			try {
-				this.stopServer();
+				this.stop();
 			} catch (ServerException e) {}
 			System.exit(1);
 		}
 
 		try {
 			
-			DatabaseServer.getInstance().startDatabaseServer();
+			DatabaseServer.getInstance().start();
 			
 			// Init database connection
 			logger.info("Init of DB connection...");
@@ -101,13 +101,10 @@ public class Server {
 		} catch (DatabaseException e) {
 			logger.fatal(e.getMessage());
 
-			DatabaseServer.getInstance().stopDatabaseServer();
+			DatabaseServer.getInstance().stop();
 			
 			System.exit(1);
 		}
-
-		
-		ServerTaskStatusListener.getInstance().startTaskStatusListener();
 		
 		
 		try {
@@ -119,9 +116,8 @@ public class Server {
 			logger.warn(e1.getMessage());
 			logger.info("Starting the server...");
 		}
-		
-		
-		
+				
+		ServerTaskStatusListener.getInstance().startTaskStatusListener();	
 		
 		int serverPort = ServerConfig.getInstance().getSERVER_UI_INPUT_PORT();
 		try {
@@ -131,7 +127,7 @@ public class Server {
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			
-			DatabaseServer.getInstance().stopDatabaseServer();
+			DatabaseServer.getInstance().stop();
 			
 			System.exit(1);
 		}
@@ -172,18 +168,19 @@ public class Server {
 	 * 
 	 * @throws ServerException
 	 */
-	public void stopServer() throws ServerException {
+	public void stop() throws ServerException {
 		if (this.isRunning) {
 			logger.info("Shutdown of server asked.");
 			shutdowning = true;
 			
 			try {
 				
-				logger.info("Shutdowning planification daemon.");
-				ServerTaskManager.getInstance().stopTaskManager();
+				ServerTaskManager.getInstance().stop();
+				
+				ServerTaskStatusListener.getInstance().stopTaskStatusListener();
 				
 				logger.info("Closing Database server.");
-				DatabaseServer.getInstance().stopDatabaseServer();
+				DatabaseServer.getInstance().stop();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();
