@@ -1,6 +1,6 @@
 <org.jity.UIClient.UIClientConfig>
-  <SERVER__PORT>2610</SERVER__PORT>
-  <SERVER__HOSTNAME>localhost</SERVER__HOSTNAME>
-  <CLIENT__NAME>clientFred</CLIENT__NAME>
-  <CLIENT__DESC>Description client Fred</CLIENT__DESC>
-  </org.jity.UIClient.UIClientConfig>
+	<SERVER__PORT>2610</SERVER__PORT>
+	<SERVER__HOSTNAME>localhost</SERVER__HOSTNAME>
+	<CLIENT__NAME>clientFred</CLIENT__NAME>
+	<CLIENT__DESC>Description client Fred</CLIENT__DESC>
+</org.jity.UIClient.UIClientConfig>
