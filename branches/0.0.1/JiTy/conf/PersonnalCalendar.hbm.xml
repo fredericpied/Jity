@@ -1,28 +1,19 @@
 <?xml version="1.0"?>
 
-<!--
-  ~ Hibernate, Relational Persistence for Idiomatic Java
-  ~
-  ~ Copyright (c) 2010, Red Hat Inc. or third-party contributors as
-  ~ indicated by the @author tags or express copyright attribution
-  ~ statements applied by the authors.  All third-party contributions are
-  ~ distributed under license by Red Hat Inc.
-  ~
-  ~ This copyrighted material is made available to anyone wishing to use, modify,
-  ~ copy, or redistribute it subject to the terms and conditions of the GNU
-  ~ Lesser General Public License, as published by the Free Software Foundation.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-  ~ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
-  ~ for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public License
-  ~ along with this distribution; if not, write to:
-  ~ Free Software Foundation, Inc.
-  ~ 51 Franklin Street, Fifth Floor
-  ~ Boston, MA  02110-1301  USA
-  -->
+<!-- ~ Hibernate, Relational Persistence for Idiomatic Java ~ ~ Copyright 
+	(c) 2010, Red Hat Inc. or third-party contributors as ~ indicated by the 
+	@author tags or express copyright attribution ~ statements applied by the 
+	authors. All third-party contributions are ~ distributed under license by 
+	Red Hat Inc. ~ ~ This copyrighted material is made available to anyone wishing 
+	to use, modify, ~ copy, or redistribute it subject to the terms and conditions 
+	of the GNU ~ Lesser General Public License, as published by the Free Software 
+	Foundation. ~ ~ This program is distributed in the hope that it will be useful, 
+	~ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+	~ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public 
+	License ~ for more details. ~ ~ You should have received a copy of the GNU 
+	Lesser General Public License ~ along with this distribution; if not, write 
+	to: ~ Free Software Foundation, Inc. ~ 51 Franklin Street, Fifth Floor ~ 
+	Boston, MA 02110-1301 USA -->
 
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
@@ -30,15 +21,16 @@
 
 <hibernate-mapping package="org.jity.common.referential.dateConstraint">
 
-    <class name="PersonnalCalendar" table="PERSONNAL_CALENDAR">
-        <id name="id" type="long">
-            <column name="ID" not-null="true" unique="true" index="PK_PERSONNAL_CALENDAR" />  
-            <generator class="increment"/>
-        </id>
-        <property name="name" column="NAME"/>
-        <property name="description" column="DESCRIPTION"/>
-        <property name="year" column="YEAR"></property>    
-        <property name="days" column="DAYS" type="string" length="366"/>
-    </class>
+	<class name="PersonnalCalendar" table="PERSONNAL_CALENDAR">
+		<id name="id" type="long">
+			<column name="ID" not-null="true" unique="true"
+				index="PK_PERSONNAL_CALENDAR" />
+			<generator class="increment" />
+		</id>
+		<property name="name" column="NAME" />
+		<property name="description" column="DESCRIPTION" />
+		<property name="year" column="YEAR"></property>
+		<property name="days" column="DAYS" type="string" length="366" />
+	</class>
 
 </hibernate-mapping>

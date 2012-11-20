@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <project basedir="." default="build" name="jity">
-	<property name="version" value="0.0.1"/>
-	<property name="app.home" value="."/>
-	<property name="cible.dir" value="d:\temp\jity"/>
-	<property name="src.dir" value="${app.home}/src"/>
-	<property name="build.dir" value="${cible.dir}/build"/>
-	<property name="dist.dir" value="${cible.dir}/dist"/>
-	<property name="dist.server.dir" value="${dist.dir}/jityServer-${version}"/>
-	<property name="dist.agent.dir" value="${dist.dir}/jityAgent-${version}"/>
-	<property name="dist.uiclient.dir" value="${dist.dir}/jityUIClient-${version}"/>
+	<property name="version" value="0.0.1" />
+	<property name="app.home" value="." />
+	<property name="cible.dir" value="/tmp/jity" />
+	<property name="src.dir" value="${app.home}/src" />
+	<property name="build.dir" value="${cible.dir}/build" />
+	<property name="dist.dir" value="${cible.dir}/dist" />
+	<property name="dist.server.dir" value="${dist.dir}/jityServer-${version}" />
+	<property name="dist.agent.dir" value="${dist.dir}/jityAgent-${version}" />
+	<property name="dist.uiclient.dir" value="${dist.dir}/jityUIClient-${version}" />
 
 	<path id="jity.classpath">
 		<fileset dir="lib">
-			<include name="log4j-1.2.15.jar"/>
-			<include name="xstream-1.4.1.jar"/>
-			<include name="h2_db-1.3.167/h2-1.3.167.jar"/>
-			<include name="hibernate-4.1.1/*.jar"/>
+			<include name="log4j-1.2.15.jar" />
+			<include name="xstream-1.4.1.jar" />
+			<include name="h2_db-1.3.167/h2-1.3.167.jar" />
+			<include name="hibernate-4.1.1/*.jar" />
 		</fileset>
 	</path>
 
@@ -35,31 +35,29 @@
 	</target>
 
 	<target name="clean">
-		<delete dir="${build.dir}"/>
-		<delete dir="${dist.dir}"/>
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
 	</target>
 
 	<target name="build" depends="clean, init">
-		<echo message="Starting compilation: ${ant.project.name} (${ant.file})"/>
+		<echo message="Starting compilation: ${ant.project.name} (${ant.file})" />
 
-		<property name="src.filter" refid="src.filter"/>
-		<javac debug="true"
-			target="1.6"
-			srcdir="${src.filter}"
-			destdir="${build.dir}">
-			<classpath refid="jity.classpath"/>
+		<property name="src.filter" refid="src.filter" />
+		<javac debug="true" target="1.6" srcdir="${src.filter}" destdir="${build.dir}">
+			<classpath refid="jity.classpath" />
 		</javac>
-		<echo message="End of compilation: ${ant.project.name} (${ant.file})"/>
+		<echo message="End of compilation: ${ant.project.name} (${ant.file})" />
 	</target>
 
 	<target name="dist" depends="build">
-		<echo message="Starting JiTy packaging: ${ant.project.name} (${ant.file})"/>
+		<echo message="Starting JiTy packaging: ${ant.project.name} (${ant.file})" />
 		<mkdir dir="${dist.agent.dir}/log" />
 		<mkdir dir="${dist.agent.dir}/lib" />
 		<mkdir dir="${dist.agent.dir}/conf" />
 		<mkdir dir="${dist.agent.dir}/bin" />
 
-		<manifestclasspath property="classpath.agent" jarfile="jityAgent.jar">
+		<manifestclasspath property="classpath.agent"
+			jarfile="jityAgent.jar">
 			<classpath refid="jity.classpath" />
 		</manifestclasspath>
 
@@ -68,37 +66,37 @@
 				<attribute name="Main-Class" value="org.jity.agent.Main" />
 				<attribute name="Class-Path" value="conf/ ${classpath.agent}" />
 			</manifest>
-			<fileset dir="${build.dir}"/>
+			<fileset dir="${build.dir}" />
 		</jar>
 
 		<copy todir="${dist.agent.dir}/lib">
 			<fileset dir="${app.home}/lib">
-				<include name="log4j-1.2.15.jar"/>
-				<include name="xstream-1.4.1.jar"/>
-				<include name="h2_db-1.3.167/h2-1.3.167.jar"/>
-				<include name="hibernate-4.1.1/*.jar"/>
+				<include name="log4j-1.2.15.jar" />
+				<include name="xstream-1.4.1.jar" />
+				<include name="h2_db-1.3.167/h2-1.3.167.jar" />
+				<include name="hibernate-4.1.1/*.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${dist.agent.dir}/conf">
 			<fileset dir="${app.home}/conf">
-				<include name="AgentConfig.xml"/>
+				<include name="AgentConfig.xml" />
 			</fileset>
 		</copy>
 
-			<copy tofile="${dist.agent.dir}/conf/log4j.xml">
-				<fileset dir="${app.home}/conf/dist">
-					<include name="agent-log4j.xml"/>
-				</fileset>
-			</copy>
+		<copy tofile="${dist.agent.dir}/conf/log4j.xml">
+			<fileset dir="${app.home}/conf/dist">
+				<include name="agent-log4j.xml" />
+			</fileset>
+		</copy>
 
-		
+
 		<copy todir="${dist.agent.dir}/bin">
 			<fileset dir="${app.home}/bat">
-				<include name="*Agent.bat"/>
+				<include name="*Agent.bat" />
 			</fileset>
 			<fileset dir="${app.home}/ksh">
-				<include name="*Agent.ksh"/>
+				<include name="*Agent.ksh" />
 			</fileset>
 		</copy>
 
@@ -107,8 +105,9 @@
 		<mkdir dir="${dist.server.dir}/conf" />
 		<mkdir dir="${dist.server.dir}/bin" />
 		<mkdir dir="${dist.server.dir}/db" />
-			
-		<manifestclasspath property="classpath.server" jarfile="jityServer.jar">
+
+		<manifestclasspath property="classpath.server"
+			jarfile="jityServer.jar">
 			<classpath refid="jity.classpath" />
 		</manifestclasspath>
 
@@ -117,43 +116,43 @@
 				<attribute name="Main-Class" value="org.jity.server.Main" />
 				<attribute name="Class-Path" value="conf/ ${classpath.server}" />
 			</manifest>
-			<fileset dir="${build.dir}"/>
+			<fileset dir="${build.dir}" />
 		</jar>
 
 		<copy todir="${dist.server.dir}/lib">
 			<fileset dir="${app.home}/lib">
-				<include name="log4j-1.2.15.jar"/>
-				<include name="xstream-1.4.1.jar"/>
-				<include name="h2_db-1.3.167/h2-1.3.167.jar"/>
-				<include name="hibernate-4.1.1/*.jar"/>
+				<include name="log4j-1.2.15.jar" />
+				<include name="xstream-1.4.1.jar" />
+				<include name="h2_db-1.3.167/h2-1.3.167.jar" />
+				<include name="hibernate-4.1.1/*.jar" />
 			</fileset>
 		</copy>
 
 		<copy todir="${dist.server.dir}/conf">
 			<fileset dir="${app.home}/conf">
-				<include name="ServerConfig.xml"/>
-				<include name="hibernate.cfg.xml"/>
-				<include name="*.hbm.xml"/>
+				<include name="ServerConfig.xml" />
+				<include name="hibernate.cfg.xml" />
+				<include name="*.hbm.xml" />
 			</fileset>
 		</copy>
-		
+
 		<copy tofile="${dist.server.dir}/conf/log4j.xml">
 			<fileset dir="${app.home}/conf/dist">
-				<include name="server-log4j.xml"/>
+				<include name="server-log4j.xml" />
 			</fileset>
 		</copy>
-		
+
 
 		<copy todir="${dist.server.dir}/bin">
 			<fileset dir="${app.home}/bat">
-				<include name="*Server.bat"/>
+				<include name="*Server.bat" />
 			</fileset>
 			<fileset dir="${app.home}/ksh">
-				<include name="*Server.ksh"/>
+				<include name="*Server.ksh" />
 			</fileset>
 		</copy>
 
-		<echo message="End of JiTy packaging: ${ant.project.name} (${ant.file})"/>
+		<echo message="End of JiTy packaging: ${ant.project.name} (${ant.file})" />
 	</target>
 
 </project>
