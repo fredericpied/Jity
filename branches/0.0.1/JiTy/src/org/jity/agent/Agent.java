@@ -43,6 +43,9 @@ import java.util.List;
 public class Agent {
 	private static final Logger logger = Logger.getLogger(Agent.class);
 
+	/**
+	 * Current running instance of JiTyAgent
+	 */
 	private static Agent instance = null;
 
 	private ServerSocket listenSocket;
