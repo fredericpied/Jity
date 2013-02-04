@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
-import org.jity.agent.AgentQueueManager;
+import org.jity.agent.AgentQueueManagerDaemon;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
@@ -78,7 +78,7 @@ public class AddTaskInQueue {
 			String timestamp = dateFormat.format(new Date());
 			execTask.setStatusMessage("Added to queue at "+timestamp);
 			execTask.setStatus(ExecTask.IN_QUEUE);
-			execTask.setServerHost(remoteIP);
+			execTask.setServerIp(remoteIP);
 			
 			response.setInstructionResultOK(true);
 			response.setXmlOutputData(XMLUtil.objectToXMLString(execTask));

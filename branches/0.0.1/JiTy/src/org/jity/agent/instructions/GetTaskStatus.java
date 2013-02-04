@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
-import org.jity.agent.AgentQueueManager;
+import org.jity.agent.AgentQueueManagerDaemon;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.ExecTask;

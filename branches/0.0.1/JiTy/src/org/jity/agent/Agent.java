@@ -182,12 +182,12 @@ public class Agent {
 			System.exit(1);
 		}
 
-		AgentQueueManager.getInstance().start();
+		AgentQueueManagerDaemon.getInstance().start();
 		try {
 			TimeUtil.waiting(1);
 		} catch (InterruptedException e1) { }
 
-		AgentTaskStatusManager.getInstance().start();
+		AgentTaskStatusManagerDaemon.getInstance().start();
 		try {
 			TimeUtil.waiting(1);
 		} catch (InterruptedException e1) { }
@@ -240,9 +240,9 @@ public class Agent {
 			
 			try {
 
-				AgentQueueManager.getInstance().stop();
+				AgentQueueManagerDaemon.getInstance().stop();
 				
-				AgentTaskStatusManager.getInstance().stop();
+				AgentTaskStatusManagerDaemon.getInstance().stop();
 				
 				logger.info("Closing Network socket.");
 

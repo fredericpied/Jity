@@ -21,7 +21,8 @@
  *
  *  http://www.assembla.com/spaces/jity
  *
- */package org.jity.server.database;
+ */
+package org.jity.server.database;
 
 public class DatabaseException extends Exception {
 	

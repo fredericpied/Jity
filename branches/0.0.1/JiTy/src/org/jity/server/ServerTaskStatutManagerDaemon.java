@@ -41,16 +41,16 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.database.H2DatabaseServer;
 
 /**
  * Listen task status to update state in DB
  *
  */
-public class ServerTaskStatusListener implements Runnable {
-	private static final Logger logger = Logger.getLogger(ServerTaskStatusListener.class);
+public class ServerTaskStatutManagerDaemon implements Runnable {
+	private static final Logger logger = Logger.getLogger(ServerTaskStatutManagerDaemon.class);
 
-	private static ServerTaskStatusListener instance = null;
+	private static ServerTaskStatutManagerDaemon instance = null;
 	
 	private ServerSocket listenSocket;
 	
@@ -66,9 +66,9 @@ public class ServerTaskStatusListener implements Runnable {
      * Create one if none
      * @return ServerTaskStatusListener
      */
-	public static ServerTaskStatusListener getInstance() {
+	public static ServerTaskStatutManagerDaemon getInstance() {
 		if (instance == null) {
-			instance = new ServerTaskStatusListener();
+			instance = new ServerTaskStatutManagerDaemon();
 		}
 		return instance;
 	}
@@ -115,7 +115,7 @@ public class ServerTaskStatusListener implements Runnable {
 		Socket socket = null;
 		
         try {
-			this.databaseSession = DatabaseServer.getInstance().getSession();
+			this.databaseSession = H2DatabaseServer.getInstance().getSession();
 		} catch (DatabaseException e) {
             logger.fatal(e.getMessage());
 		}

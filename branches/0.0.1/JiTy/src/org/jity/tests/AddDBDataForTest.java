@@ -13,7 +13,7 @@ import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.database.H2DatabaseServer;
 
 public class AddDBDataForTest {
 	private static final Logger logger = Logger.getLogger(AddDBDataForTest.class);
@@ -22,7 +22,7 @@ public class AddDBDataForTest {
 
 //		try {
 
-			Session session = DatabaseServer.getInstance().getSession();
+			Session session = H2DatabaseServer.getInstance().getSession();
 						
 			logger.info("Deleting Job, DateConstraint and PersonnalCalendar in DB...");
 			

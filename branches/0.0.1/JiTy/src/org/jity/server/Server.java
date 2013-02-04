@@ -29,7 +29,7 @@ import org.hibernate.Session;
 import org.jity.agent.AgentException;
 import org.jity.common.protocol.RequestReceiver;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.database.H2DatabaseServer;
 
 import java.io.*;
 import java.net.*;
@@ -90,18 +90,18 @@ public class Server {
 
 		try {
 			
-			DatabaseServer.getInstance().start();
+			H2DatabaseServer.getInstance().start();
 			
 			// Init database connection
 			logger.info("Init of DB connection...");
-			Session sess = DatabaseServer.getInstance().getSession();
+			Session sess = H2DatabaseServer.getInstance().getSession();
 			sess.close();
 			logger.info("Connection to database: OK");
 
 		} catch (DatabaseException e) {
 			logger.fatal(e.getMessage());
 
-			DatabaseServer.getInstance().stop();
+			H2DatabaseServer.getInstance().stop();
 			
 			System.exit(1);
 		}
@@ -117,7 +117,7 @@ public class Server {
 			logger.info("Starting the server...");
 		}
 				
-		ServerTaskStatusListener.getInstance().startTaskStatusListener();	
+		ServerTaskStatutManagerDaemon.getInstance().startTaskStatusListener();	
 		
 		int serverPort = ServerConfig.getInstance().getSERVER_UI_INPUT_PORT();
 		try {
@@ -127,7 +127,7 @@ public class Server {
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			
-			DatabaseServer.getInstance().stop();
+			H2DatabaseServer.getInstance().stop();
 			
 			System.exit(1);
 		}
@@ -175,12 +175,12 @@ public class Server {
 			
 			try {
 				
-				ServerTaskManager.getInstance().stop();
+				ServerTaskLauncherDaemon.getInstance().stop();
 				
-				ServerTaskStatusListener.getInstance().stopTaskStatusListener();
+				ServerTaskStatutManagerDaemon.getInstance().stopTaskStatusListener();
 				
 				logger.info("Closing Database server.");
-				DatabaseServer.getInstance().stop();
+				H2DatabaseServer.getInstance().stop();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();
