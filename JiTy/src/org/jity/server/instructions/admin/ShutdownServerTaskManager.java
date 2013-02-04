@@ -26,7 +26,7 @@ package org.jity.server.instructions.admin;
 
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.ServerTaskManager;
+import org.jity.server.ServerTaskLauncherDaemon;
 
 /**
  * Server command to shutdown the Server Task Manager
@@ -38,7 +38,7 @@ public class ShutdownServerTaskManager implements Instruction {
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerTaskManager.getInstance().stop();
+		ServerTaskLauncherDaemon.getInstance().stop();
 		response.setInstructionResultOK(true);
 
 		return response;

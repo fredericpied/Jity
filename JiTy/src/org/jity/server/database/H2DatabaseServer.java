@@ -1,3 +1,27 @@
+/**
+ *  JiTy : Open Job Scheduler
+ *  Copyright (C) 2012 
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free
+ *  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *  MA 02111-1307, USA
+ *
+ *  For questions, suggestions:
+ *
+ *  http://www.assembla.com/spaces/jity
+ *
+ */
 package org.jity.server.database;
 
 import java.sql.SQLException;
@@ -7,18 +31,28 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class DatabaseServer {
-	private static final Logger logger = Logger.getLogger(DatabaseServer.class);
+/**
+ * Wrapper for H2 Database Java Server instance
+ * @author 09344a
+ *
+ */
+public class H2DatabaseServer {
+	private static final Logger logger = Logger.getLogger(H2DatabaseServer.class);
 	
-	private static DatabaseServer instance = null;
+	private static H2DatabaseServer instance = null;
 	
 	private static SessionFactory sessionFactory;
 	
 	private static org.h2.tools.Server H2DBServer = null;;
 	
-	public static DatabaseServer getInstance() {
+	/**
+	 * Return current instance of H2 Database Server.
+	 * Create one if none exist
+	 * @return H2DatabaseServer
+	 */
+	public static H2DatabaseServer getInstance() {
 		if (instance == null) {
-			instance = new DatabaseServer();
+			instance = new H2DatabaseServer();
 		}
 		return instance;
 	}

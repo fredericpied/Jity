@@ -1,22 +1,27 @@
 package org.jity.agent;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.commandExecutor.CommandExecutor;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.util.TimeUtil;
+import org.jity.common.util.XMLUtil;
 
 /**
- * Pool queue to launch executions
+ * Pool Agent Queue to send task status to server
  * @author fred
  *
  */
-public class AgentQueueManager implements Runnable {
-	private static final Logger logger = Logger.getLogger(AgentQueueManager.class);
+public class AgentTaskStatusManagerDaemon implements Runnable {
+	
+	private static final Logger logger = Logger.getLogger(AgentTaskStatusManagerDaemon.class);
 
-	private static AgentQueueManager instance = null;
+	private static AgentTaskStatusManagerDaemon instance = null;
 	
     private Thread daemon = null;
 
@@ -26,9 +31,9 @@ public class AgentQueueManager implements Runnable {
      * Return current instance
      * @return AgentQueueManager
      */
-	public static AgentQueueManager getInstance() {
+	public static AgentTaskStatusManagerDaemon getInstance() {
 		if (instance == null) {
-			instance = new AgentQueueManager();
+			instance = new AgentTaskStatusManagerDaemon();
 		}
 		return instance;
 	}
@@ -68,35 +73,63 @@ public class AgentQueueManager implements Runnable {
     }
       
     /**
-     * Analyze task queue to execute jobs
+     * Analyze task queue to pool task status to server
      * @throws AgentException
      * @throws IOException
      */
-    public void taskQueueAnalyze() throws AgentException, IOException {
-
-		// Checking concurrent max jobs nummber
-    	int maxConcurrentJob = AgentConfig.getInstance().getMAX_CONCURRENT_JOBS();
-    	
-    	if (Agent.getInstance().getCurrentJobsExecution() <= maxConcurrentJob) {
+    private void taskQueueReading() throws AgentException, IOException {
     	
 	    	synchronized(Agent.getInstance().getTaskQueue()) {
+
 	    		Iterator<ExecTask> iterTask = Agent.getInstance().getTaskQueue().iterator();
 	    		while (iterTask.hasNext()) {
 	    			ExecTask task = iterTask.next();
 
 	    			// If task not in the IN_QUEUE state, continue
-	    			if (task.getStatus() != ExecTask.IN_QUEUE) continue;
-	    			
-	    			// Launch command in a new thread
-	    			CommandExecutor commandExecutor = new CommandExecutor();
-	    			commandExecutor.execute(task);
+	    			if (task.getStatus() != ExecTask.IN_QUEUE) {
+	    				sendTaskStatus(task);
+	    			}
 	    		}
 
-	    	} // synchronized(taskQueueSynchro) {
-    	} else {
-    		logger.debug("Max concurent jobs reached ("+maxConcurrentJob+")");
-    	}
+	    	} 
+	    	
     }
+    
+    /**
+     * Send one task status to JiTy Server
+     * @param task
+     */
+    private void sendTaskStatus(ExecTask task) {
+    	
+    	// Construct Request
+		JityRequest request = new JityRequest();
+		request.setInstructionName("UPDTASKSTATUS");
+		request.setXmlInputData(XMLUtil.objectToXMLString(task));
+		
+		try {
+			RequestSender requestLauncher = new RequestSender();
+
+			requestLauncher.openConnection(task.getServerIp(),
+					AgentConfig.getInstance().getSERVER_INPUT_PORT());
+
+			// Send request to agent
+			JityResponse response = requestLauncher.sendRequest(request);
+
+			requestLauncher.closeConnection();
+
+			if (! response.isInstructionResultOK()) {
+				// If response is KO
+				logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp()+" ("+response.getExceptionName()+":"+response.getExceptionMessage()+")");
+				
+			}
+			
+		} catch (UnknownHostException e) {
+			logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp() + "("+e.getMessage()+")");
+		} catch (IOException e) {
+			logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp() + "("+e.getMessage()+")");
+		}
+    }
+       
     
     /**
      * Launch queue analyze each X seconds.
@@ -109,7 +142,7 @@ public class AgentQueueManager implements Runnable {
         while (!shutdownAsked) {
 
             try {
-            	taskQueueAnalyze(); 
+            	taskQueueReading(); 
             	TimeUtil.waiting(cycle);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked) logger.warn(this.getClass().getSimpleName() +" is stopped.");

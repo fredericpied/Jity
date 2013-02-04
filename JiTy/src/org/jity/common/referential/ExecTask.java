@@ -12,7 +12,32 @@ public class ExecTask {
 	private Job job;
 	private String statusMessage;
 	private String logFile;
-	private String serverHost;
+	private String serverIp;	
+
+	/**
+	 * The task is going to execute and wait for Job timeConstraint to be valid
+	 */
+	public static final int PLANED = 2;
+	
+	/**
+	 * The task is waiting in agent queue
+	 */
+	public static final int IN_QUEUE = 3;
+	
+	/**
+	 * The task is currently executing on the agent
+	 */
+	public static final int RUNNING = 4;
+	
+	/**
+	 * The task was correctly executed for the current exec Date
+	 */
+	public static final int OK = 5;
+	
+	/**
+	 * The task was executed for current exec Date but the command line ended whith error
+	 */
+	public static final int KO = 6;
 	
 	public String getLogFile() {
 		return logFile;
@@ -22,12 +47,7 @@ public class ExecTask {
 		this.logFile = logFile;
 	}
 
-	public static final int NOT_PLANED = 1;
-	public static final int PLANED = 2;
-	public static final int IN_QUEUE = 3;
-	public static final int RUNNING = 4;
-	public static final int OK = 5;
-	public static final int KO = 6;
+
 
 	public ExecTask() {
 
@@ -89,14 +109,14 @@ public class ExecTask {
 		this.execDate = execDate;
 	}
 
-	public String getServerHost() {
-		return serverHost;
+	public String getServerIp() {
+		return serverIp;
 	}
 
-	public void setServerHost(String serverHost) {
-		this.serverHost = serverHost;
+	public void setServerIp(String serverIp) {
+		this.serverIp = serverIp;
 	}
-
+	
 	
 	
 }

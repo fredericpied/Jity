@@ -31,7 +31,7 @@ import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DataNotFoundDBException;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.database.H2DatabaseServer;
 import org.jity.server.database.TooMuchDataDBException;
 
 /**
@@ -51,7 +51,7 @@ public class GetCalendar implements Instruction {
 			String queryFind = "select cal from org.jity.referential.PersonnalCalendar cal"
 	                + " where cal.id = " + id;
 
-			Session session = DatabaseServer.getInstance().getSession();
+			Session session = H2DatabaseServer.getInstance().getSession();
 
 			List list = session.createQuery(queryFind).list();
 	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);

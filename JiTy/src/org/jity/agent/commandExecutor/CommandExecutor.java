@@ -38,7 +38,7 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
-import org.jity.agent.AgentQueueManager;
+import org.jity.agent.AgentQueueManagerDaemon;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.util.DateUtil;

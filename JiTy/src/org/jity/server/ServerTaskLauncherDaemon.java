@@ -42,21 +42,20 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
-import org.jity.common.referential.timeConstraint.TimeConstraint;
 import org.jity.common.referential.timeConstraint.TimeConstraintException;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.database.H2DatabaseServer;
 
 /**
  * Pool jobs constraints and create execTask for agents. Get task status to update state in DB
  *
  */
-public class ServerTaskManager implements Runnable {
-	private static final Logger logger = Logger.getLogger(ServerTaskManager.class);
+public class ServerTaskLauncherDaemon implements Runnable {
+	private static final Logger logger = Logger.getLogger(ServerTaskLauncherDaemon.class);
 
-	private static ServerTaskManager instance = null;
+	private static ServerTaskLauncherDaemon instance = null;
 	
 	private Session databaseSession;
 		
@@ -102,9 +101,9 @@ public class ServerTaskManager implements Runnable {
      * Create one if none
      * @return ServerExecManager
      */
-	public static ServerTaskManager getInstance() {
+	public static ServerTaskLauncherDaemon getInstance() {
 		if (instance == null) {
-			instance = new ServerTaskManager();
+			instance = new ServerTaskLauncherDaemon();
 		}
 		return instance;
 	}
@@ -350,7 +349,7 @@ public class ServerTaskManager implements Runnable {
         int cycle = ServerConfig.getInstance().getSERVER_POOLING_CYCLE();
         
         try {
-			this.databaseSession = DatabaseServer.getInstance().getSession();
+			this.databaseSession = H2DatabaseServer.getInstance().getSession();
 		} catch (DatabaseException e) {
             logger.fatal(e.getMessage());
 		}

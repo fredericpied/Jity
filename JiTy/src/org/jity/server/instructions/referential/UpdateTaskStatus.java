@@ -37,8 +37,8 @@ import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
-import org.jity.server.ServerTaskManager;
-import org.jity.server.database.DatabaseServer;
+import org.jity.server.ServerTaskLauncherDaemon;
+import org.jity.server.database.H2DatabaseServer;
 
 /**
  * Server command to update task status
@@ -55,7 +55,7 @@ public class UpdateTaskStatus implements Instruction {
 		
 		try {
 
-			databaseSession = DatabaseServer.getInstance().getSession();
+			databaseSession = H2DatabaseServer.getInstance().getSession();
 			
 			ExecTask task = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
 					
