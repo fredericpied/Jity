@@ -24,25 +24,16 @@
  */
 package org.jity.agent.instructions;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentConfig;
 import org.jity.agent.AgentException;
-import org.jity.agent.AgentQueueManagerDaemon;
-import org.jity.common.protocol.Instruction;
-import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.protocol.Protocol;
 import org.jity.common.referential.ExecTask;
-import org.jity.common.referential.Job;
 import org.jity.common.util.DateUtil;
 import org.jity.common.util.XMLUtil;
 

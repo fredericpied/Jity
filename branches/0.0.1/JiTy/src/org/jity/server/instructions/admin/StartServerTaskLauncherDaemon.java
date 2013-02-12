@@ -29,16 +29,16 @@ import org.jity.common.protocol.JityResponse;
 import org.jity.server.ServerTaskLauncherDaemon;
 
 /**
- * Server command to shutdown the Server Task Manager
+ * Server command to shutdown the Planif Daemon
  * @author Fred
  *
  */
-public class ShutdownServerTaskManager implements Instruction {
+public class StartServerTaskLauncherDaemon implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		ServerTaskLauncherDaemon.getInstance().stop();
+		ServerTaskLauncherDaemon.getInstance().start();
 		response.setInstructionResultOK(true);
 
 		return response;

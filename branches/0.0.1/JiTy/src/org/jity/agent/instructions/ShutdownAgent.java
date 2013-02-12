@@ -24,8 +24,6 @@
  */
 package org.jity.agent.instructions;
 
-import java.net.SocketException;
-
 import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;

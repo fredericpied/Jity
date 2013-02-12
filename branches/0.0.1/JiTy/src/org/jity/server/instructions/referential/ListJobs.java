@@ -22,52 +22,53 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.agent.instructions;
+package org.jity.server.instructions.referential;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jity.agent.Agent;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.ExecTask;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
+import org.jity.server.database.DataNotFoundDBException;
+import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.TooMuchDataDBException;
+import org.jity.tests.TestServerForUIClient;
 
 /**
+ * Server command to list Jobs existing in DB
  * 
  * @author 09344A
- *
+ * 
  */
-public class GetTaskStatus implements Instruction {
-	private static final Logger logger = Logger.getLogger(GetTaskStatus.class);
-
+public class ListJobs implements Instruction {
+	private static final Logger logger = Logger.getLogger(ListJobs.class);
+	
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
+
 		try {
 			
-			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
+			String queryFind = "select job from org.jity.common.referential.Job job";
+			
+			Session session = H2DatabaseServer.getInstance().getSession();
 
-		     synchronized(Agent.getInstance().getTaskQueue()) {
-			 
-				 // Select terminate tasks in queue
-				Iterator<ExecTask> iterTask = Agent.getInstance().getTaskQueue().iterator();
-		    	while (iterTask.hasNext()) {
-		    		ExecTask task = iterTask.next();
-		    		if (task.getStatus() != ExecTask.IN_QUEUE)
-		    			taskQueueExtract.add(task);
-		    	}
-	    	}
+			List list = session.createQuery(queryFind).list();
+	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			response.setInstructionResultOK(true);
 
-			response.setXmlOutputData(XMLUtil.objectToXMLString(taskQueueExtract));
-	    	response.setInstructionResultOK(true);
-		
+			session.close();
+			
 		} catch (Exception e) {
 			response.setException(e);
 		}
-		
+
 		return response;
 	}
-	
+
 }
