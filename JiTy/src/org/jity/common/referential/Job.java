@@ -45,7 +45,7 @@ public class Job {
 	private int hostPort;
 	private String hostUserName;
 	private String commandPath;
-	private boolean isActived;
+	private boolean isEnable;
 	private DateConstraint dateConstraint;
 	private String startTime;
 
@@ -109,11 +109,11 @@ public class Job {
 	}
 
 	public boolean getIsActived() {
-		return isActived;
+		return isEnable;
 	}
 
 	public void setIsActived(boolean isActived) {
-		this.isActived = isActived;
+		this.isEnable = isActived;
 	}
 	
 	public DateConstraint getDateConstraint() {

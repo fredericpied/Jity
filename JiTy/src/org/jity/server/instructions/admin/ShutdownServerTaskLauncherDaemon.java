@@ -22,52 +22,27 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.agent.instructions;
+package org.jity.server.instructions.admin;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-import org.jity.agent.Agent;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.ExecTask;
-import org.jity.common.util.XMLUtil;
+import org.jity.server.ServerTaskLauncherDaemon;
 
 /**
- * 
- * @author 09344A
+ * Server command to shutdown the Server Task Manager
+ * @author Fred
  *
  */
-public class GetTaskStatus implements Instruction {
-	private static final Logger logger = Logger.getLogger(GetTaskStatus.class);
+public class ShutdownServerTaskLauncherDaemon implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 		
-		try {
-			
-			 ArrayList<ExecTask> taskQueueExtract = new ArrayList<ExecTask>();
+		ServerTaskLauncherDaemon.getInstance().stop();
+		response.setInstructionResultOK(true);
 
-		     synchronized(Agent.getInstance().getTaskQueue()) {
-			 
-				 // Select terminate tasks in queue
-				Iterator<ExecTask> iterTask = Agent.getInstance().getTaskQueue().iterator();
-		    	while (iterTask.hasNext()) {
-		    		ExecTask task = iterTask.next();
-		    		if (task.getStatus() != ExecTask.IN_QUEUE)
-		    			taskQueueExtract.add(task);
-		    	}
-	    	}
-
-			response.setXmlOutputData(XMLUtil.objectToXMLString(taskQueueExtract));
-	    	response.setInstructionResultOK(true);
-		
-		} catch (Exception e) {
-			response.setException(e);
-		}
-		
 		return response;
 	}
 	
+
 }

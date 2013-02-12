@@ -34,7 +34,7 @@
 			cascade="all" />
 		<property name="statusMessage" column="STATUS_MESSAGE" />
 		<property name="logFile" column="LOG_FILE" />
-		<property name="serverHost" column="SERVER_HOST" />
+		<property name="serverIp" column="SERVER_IP" />
 	</class>
 
 

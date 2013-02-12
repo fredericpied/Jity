@@ -22,27 +22,51 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.admin;
+package org.jity.server.instructions.referential;
 
+import java.util.List;
+
+import org.hibernate.Session;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.ServerTaskLauncherDaemon;
+import org.jity.common.util.XMLUtil;
+import org.jity.server.database.DataNotFoundDBException;
+import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.TooMuchDataDBException;
 
 /**
- * Server command to shutdown the Planif Daemon
- * @author Fred
- *
+ * Server command to create à new calendar
+ * 
+ * @author 09344A
+ * 
  */
-public class StartServerTaskManager implements Instruction {
+public class GetJob implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
-		ServerTaskLauncherDaemon.getInstance().start();
-		response.setInstructionResultOK(true);
+
+		try {
+
+			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
+			String queryFind = "select job from org.jity.common.referential.Job job"
+	                + " where job.id = " + id;
+
+			Session session = H2DatabaseServer.getInstance().getSession();
+
+			List list = session.createQuery(queryFind).list();
+	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			if (list.size() > 1) throw new TooMuchDataDBException("TooMuchDataDBException :"+queryFind);
+			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			response.setInstructionResultOK(true);
+
+			session.close();
+
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }
