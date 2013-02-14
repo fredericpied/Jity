@@ -28,15 +28,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DataNotFoundDBException;
-import org.jity.server.database.H2DatabaseServer;
-import org.jity.server.database.TooMuchDataDBException;
-import org.jity.tests.TestServerForUIClient;
+import org.jity.server.database.HibernateSessionFactory;
+
 
 /**
  * Server command to list Jobs existing in DB
@@ -54,7 +51,7 @@ public class ListJobs implements Instruction {
 			
 			String queryFind = "select job from org.jity.common.referential.Job job";
 			
-			Session session = H2DatabaseServer.getInstance().getSession();
+			Session session = HibernateSessionFactory.getInstance().getSession();
 
 			List list = session.createQuery(queryFind).list();
 	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);

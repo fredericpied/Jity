@@ -1,19 +1,26 @@
 package org.jity.tests;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.jity.agent.Main;
+import org.jity.common.commandLine.BadArgCLException;
 import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraint;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.server.Server;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.H2DatabaseServer;
+
+import org.jity.server.database.HibernateSessionFactory;
 
 public class AddDBDataForTest {
 	private static final Logger logger = Logger.getLogger(AddDBDataForTest.class);
@@ -21,8 +28,7 @@ public class AddDBDataForTest {
 	public static void launch() throws DatabaseException, PersonnalCalendarException {
 
 //		try {
-
-			Session session = H2DatabaseServer.getInstance().getSession();
+			Session session = HibernateSessionFactory.getInstance().getSession();
 						
 			logger.info("Deleting Job, DateConstraint and PersonnalCalendar in DB...");
 			
@@ -56,38 +62,38 @@ public class AddDBDataForTest {
 			}
 			
 			// Calendars
-			PersonnalCalendar Cal5OpenDays2012 = new PersonnalCalendar();
-			Cal5OpenDays2012.setName("Cal5OpenDays2012");
-			Cal5OpenDays2012.setYear(2012);
-			Cal5OpenDays2012.initializeWithAllDaysOpen();
-			Cal5OpenDays2012.addFrenchHolydays();
-			Cal5OpenDays2012.addClosedDayOfWeek(6);
-			Cal5OpenDays2012.addClosedDayOfWeek(7);
+			PersonnalCalendar Cal5OpenDays2013 = new PersonnalCalendar();
+			Cal5OpenDays2013.setName("Cal5OpenDays2013");
+			Cal5OpenDays2013.setYear(2013);
+			Cal5OpenDays2013.initializeWithAllDaysOpen();
+			Cal5OpenDays2013.addFrenchHolydays();
+			Cal5OpenDays2013.addClosedDayOfWeek(6);
+			Cal5OpenDays2013.addClosedDayOfWeek(7);
 			
-			PersonnalCalendar Cal6OpenDays2012 = new PersonnalCalendar();
-			Cal6OpenDays2012.setName("Cal6OpenDays2012");
-			Cal6OpenDays2012.setYear(2012);
-			Cal6OpenDays2012.initializeWithAllDaysOpen();
-			Cal6OpenDays2012.addFrenchHolydays();
-			Cal6OpenDays2012.addClosedDayOfWeek(7);
+			PersonnalCalendar Cal6OpenDays2013 = new PersonnalCalendar();
+			Cal6OpenDays2013.setName("Cal6OpenDays2013");
+			Cal6OpenDays2013.setYear(2013);
+			Cal6OpenDays2013.initializeWithAllDaysOpen();
+			Cal6OpenDays2013.addFrenchHolydays();
+			Cal6OpenDays2013.addClosedDayOfWeek(7);
 			
-			PersonnalCalendar Cal7OpenDays2012 = new PersonnalCalendar();
-			Cal7OpenDays2012.setName("Cal7OpenDays2012");
-			Cal7OpenDays2012.setYear(2012);
-			Cal7OpenDays2012.initializeWithAllDaysOpen();
-			Cal7OpenDays2012.addFrenchHolydays();
+			PersonnalCalendar Cal7OpenDays2013 = new PersonnalCalendar();
+			Cal7OpenDays2013.setName("Cal7OpenDays2013");
+			Cal7OpenDays2013.setYear(2013);
+			Cal7OpenDays2013.initializeWithAllDaysOpen();
+			Cal7OpenDays2013.addFrenchHolydays();
 							
 			PersonnalCalendar[] tabPersonnalCalendar = new PersonnalCalendar[3];
-			tabPersonnalCalendar[0] = Cal5OpenDays2012;
-			tabPersonnalCalendar[1] = Cal6OpenDays2012;			
-			tabPersonnalCalendar[2] = Cal7OpenDays2012;
+			tabPersonnalCalendar[0] = Cal5OpenDays2013;
+			tabPersonnalCalendar[1] = Cal6OpenDays2013;			
+			tabPersonnalCalendar[2] = Cal7OpenDays2013;
 			
 			logger.info("Adding PersonnalCalendar");
 
 			Transaction transaction = session.beginTransaction();
-			session.save(Cal5OpenDays2012);
-			session.save(Cal6OpenDays2012);
-			session.save(Cal7OpenDays2012);
+			session.save(Cal5OpenDays2013);
+			session.save(Cal6OpenDays2013);
+			session.save(Cal7OpenDays2013);
 			transaction.commit();
 
 			logger.info("Adding DateConstraints and Jobs");
@@ -104,8 +110,9 @@ public class AddDBDataForTest {
 				Job job = new Job();
 				job.setName("JOB"+i);
 				job.setHostName("localhost");
-				job.setCommandPath("/tmp/test.ksh");
-				job.setIsActived(true);
+				job.setHostPort(2611);
+				job.setCommandPath("d:\\temp\\test.bat");
+				job.setIsEnable(true);
 				job.setDateConstraint(dateConstraint1);
 				
 				transaction = session.beginTransaction();
@@ -125,8 +132,9 @@ public class AddDBDataForTest {
 			Job job = new Job();
 			job.setName("JOB_ALL_DAYS");
 			job.setHostName("localhost");
+			job.setHostPort(2611);
 			job.setCommandPath("d:\\temp\\test.bat");
-			job.setIsActived(true);
+			job.setIsEnable(true);
 			job.setDateConstraint(dateConstraint2);
 			
 			transaction = session.beginTransaction();
@@ -134,6 +142,7 @@ public class AddDBDataForTest {
 			transaction.commit();
 			
 			session.close();
+			
 			logger.info("Finish");
 			//DatabaseServer.stopDatabaseServer();
 		
@@ -204,6 +213,18 @@ public class AddDBDataForTest {
 		
 	}
 
+	public static void main(String[] args) {
+				
+		try {
+
+			AddDBDataForTest.launch();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+	}
 	
 
 }

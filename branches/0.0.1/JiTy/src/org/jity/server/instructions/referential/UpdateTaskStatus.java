@@ -24,21 +24,14 @@ if *  JiTy : Open Job Scheduler
  */
 package org.jity.server.instructions.referential;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.ExecTask;
-import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.Server;
-import org.jity.server.ServerException;
-import org.jity.server.ServerTaskLauncherDaemon;
-import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.HibernateSessionFactory;
 
 /**
  * Server command to update task status
@@ -55,7 +48,7 @@ public class UpdateTaskStatus implements Instruction {
 		
 		try {
 
-			databaseSession = H2DatabaseServer.getInstance().getSession();
+			databaseSession = HibernateSessionFactory.getInstance().getSession();
 			
 			ExecTask task = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
 					
@@ -64,7 +57,7 @@ public class UpdateTaskStatus implements Instruction {
 			databaseSession.merge(task);
 			transaction.commit();
 					
-			logger.debug("Exec task "+task.getId()+" updated in db");
+			logger.debug("Exec task "+task.getId()+" updated in db (status: "+task.getStatus()+")");
 
 			databaseSession.close();
 			

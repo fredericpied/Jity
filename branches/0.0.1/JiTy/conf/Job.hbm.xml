@@ -32,7 +32,7 @@
 		<property name="hostPort" column="HOST_PORT" />
 		<property name="hostUserName" column="HOST_USER_NAME" />
 		<property name="commandPath" column="COMMAND_PATH" />
-		<property name="isActived" column="IS_ACTIVED" />
+		<property name="isEnable" column="IS_ENABLE" />
 		<many-to-one name="dateConstraint" not-null="true"
 			column="DATE_CONSTRAINT_ID" cascade="all" />
 		<property name="startTime" column="START_TIME" />

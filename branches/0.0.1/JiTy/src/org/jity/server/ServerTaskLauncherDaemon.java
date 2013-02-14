@@ -46,7 +46,7 @@ import org.jity.common.referential.timeConstraint.TimeConstraintException;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.HibernateSessionFactory;
 
 /**
  * Pool jobs constraints and create execTask for agents. Get task status to update state in DB
@@ -134,12 +134,12 @@ public class ServerTaskLauncherDaemon implements Runnable {
      */
     public synchronized void stop() {
         if (daemon != null) {
-        	logger.info("Shutdown of ServerTaskManager asked.");
+        	logger.info("Shutdown of "+this.getClass().getSimpleName()+" asked.");
             shutdownAsked = true;
     		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
-			logger.info("ServerTaskManager successfuly shutdowned");
+			logger.info(this.getClass().getSimpleName()+" successfuly shutdowned");
         }
     }
     
@@ -151,13 +151,13 @@ public class ServerTaskLauncherDaemon implements Runnable {
     private List<Job> getJobsToExecuteList() {
 
     	SQLQuery query2 = this.databaseSession.createSQLQuery("SELECT JOB.* FROM JOB"
-    			+" WHERE JOB.IS_ACTIVED = TRUE"
+    			+" WHERE JOB.IS_ENABLE = TRUE"
     			+" AND JOB.ID NOT IN (SELECT JOB_ID FROM EXEC_TASK"
     			+" WHERE EXEC_TASK.STATUS IN (3,4,5,6))").addEntity(Job.class);
     	
     	List<Job> jobList = query2.list();
 				
-		logger.debug("Found "+jobList.size()+" jobs to execute");
+		logger.debug("Found "+jobList.size()+" jobs in database");
 
 		return jobList;
     }
@@ -170,6 +170,8 @@ public class ServerTaskLauncherDaemon implements Runnable {
      */
     private void analyzeJobsForExecute() throws DatabaseException {
 		
+    	int jobLaunched = 0;
+    	
     	// Get job list
 		Iterator<Job> iterJobList = getJobsToExecuteList().iterator();
 		while (iterJobList.hasNext()) {
@@ -177,7 +179,10 @@ public class ServerTaskLauncherDaemon implements Runnable {
 						
 			try {
 
-				if (job.checkConstraint(this.exploitDate)) submitJobToAgent(job);
+				if (job.checkConstraint(this.exploitDate)) {
+					submitJobToAgent(job);
+					jobLaunched++;
+				}
 					
 			} catch (DateConstraintException e) {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
@@ -185,6 +190,9 @@ public class ServerTaskLauncherDaemon implements Runnable {
 				logger.warn("Job "+job.getName()+": "+e.getMessage());
 			}			
 		}
+		
+		logger.debug(jobLaunched +" jobs submits to agent");
+		
     }
     
     
@@ -214,7 +222,7 @@ public class ServerTaskLauncherDaemon implements Runnable {
 			RequestSender requestLauncher = new RequestSender();
 
 			requestLauncher.openConnection(job.getHostName(),
-					ServerConfig.getInstance().getAGENT_INPUT_PORT());
+					job.getHostPort());
 
 			// Send request to agent
 			JityResponse response = requestLauncher.sendRequest(request);
@@ -261,7 +269,7 @@ public class ServerTaskLauncherDaemon implements Runnable {
 	 */
 	public void updateTasksStatusForDMZ() {
 				
-		ArrayList<String> hostnameList = new ArrayList<String>();
+		ArrayList<AgentHostToPool> agentsList = new ArrayList<AgentHostToPool>();
 
 		// Finding ExecTask whith status IN_QUEUE
 		String queryFind = "select execTask from org.jity.common.referential.ExecTask execTask"
@@ -275,29 +283,31 @@ public class ServerTaskLauncherDaemon implements Runnable {
 		Iterator<ExecTask> iterExecTaskList = execTaskList.iterator();
 		while (iterExecTaskList.hasNext()) {
 			ExecTask execTask = iterExecTaskList.next();
-			String hostname = execTask.getJob().getHostName();
 			
-			if (! hostnameList.contains(hostname)) hostnameList.add(hostname);
+			AgentHostToPool agent = new AgentHostToPool();
+			agent.hostName = execTask.getJob().getHostName();
+			agent.hostPort = execTask.getJob().getHostPort();
+			
+			if (! agentsList.contains(agent)) agentsList.add(agent);
 		}
 		
-		logger.debug("Found "+hostnameList.size()+" hostnames to pool");
+		logger.debug("Found "+agentsList.size()+" agents to pool");
 		
 		// For each hostname, getTasksStatus
-		Iterator<String> iterHostnameList = hostnameList.iterator();
-		while (iterHostnameList.hasNext()) {
-			String hostname = iterHostnameList.next();
+		Iterator<AgentHostToPool> iterAgentsList = agentsList.iterator();
+		while (iterAgentsList.hasNext()) {
+			AgentHostToPool agent = iterAgentsList.next();
 			
 			// Construct Request
 			JityRequest request = new JityRequest();
 			request.setInstructionName("GETTASKSTATUS");
 			
-			logger.debug("Pooling "+hostname+" agent");
+			logger.debug("Pooling "+agent.hostName+" ("+agent.hostPort+")...");
 			
 			RequestSender requestLauncher = new RequestSender();
 			
 			try {
-				requestLauncher.openConnection(hostname,
-						ServerConfig.getInstance().getAGENT_INPUT_PORT());
+				requestLauncher.openConnection(agent.hostName, agent.hostPort);
 
 				JityResponse response = requestLauncher.sendRequest(request);
 
@@ -326,15 +336,15 @@ public class ServerTaskLauncherDaemon implements Runnable {
 					}
 					
 				} else {
-					logger.warn("Can't get tasks status for agent "+hostname);
+					logger.warn("Can't get tasks status for agent "+agent.hostName+" ("+agent.hostPort+")");
 					//TODO must update ExecTask
 					
 				}
 				
 			} catch (UnknownHostException e) {
-				logger.warn("Can't get tasks status for agent "+hostname);
+				logger.warn("Can't get tasks status for agent "+agent.hostName+" ("+agent.hostPort+")");
 			} catch (IOException e) {
-				logger.warn("Can't get tasks status for agent "+hostname);
+				logger.warn("Can't get tasks status for agent "+agent.hostName+" ("+agent.hostPort+")");
 			}
 		
 		}
@@ -347,14 +357,10 @@ public class ServerTaskLauncherDaemon implements Runnable {
      */
     public void run() {
         int cycle = ServerConfig.getInstance().getSERVER_POOLING_CYCLE();
+
+        this.databaseSession = HibernateSessionFactory.getInstance().getSession();
         
-        try {
-			this.databaseSession = H2DatabaseServer.getInstance().getSession();
-		} catch (DatabaseException e) {
-            logger.fatal(e.getMessage());
-		}
-        
-		logger.info("Starting ServerTaskManager");
+		logger.info("Starting "+this.getClass().getSimpleName());
 		
 		if (this.getExploitDate() == null) this.initializeExploitDateWithCurrentDate();
 		
@@ -367,7 +373,7 @@ public class ServerTaskLauncherDaemon implements Runnable {
                 //TimeUtil.waiting(cycle/2);
             } catch (InterruptedException ex) {
             	if (!shutdownAsked)  {
-            		logger.warn("ServerTaskManager is stopped.");
+            		logger.warn(this.getClass().getSimpleName()+" is stopped.");
             		logger.debug(ex.toString());
             	}
                 
@@ -379,4 +385,10 @@ public class ServerTaskLauncherDaemon implements Runnable {
         }
         
     }
+    
+    private class AgentHostToPool {
+    	String hostName;
+    	int hostPort;
+    }
+    
 }

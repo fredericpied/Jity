@@ -157,7 +157,7 @@ public class JobsCRUD {
 		Label filler13 = new Label(sShell, SWT.NONE);
 		createGroupJobDetails1();
 		TableColumn tableColumn21 = new TableColumn(tableJobs, SWT.NONE);
-		tableColumn21.setWidth(30);
+		tableColumn21.setWidth(0);
 		tableColumn21.setText("ID");
 		TableColumn tableColumn = new TableColumn(tableJobs, SWT.NONE);
 		tableColumn.setWidth(100);
@@ -339,7 +339,7 @@ public class JobsCRUD {
 
 				ligneJob.setText(new String[] {String.valueOf(j.getId()),
 						j.getName(),j.getDescription(),
-						j.getHostName(), String.valueOf(j.getIsActived())});
+						j.getHostName(), String.valueOf(j.getIsEnable())});
 			}
 			this.textNbJobs.setText(listJob.size()+" jobs loaded");
 		}
@@ -371,13 +371,14 @@ public class JobsCRUD {
 			List listJobSelected = (List)XMLUtil.XMLStringToObject(response.getXmlOutputData());
 			Job jobSelected = (Job)listJobSelected.get(0);
 			this.setFormsEnabled(true);
+
 			textName.setText(SWTUtility.nvl(jobSelected.getName()));
 			textDescription.setText(SWTUtility.nvl(jobSelected.getDescription()));
 			textHostName.setText(SWTUtility.nvl(jobSelected.getHostName()));
 			textHostPort.setText(String.valueOf(jobSelected.getHostPort()));
 			textHostUserName.setText(SWTUtility.nvl(jobSelected.getHostUserName()));
 			textCommandPath.setText(SWTUtility.nvl(jobSelected.getCommandPath()));
-			checkBoxEnabled.setSelection(jobSelected.getIsActived());
+			checkBoxEnabled.setSelection(jobSelected.getIsEnable());
 			textStartTime.setText(SWTUtility.nvl(jobSelected.getStartTime()));
 			
 		}

@@ -26,10 +26,8 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jity.agent.AgentException;
 import org.jity.common.protocol.RequestReceiver;
-import org.jity.server.database.DatabaseException;
-import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.HibernateSessionFactory;
 
 import java.io.*;
 import java.net.*;
@@ -50,6 +48,8 @@ public class Server {
 	private boolean shutdowning = false;
 	
 	private Date execDate;
+	
+	private static org.h2.tools.Server H2DBServer = null;
 	
 	public static Server getInstance() {
 		if (instance == null) {
@@ -90,18 +90,19 @@ public class Server {
 
 		try {
 			
-			H2DatabaseServer.getInstance().start();
+			this.H2DBServer = org.h2.tools.Server.createTcpServer().start();
+			logger.info(H2DBServer.getStatus());
 			
 			// Init database connection
 			logger.info("Init of DB connection...");
-			Session sess = H2DatabaseServer.getInstance().getSession();
+			Session sess = HibernateSessionFactory.getInstance().getSession();
 			sess.close();
 			logger.info("Connection to database: OK");
 
-		} catch (DatabaseException e) {
+		} catch (SQLException e) {
 			logger.fatal(e.getMessage());
 
-			H2DatabaseServer.getInstance().stop();
+			this.H2DBServer.stop();
 			
 			System.exit(1);
 		}
@@ -127,7 +128,7 @@ public class Server {
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
 			
-			H2DatabaseServer.getInstance().stop();
+			this.H2DBServer.stop();
 			
 			System.exit(1);
 		}
@@ -179,8 +180,8 @@ public class Server {
 				
 				ServerTaskStatutManagerDaemon.getInstance().stopTaskStatusListener();
 				
-				logger.info("Closing Database server.");
-				H2DatabaseServer.getInstance().stop();
+				logger.info("Shutdowing H2 Database server.");
+				this.H2DBServer.stop();
 				
 				logger.info("Closing Network socket.");
 				listenSocket.close();
