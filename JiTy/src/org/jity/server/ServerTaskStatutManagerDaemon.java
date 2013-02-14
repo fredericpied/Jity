@@ -41,7 +41,8 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.database.DatabaseException;
-import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.HibernateSessionFactory;
+
 
 /**
  * Listen task status to update state in DB
@@ -99,12 +100,12 @@ public class ServerTaskStatutManagerDaemon implements Runnable {
      */
     public synchronized void stopTaskStatusListener() {
         if (daemon != null) {
-        	logger.info("Shutdown of ServerTaskStatusListener asked.");
+        	logger.info("Shutdown of "+this.getClass().getSimpleName()+" asked.");
             shutdownAsked = true;
     		this.databaseSession.close();
             daemon.interrupt();
             daemon = null;
-			logger.info("ServerTaskStatusListener successfuly shutdowned");
+			logger.info(this.getClass().getSimpleName()+" successfuly shutdowned");
         }
     }
  	
@@ -113,19 +114,15 @@ public class ServerTaskStatutManagerDaemon implements Runnable {
      */
     public void run() {
 		Socket socket = null;
-		
-        try {
-			this.databaseSession = H2DatabaseServer.getInstance().getSession();
-		} catch (DatabaseException e) {
-            logger.fatal(e.getMessage());
-		}
+
+		this.databaseSession = HibernateSessionFactory.getInstance().getSession();
         
-		logger.info("Starting ServerTaskStatusListener...");
+		logger.info("Starting "+this.getClass().getSimpleName()+"...");
 
 		int serverPort = ServerConfig.getInstance().getSERVER_INPUT_PORT();
 		try {
 			listenSocket = new ServerSocket(serverPort);
-			logger.info("ServerTaskStatusListener running on port " + serverPort);
+			logger.info(this.getClass().getSimpleName()+" running on port " + serverPort);
 
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
@@ -135,7 +132,7 @@ public class ServerTaskStatutManagerDaemon implements Runnable {
 	
 		try {
 			
-			logger.info("ServerTaskStatusListener successfully started.");
+			logger.info(this.getClass().getSimpleName()+" successfully started.");
 			
 			while (true) {
 				socket = listenSocket.accept();
@@ -163,7 +160,7 @@ public class ServerTaskStatutManagerDaemon implements Runnable {
 				logger.warn("Failed to close agent connection.");
 				logger.debug(e.getMessage());
 			}
-			logger.info("ServerTaskStatusListener shutdowned correctly.");
+			logger.info(this.getClass().getSimpleName()+" shutdowned correctly.");
 		}
         
     }

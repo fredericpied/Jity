@@ -108,12 +108,12 @@ public class Job {
 		this.commandPath = commandPath;
 	}
 
-	public boolean getIsActived() {
+	public boolean getIsEnable() {
 		return isEnable;
 	}
 
-	public void setIsActived(boolean isActived) {
-		this.isEnable = isActived;
+	public void setIsEnable(boolean isEnable) {
+		this.isEnable = isEnable;
 	}
 	
 	public DateConstraint getDateConstraint() {

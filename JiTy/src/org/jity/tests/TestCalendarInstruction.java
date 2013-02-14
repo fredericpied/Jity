@@ -16,7 +16,7 @@ import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.Server;
 import org.jity.server.ServerException;
-import org.jity.server.database.H2DatabaseServer;
+import org.jity.server.database.HibernateSessionFactory;
 
 import junit.framework.TestCase;
 
@@ -78,7 +78,7 @@ public class TestCalendarInstruction extends TestCase {
 			calendar.setYear(2012);
 			calendar.initializeWithAllDaysOpen();
 
-			Session session = H2DatabaseServer.getInstance().getSession();
+			Session session = HibernateSessionFactory.getInstance().getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);

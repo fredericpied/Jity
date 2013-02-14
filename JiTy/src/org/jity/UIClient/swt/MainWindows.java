@@ -24,12 +24,15 @@ public class MainWindows {
 	private MenuItem menuItemEdit = null;
 	private MenuItem menuItemHelp = null;
 	private MenuItem menuItemReferential = null;
+	private MenuItem menuItemJobsStatus = null;
 	private Menu menuFile = null;
 	private Menu menuEdit = null;
 	private Menu menuHelp = null;
+	private Menu menuJobsStatus = null;
 	private Menu menuReferential = null;
 	private MenuItem menuItemFileExit = null;
 	private MenuItem menuItemReferentialJobs = null;
+	private MenuItem menuItemJobsStatusWindows = null;
 	
 	/**
 	 * This method initializes sShell
@@ -71,6 +74,18 @@ public class MainWindows {
 		menuItemReferentialJobs.addListener(SWT.Selection, new Listener () {
 			public void handleEvent (Event e) {
 				new JobsCRUD();
+			}
+		});
+		
+		menuItemJobsStatus = new MenuItem(menuBar, SWT.CASCADE);
+		menuItemJobsStatus.setText("Jobs status");
+		menuJobsStatus = new Menu(sShell, SWT.DROP_DOWN);
+		menuItemJobsStatus.setMenu(menuJobsStatus);
+		menuItemJobsStatusWindows = new MenuItem(menuJobsStatus, SWT.PUSH);
+		menuItemJobsStatusWindows.setText("Jobs status windows");
+		menuItemJobsStatusWindows.addListener(SWT.Selection, new Listener () {
+			public void handleEvent (Event e) {
+				new JobsStatusWindows();
 			}
 		});
 				

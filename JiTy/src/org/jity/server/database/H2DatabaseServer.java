@@ -41,8 +41,6 @@ public class H2DatabaseServer {
 	
 	private static H2DatabaseServer instance = null;
 	
-	private static SessionFactory sessionFactory;
-	
 	private static org.h2.tools.Server H2DBServer = null;;
 	
 	/**
@@ -76,37 +74,11 @@ public class H2DatabaseServer {
 	 */
 	public void stop() {
 		
-		// stop sessionFactory
-		if (sessionFactory != null) sessionFactory.close();
-		sessionFactory = null;
-		
 		// stop the TCP Server
 		if (H2DBServer != null) H2DBServer.stop();
 		
 	}
 	
-	/**
-	 * Open and return a new H2 Database session
-	 * @return Session
-	 * @throws DatabaseException
-	 */
-	@SuppressWarnings("deprecation")
-	public Session getSession() throws DatabaseException {
-		
-		if (H2DBServer == null) {
-			throw new DatabaseException("Database server is not running.");
-		}
-		
-		try {
-			if (sessionFactory == null) {
-				
-				sessionFactory = new Configuration().configure().buildSessionFactory(); 
-			}
-		
-			return sessionFactory.openSession();
-		} catch (Exception e) {
-			throw new DatabaseException(e.getMessage());
-		}
-	}
+	
 	
 }

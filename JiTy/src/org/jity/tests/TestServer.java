@@ -103,7 +103,7 @@ public class TestServer extends TestCase {
 		
 			assertTrue(response.isInstructionResultOK());
 
-			TimeUtil.waiting(60);
+			TimeUtil.waiting(120);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

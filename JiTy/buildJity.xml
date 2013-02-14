@@ -131,11 +131,17 @@
 		<copy todir="${dist.server.dir}/conf">
 			<fileset dir="${app.home}/conf">
 				<include name="ServerConfig.xml" />
-				<include name="hibernate.cfg.xml" />
 				<include name="*.hbm.xml" />
 			</fileset>
 		</copy>
 
+		<copy todir="${dist.server.dir}/conf">
+			<fileset dir="${app.home}/conf/dist">
+				<include name="hibernate.cfg.xml" />
+			</fileset>
+		</copy>
+
+		
 		<copy tofile="${dist.server.dir}/conf/log4j.xml">
 			<fileset dir="${app.home}/conf/dist">
 				<include name="server-log4j.xml" />

@@ -36,6 +36,7 @@ import org.jity.server.instructions.referential.AddCalendar;
 import org.jity.server.instructions.referential.DeleteCalendar;
 import org.jity.server.instructions.referential.GetCalendar;
 import org.jity.server.instructions.referential.GetJob;
+import org.jity.server.instructions.referential.ListExecTask;
 import org.jity.server.instructions.referential.ListJobs;
 import org.jity.server.instructions.referential.UpdateCalendar;
 import org.jity.server.instructions.referential.UpdateTaskStatus;
@@ -90,6 +91,8 @@ public abstract class Protocol {
 			response = new ListJobs().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("GETJOB")) {
 			response = new GetJob().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("LISTEXECTASK")) {
+			response = new ListExecTask().launch(request.getXmlInputData());
 			
 		// Agent requests
 		} else	if (request.getInstructionName().equals("ADDTASKINQUEUE")) {

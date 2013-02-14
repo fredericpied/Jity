@@ -87,7 +87,12 @@ public class AgentTaskStatusManagerDaemon implements Runnable {
 
 	    			// If task not in the IN_QUEUE state, continue
 	    			if (task.getStatus() != ExecTask.IN_QUEUE) {
-	    				sendTaskStatus(task);
+	    				if ( (sendTaskStatus(task) == true) && 
+	    					(task.getStatus() == ExecTask.OK) || (task.getStatus() == ExecTask.KO) ) {
+	    					// if response is OK and exectask status = 5 (OK) ou  6 (KO), delete task from queue
+	    					iterTask.remove();
+	    					logger.debug("removing task "+task.getId()+" from agent queue");
+	    				}
 	    			}
 	    		}
 
@@ -99,7 +104,7 @@ public class AgentTaskStatusManagerDaemon implements Runnable {
      * Send one task status to JiTy Server
      * @param task
      */
-    private void sendTaskStatus(ExecTask task) {
+    private boolean sendTaskStatus(ExecTask task) {
     	
     	// Construct Request
 		JityRequest request = new JityRequest();
@@ -120,13 +125,17 @@ public class AgentTaskStatusManagerDaemon implements Runnable {
 			if (! response.isInstructionResultOK()) {
 				// If response is KO
 				logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp()+" ("+response.getExceptionName()+":"+response.getExceptionMessage()+")");
-				
+				return false;
+			} else {
+				return true;
 			}
 			
 		} catch (UnknownHostException e) {
 			logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp() + "("+e.getMessage()+")");
+			return false;
 		} catch (IOException e) {
 			logger.warn("Cannot send task "+task.getId()+" status to server "+task.getServerIp() + "("+e.getMessage()+")");
+			return false;
 		}
     }
        

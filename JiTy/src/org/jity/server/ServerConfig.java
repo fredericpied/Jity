@@ -57,7 +57,7 @@ public class ServerConfig {
 	public String SERVER_DESCRIPTION;
 	
 	/**
-	 * Server listening port for UI (default 2610)
+	 * Server listening port for User Interface (default 2610)
 	 */
 	public int SERVER_UI_INPUT_PORT = 2610;
 
@@ -71,12 +71,6 @@ public class ServerConfig {
 	 */
 	public int SERVER_POOLING_CYCLE = 10;
 
-	/**
-	 * Agent listening port (default 2611)
-	 */
-	public int AGENT_INPUT_PORT = 2611;
-
-	
 	public static ServerConfig getInstance() {
 		if (instance == null)
 			instance = new ServerConfig();
@@ -98,7 +92,7 @@ public class ServerConfig {
 		logger.info("SERVER_UI_INPUT_PORT="+ServerConfig.getInstance().getSERVER_UI_INPUT_PORT());
 		logger.info("SERVER_INPUT_PORT="+ServerConfig.getInstance().getSERVER_INPUT_PORT());
 		logger.info("SERVER_POOLING_CYCLE="+ServerConfig.getInstance().getSERVER_POOLING_CYCLE());
-		logger.info("AGENT_INPUT_PORT="+ServerConfig.getInstance().getAGENT_INPUT_PORT());
+		//logger.info("AGENT_INPUT_PORT="+ServerConfig.getInstance().getAGENT_INPUT_PORT());
 	}
 	
 	public int getSERVER_UI_INPUT_PORT() {
@@ -107,10 +101,6 @@ public class ServerConfig {
 
 	public int getSERVER_POOLING_CYCLE() {
 		return SERVER_POOLING_CYCLE;
-	}
-
-	public int getAGENT_INPUT_PORT() {
-		return AGENT_INPUT_PORT;
 	}
 
 	public static String getXmlFileName() {

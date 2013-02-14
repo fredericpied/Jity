@@ -30,7 +30,8 @@ import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.database.H2DatabaseServer;
+
+import org.jity.server.database.HibernateSessionFactory;
 
 /**
  * Server command to create a new calendar
@@ -47,7 +48,7 @@ public class AddCalendar implements Instruction {
 
 			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
 
-			Session session = H2DatabaseServer.getInstance().getSession();
+			Session session = HibernateSessionFactory.getInstance().getSession();
 			Transaction transaction = session.beginTransaction();
 
 			session.save(calendar);
