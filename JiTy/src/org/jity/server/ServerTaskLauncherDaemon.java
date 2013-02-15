@@ -45,7 +45,6 @@ import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.referential.timeConstraint.TimeConstraintException;
 import org.jity.common.util.TimeUtil;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.database.DatabaseException;
 import org.jity.server.database.HibernateSessionFactory;
 
 /**
@@ -168,7 +167,7 @@ public class ServerTaskLauncherDaemon implements Runnable {
      * state.
      * @throws DatabaseException 
      */
-    private void analyzeJobsForExecute() throws DatabaseException {
+    private void analyzeJobsForExecute() {
 		
     	int jobLaunched = 0;
     	

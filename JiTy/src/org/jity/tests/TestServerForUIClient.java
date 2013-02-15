@@ -11,7 +11,6 @@ import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.util.TimeUtil;
 import org.jity.server.Server;
-import org.jity.server.database.DatabaseException;
 
 import junit.framework.TestCase;
 
@@ -66,9 +65,6 @@ public class TestServerForUIClient extends TestCase {
 			new MainWindows().launch();
 			
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (DatabaseException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (PersonnalCalendarException e) {

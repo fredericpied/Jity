@@ -40,7 +40,6 @@ import org.jity.common.protocol.RequestReceiver;
 import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.ExecTask;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.database.DatabaseException;
 import org.jity.server.database.HibernateSessionFactory;
 
 

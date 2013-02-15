@@ -180,7 +180,8 @@ public class CommandExecutor implements Runnable {
 		Job job = currentTask.getJob();
 		
 		currentTask.setStatus(ExecTask.RUNNING);
-		
+		currentTask.setBegin(new Date());
+
 		// Initializing exitStatus
 		int exitStatus = -1;
 
@@ -215,6 +216,7 @@ public class CommandExecutor implements Runnable {
 			Agent.getInstance().decrementCurrentJobsExecution();
 			
 			logger.info("End of "+job.getName()+"(exit status: "+exitStatus+")");
+			currentTask.setEnd(new Date());
 
 			// Setting execStatus
 			if (exitStatus == 0) {
@@ -224,7 +226,8 @@ public class CommandExecutor implements Runnable {
 			}
 			currentTask.setStatusMessage("Command exit status = "+exitStatus);
 			currentTask.setLogFile(jobLogFile.getAbsolutePath());
-		
+			jobLoggerAppender.close();
+			
 		} catch (Exception e) {
 			logger.info("Exception "+e.getClass().getName()+
 					" while executing "+job.getName()+" ("+e.getMessage()+")");

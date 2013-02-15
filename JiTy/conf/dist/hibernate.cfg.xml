@@ -36,8 +36,8 @@
 		<!-- Disable the second-level cache -->
 		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
 		
-		<!-- Drop and re-create the database schema on startup -->
-		<property name="hbm2ddl.auto">create</property>
+		<!-- create the database schema on startup if not exist-->
+		<property name="hbm2ddl.auto">update</property>
 
 		<mapping resource="PersonnalCalendar.hbm.xml" />
 		<mapping resource="Job.hbm.xml" />

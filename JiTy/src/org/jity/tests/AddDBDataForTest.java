@@ -18,14 +18,13 @@ import org.jity.common.referential.dateConstraint.DateConstraint;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.server.Server;
-import org.jity.server.database.DatabaseException;
 
 import org.jity.server.database.HibernateSessionFactory;
 
 public class AddDBDataForTest {
 	private static final Logger logger = Logger.getLogger(AddDBDataForTest.class);
 	
-	public static void launch() throws DatabaseException, PersonnalCalendarException {
+	public static void launch() throws PersonnalCalendarException {
 
 //		try {
 			Session session = HibernateSessionFactory.getInstance().getSession();
