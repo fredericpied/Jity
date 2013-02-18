@@ -26,7 +26,7 @@ import org.jity.common.referential.Job;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.Main;
 import org.jity.server.instructions.InstructionException;
-import org.jity.server.instructions.referential.ListJobs;
+import org.jity.server.instructions.ListJobs;
 
 public class JobsCRUD {
 	private static final Logger logger = Logger.getLogger(JobsCRUD.class);

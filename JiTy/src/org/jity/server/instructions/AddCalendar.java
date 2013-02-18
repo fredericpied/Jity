@@ -22,35 +22,48 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.admin;
+package org.jity.server.instructions;
 
-import java.util.ArrayList;
-
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.Server;
-import org.jity.server.ServerException;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
+import org.jity.common.util.XMLUtil;
+
+import org.jity.server.database.HibernateSessionFactory;
 
 /**
- * Server command to shutdown the JiTy server
+ * Server command to create a new calendar
+ * 
  * @author 09344A
- *
+ * 
  */
-public class ShutdownServer implements Instruction {
+public class AddCalendar implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
+
 		try {
-			Server.getInstance().stop();
+
+			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
+
+			Session session = HibernateSessionFactory.getInstance().getSession();
+			Transaction transaction = session.beginTransaction();
+
+			session.save(calendar);
+			
+			transaction.commit();
+			session.close();
+
 			response.setInstructionResultOK(true);
 
-		} catch (ServerException e) {
+
+		} catch (Exception e) {
 			response.setException(e);
 		}
 
 		return response;
 	}
-	
 
 }

@@ -22,27 +22,50 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.admin;
+package org.jity.server.instructions;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.server.ServerTaskLauncherDaemon;
+import org.jity.common.util.XMLUtil;
+import org.jity.server.database.HibernateSessionFactory;
+
 
 /**
- * Server command to shutdown the Server Task Manager
- * @author Fred
- *
+ * Server command to list Jobs existing in DB
+ * 
+ * @author 09344A
+ * 
  */
-public class ShutdownServerTaskLauncherDaemon implements Instruction {
-
+public class ListExecTask implements Instruction {
+	private static final Logger logger = Logger.getLogger(ListExecTask.class);
+	
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		
-		ServerTaskLauncherDaemon.getInstance().stop();
-		response.setInstructionResultOK(true);
+
+		try {
+			
+			String queryFind = "select exectask from org.jity.common.referential.ExecTask exectask";
+			
+			Session session = HibernateSessionFactory.getInstance().getSession();
+
+			List list = session.createQuery(queryFind).list();
+	        //if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			logger.info("Nb exetask lus: "+list.size());
+			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			response.setInstructionResultOK(true);
+
+			session.close();
+			
+		} catch (Exception e) {
+			response.setException(e);
+		}
 
 		return response;
 	}
-	
 
 }

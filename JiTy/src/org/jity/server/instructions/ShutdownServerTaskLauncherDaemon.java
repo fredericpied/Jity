@@ -22,51 +22,27 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions;
 
-import java.util.ArrayList;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.util.XMLUtil;
-import org.jity.server.Server;
-import org.jity.server.ServerException;
-
-import org.jity.server.database.HibernateSessionFactory;
+import org.jity.server.ServerTaskLauncherDaemon;
 
 /**
- * Server command to delete a calendar
- * @author 09344A
+ * Server command to shutdown the Server Task Manager
+ * @author Fred
  *
  */
-public class DeleteCalendar implements Instruction {
+public class ShutdownServerTaskLauncherDaemon implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-
-		try {
-
-			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
-
-			Session session = HibernateSessionFactory.getInstance().getSession();
-			Transaction transaction = session.beginTransaction();
-
-			session.delete(calendar);
-			
-			transaction.commit();
-			session.close();
-
-			response.setInstructionResultOK(true);
-
-
-		} catch (Exception e) {
-			response.setException(e);
-		}
+		
+		ServerTaskLauncherDaemon.getInstance().stop();
+		response.setInstructionResultOK(true);
 
 		return response;
 	}
+	
 
 }

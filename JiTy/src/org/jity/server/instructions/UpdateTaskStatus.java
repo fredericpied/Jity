@@ -1,5 +1,5 @@
 /**
- *  JiTy : Open Job Scheduler
+if *  JiTy : Open Job Scheduler
  *  Copyright (C) 2012 
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,47 +22,50 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
-
-import java.util.List;
+package org.jity.server.instructions;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
+import org.jity.common.referential.ExecTask;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.HibernateSessionFactory;
 
-
 /**
- * Server command to list Jobs existing in DB
- * 
+ * Server command to update task status
  * @author 09344A
- * 
+ *
  */
-public class ListJobs implements Instruction {
-	private static final Logger logger = Logger.getLogger(ListJobs.class);
+public class UpdateTaskStatus implements Instruction {
+	private static final Logger logger = Logger.getLogger(UpdateTaskStatus.class);
+	
 	
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-
+		Session databaseSession = null;
+		
 		try {
-			
-			String queryFind = "select job from org.jity.common.referential.Job job";
-			
-			Session session = HibernateSessionFactory.getInstance().getSession();
 
-			List list = session.createQuery(queryFind).list();
-	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			databaseSession = HibernateSessionFactory.getInstance().getSession();
 			
-			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			ExecTask task = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
+					
+			// Saving ExecTask state
+			Transaction transaction = databaseSession.beginTransaction();
+			databaseSession.merge(task);
+			transaction.commit();
+					
+			logger.debug("Exec task "+task.getId()+" updated in db (status: "+task.getStatus()+")");
+
+			databaseSession.close();
+			
 			response.setInstructionResultOK(true);
 
-			session.close();
-			
 		} catch (Exception e) {
 			response.setException(e);
+			if (databaseSession != null) databaseSession.close();
 		}
 
 		return response;
