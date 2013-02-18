@@ -1,5 +1,5 @@
 /**
-if *  JiTy : Open Job Scheduler
+ *  JiTy : Open Job Scheduler
  *  Copyright (C) 2012 
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,50 +22,48 @@ if *  JiTy : Open Job Scheduler
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions;
 
-import org.apache.log4j.Logger;
+import java.util.List;
+
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.ExecTask;
 import org.jity.common.util.XMLUtil;
+import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.HibernateSessionFactory;
+import org.jity.server.database.TooMuchDataDBException;
 
 /**
- * Server command to update task status
+ * Server command to create à new calendar
+ * 
  * @author 09344A
- *
+ * 
  */
-public class UpdateTaskStatus implements Instruction {
-	private static final Logger logger = Logger.getLogger(UpdateTaskStatus.class);
-	
-	
+public class GetCalendar implements Instruction {
+
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-		Session databaseSession = null;
-		
+
 		try {
 
-			databaseSession = HibernateSessionFactory.getInstance().getSession();
-			
-			ExecTask task = (ExecTask)XMLUtil.XMLStringToObject(xmlInputData);
-					
-			// Saving ExecTask state
-			Transaction transaction = databaseSession.beginTransaction();
-			databaseSession.merge(task);
-			transaction.commit();
-					
-			logger.debug("Exec task "+task.getId()+" updated in db (status: "+task.getStatus()+")");
+			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
+			String queryFind = "select cal from org.jity.referential.PersonnalCalendar cal"
+	                + " where cal.id = " + id;
 
-			databaseSession.close();
+			Session session = HibernateSessionFactory.getInstance().getSession();
+
+			List list = session.createQuery(queryFind).list();
+	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			if (list.size() > 1) throw new TooMuchDataDBException("TooMuchDataDBException :"+queryFind);
 			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
 			response.setInstructionResultOK(true);
+
+			session.close();
 
 		} catch (Exception e) {
 			response.setException(e);
-			if (databaseSession != null) databaseSession.close();
 		}
 
 		return response;

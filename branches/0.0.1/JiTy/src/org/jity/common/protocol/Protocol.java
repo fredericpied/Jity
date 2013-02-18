@@ -29,17 +29,17 @@ import org.jity.agent.instructions.GetTaskStatus;
 import org.jity.agent.instructions.ShutdownAgent;
 import org.jity.agent.instructions.PingAgent;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.instructions.admin.ShutdownServerTaskLauncherDaemon;
-import org.jity.server.instructions.admin.ShutdownServer;
-import org.jity.server.instructions.admin.StartServerTaskLauncherDaemon;
-import org.jity.server.instructions.referential.AddCalendar;
-import org.jity.server.instructions.referential.DeleteCalendar;
-import org.jity.server.instructions.referential.GetCalendar;
-import org.jity.server.instructions.referential.GetJob;
-import org.jity.server.instructions.referential.ListExecTask;
-import org.jity.server.instructions.referential.ListJobs;
-import org.jity.server.instructions.referential.UpdateCalendar;
-import org.jity.server.instructions.referential.UpdateTaskStatus;
+import org.jity.server.instructions.AddCalendar;
+import org.jity.server.instructions.DeleteCalendar;
+import org.jity.server.instructions.GetCalendar;
+import org.jity.server.instructions.GetJob;
+import org.jity.server.instructions.ListExecTask;
+import org.jity.server.instructions.ListJobs;
+import org.jity.server.instructions.ShutdownServer;
+import org.jity.server.instructions.ShutdownServerTaskLauncherDaemon;
+import org.jity.server.instructions.StartServerTaskLauncherDaemon;
+import org.jity.server.instructions.UpdateCalendar;
+import org.jity.server.instructions.UpdateTaskStatus;
 
 public abstract class Protocol {
 	

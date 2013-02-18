@@ -22,51 +22,35 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import org.hibernate.Session;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.util.XMLUtil;
-import org.jity.server.database.DataNotFoundDBException;
-import org.jity.server.database.HibernateSessionFactory;
-import org.jity.server.database.TooMuchDataDBException;
+import org.jity.server.Server;
+import org.jity.server.ServerException;
 
 /**
- * Server command to create à new calendar
- * 
+ * Server command to shutdown the JiTy server
  * @author 09344A
- * 
+ *
  */
-public class GetJob implements Instruction {
+public class ShutdownServer implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
-
+		
 		try {
-
-			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
-			String queryFind = "select job from org.jity.common.referential.Job job"
-	                + " where job.id = " + id;
-
-			Session session = HibernateSessionFactory.getInstance().getSession();
-
-			List list = session.createQuery(queryFind).list();
-	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
-			if (list.size() > 1) throw new TooMuchDataDBException("TooMuchDataDBException :"+queryFind);
-			
-			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			Server.getInstance().stop();
 			response.setInstructionResultOK(true);
 
-			session.close();
-
-		} catch (Exception e) {
+		} catch (ServerException e) {
 			response.setException(e);
 		}
 
 		return response;
 	}
+	
 
 }

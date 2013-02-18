@@ -22,45 +22,45 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
+import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.database.DataNotFoundDBException;
+import org.jity.server.Server;
+import org.jity.server.ServerException;
+
 import org.jity.server.database.HibernateSessionFactory;
-import org.jity.server.database.TooMuchDataDBException;
 
 /**
- * Server command to create à new calendar
- * 
+ * Server command to delete a calendar
  * @author 09344A
- * 
+ *
  */
-public class GetCalendar implements Instruction {
+public class DeleteCalendar implements Instruction {
 
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 
 		try {
 
-			Long id = (Long)XMLUtil.XMLStringToObject(xmlInputData);
-			String queryFind = "select cal from org.jity.referential.PersonnalCalendar cal"
-	                + " where cal.id = " + id;
+			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
 
 			Session session = HibernateSessionFactory.getInstance().getSession();
+			Transaction transaction = session.beginTransaction();
 
-			List list = session.createQuery(queryFind).list();
-	        if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
-			if (list.size() > 1) throw new TooMuchDataDBException("TooMuchDataDBException :"+queryFind);
+			session.delete(calendar);
 			
-			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
+			transaction.commit();
+			session.close();
+
 			response.setInstructionResultOK(true);
 
-			session.close();
 
 		} catch (Exception e) {
 			response.setException(e);

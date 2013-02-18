@@ -22,43 +22,45 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions.referential;
+package org.jity.server.instructions;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jity.common.protocol.Instruction;
 import org.jity.common.protocol.JityResponse;
-import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.util.XMLUtil;
-
+import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.HibernateSessionFactory;
 
+
 /**
- * Server command to create a new calendar
+ * Server command to list Jobs existing in DB
  * 
  * @author 09344A
  * 
  */
-public class AddCalendar implements Instruction {
-
+public class ListJobs implements Instruction {
+	private static final Logger logger = Logger.getLogger(ListJobs.class);
+	
 	public JityResponse launch(String xmlInputData) {
 		JityResponse response = new JityResponse();
 
 		try {
-
-			PersonnalCalendar calendar = (PersonnalCalendar) XMLUtil.XMLStringToObject(xmlInputData);
-
-			Session session = HibernateSessionFactory.getInstance().getSession();
-			Transaction transaction = session.beginTransaction();
-
-			session.save(calendar);
 			
-			transaction.commit();
-			session.close();
+			String queryFind = "select job from org.jity.common.referential.Job job";
+			
+			Session session = HibernateSessionFactory.getInstance().getSession();
 
+			List list = session.createQuery(queryFind).list();
+	        //if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
+			
+			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
 			response.setInstructionResultOK(true);
 
-
+			session.close();
+			
 		} catch (Exception e) {
 			response.setException(e);
 		}

@@ -19,15 +19,17 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.jity.common.referential.dateConstraint">
+<hibernate-mapping package="org.jity.common.referential">
 
-	<class name="DateConstraint" table="DATE_CONSTRAINT">
+	<class name="User" table="USER">
 		<id name="id" type="long">
-			<column name="ID" not-null="true" unique="true" index="PK_DATE_CONSTRAINT" />
+			<column name="ID" not-null="true" unique="true" index="PK_USER" />
 			<generator class="increment" />
 		</id>
-		<property name="planifRule" not-null="true" column="PLANIF_RULE" />
-		<many-to-one name="calendar" not-null="true" column="CALENDAR_ID"
+		<property name="login" not-null="true" column="LOGIN" />
+		<property name="password" not-null="true" column="PASSWORD" />
+		<property name="name" column="NAME" />
+		<many-to-one name="group" not-null="true" column="GROUP_ID"
 			cascade="all" />
 	</class>
 

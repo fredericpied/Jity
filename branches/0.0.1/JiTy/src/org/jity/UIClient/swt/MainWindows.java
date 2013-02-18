@@ -93,22 +93,26 @@ public class MainWindows {
 		menuItemHelp.setText("Help");
 		menuHelp = new Menu(sShell, SWT.DROP_DOWN);
 		menuItemHelp.setMenu(menuHelp);
-		
-		
 	}
 
+	
+	
 	public void launch() {
-		createSShell();
 		
+		createSShell();
+		SWTUtility.centerOnScreen(sShell.getDisplay(), sShell);	
 		sShell.open();
+
+		new LoginWindows();
 		
 		while (!sShell.isDisposed()) {
 			if (!sShell.getDisplay().readAndDispatch())
 				sShell.getDisplay().sleep();
 		}
 
-		//sShell.getDisplay().dispose();
-		
 	}	
 
+	
+	
+	
 }
