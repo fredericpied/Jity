@@ -6,16 +6,7 @@ import org.jity.common.commandLine.CommandLine;
 
 public class Main extends CommandLine {
 	private static final Logger logger = Logger.getLogger(Main.class);
-	
-	private Main() {
-		this.setHelpMessage("JiTy Agent command line options:" +
-				"\n-start\t\tStart the JiTy Agent" +
-				"\n-stop\t\tStop the JiTy Agent");
-		this.setUsage("jityAgent [-stop|-start]");
-		this.setMinArgsNumber(1);
-		this.setMaxArgsNumber(1);
-	}
-	
+		
 	private static int launch(String[] args) {
 
 		MainWindows m = new MainWindows();

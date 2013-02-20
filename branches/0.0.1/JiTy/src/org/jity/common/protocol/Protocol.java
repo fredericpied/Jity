@@ -35,6 +35,8 @@ import org.jity.server.instructions.GetCalendar;
 import org.jity.server.instructions.GetJob;
 import org.jity.server.instructions.ListExecTask;
 import org.jity.server.instructions.ListJobs;
+import org.jity.server.instructions.ListUsers;
+import org.jity.server.instructions.LoginUser;
 import org.jity.server.instructions.ShutdownServer;
 import org.jity.server.instructions.ShutdownServerTaskLauncherDaemon;
 import org.jity.server.instructions.StartServerTaskLauncherDaemon;
@@ -93,6 +95,11 @@ public abstract class Protocol {
 			response = new GetJob().launch(request.getXmlInputData());
 		} else if (request.getInstructionName().equals("LISTEXECTASK")) {
 			response = new ListExecTask().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("LISTUSERS")) {
+			response = new ListUsers().launch(request.getXmlInputData());
+		} else if (request.getInstructionName().equals("LOGINUSER")) {
+			response = new LoginUser().launch(request.getXmlInputData());
+			
 			
 		// Agent requests
 		} else	if (request.getInstructionName().equals("ADDTASKINQUEUE")) {
