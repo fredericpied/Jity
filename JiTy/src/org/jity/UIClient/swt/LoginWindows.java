@@ -1,8 +1,16 @@
 package org.jity.UIClient.swt;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
@@ -10,10 +18,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.jity.UIClient.UIClientConfig;
+import org.jity.common.protocol.JityRequest;
+import org.jity.common.protocol.JityResponse;
+import org.jity.common.protocol.RequestSender;
+import org.jity.common.referential.User;
+import org.jity.common.util.StringCrypter;
+import org.jity.common.util.XMLUtil;
 
 public class LoginWindows {
 
-	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,10"
+	private Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,10"
 	private Label labelUser = null;
 	private Label labelPasswor = null;
 	private Text textUsername = null;
@@ -84,6 +99,21 @@ public class LoginWindows {
 		labelPasswor.setLayoutData(gridData3);
 		textPassword = new Text(sShell, SWT.BORDER | SWT.PASSWORD);
 		textPassword.setLayoutData(gridData1);
+		textPassword.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				switch (event.keyCode) {
+				case SWT.CR:
+
+					try {
+						loginUser();
+					} catch (Exception e1) {
+						SWTUtility.showErrorMessage(sShell, e1.getClass().getSimpleName() + ": " + e1.getMessage());
+					}
+					break;
+				}
+			}
+		});
+
 		labelServerHost = new Label(sShell, SWT.NONE);
 		labelServerHost.setText("Server hostname:");
 		labelServerHost.setLayoutData(gridData4);
@@ -108,16 +138,72 @@ public class LoginWindows {
 		buttonOK.setLayoutData(gridData8);
 		buttonOK.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
-				sShell.close();
+
+				try {
+					loginUser();
+				} catch (Exception e1) {
+					SWTUtility.showErrorMessage(sShell, e1.getClass().getSimpleName() + ": " + e1.getMessage());
+				}
+
 			}
 		});
 	}
-		
+
 	public LoginWindows() {
 		createSShell();
-		SWTUtility.centerOnScreen(sShell.getDisplay(), sShell);	
+		SWTUtility.centerOnScreen(sShell.getDisplay(), sShell);
 		sShell.open();
-	}
-	
 
+		// Load config file
+		UIClientConfig clientConfig = UIClientConfig.getInstance();
+		try {
+			clientConfig.initialize();
+		} catch (IOException e) {
+			SWTUtility.showErrorMessage(sShell, e.getClass().getSimpleName() + ": " + e.getMessage());
+		}
+
+		this.textServerHostName.setText(clientConfig.getSERVER_HOSTNAME());
+		this.textServerPort.setText(String.valueOf(clientConfig.getSERVER_PORT()));
+
+	}
+
+	private void loginUser() throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+			IllegalBlockSizeException, BadPaddingException {
+
+		if (this.textUsername.getText().length() == 0 || this.textPassword.getText().length() == 0
+				|| this.textServerHostName.getText().length() == 0 || this.textServerPort.getText().length() == 0) {
+
+			SWTUtility.showErrorMessage(sShell, "All fields are required to login");
+		} else {
+			JityRequest request = new JityRequest();
+			request.setInstructionName("LOGINUSER");
+
+			User sampleUser = new User();
+			sampleUser.setLogin(this.textUsername.getText());
+			String encryptedPassword = StringCrypter.encrypt(this.textPassword.getText(), "JiTyCedricFred13");
+			sampleUser.setPassword(encryptedPassword);
+			request.setXmlInputData(XMLUtil.objectToXMLString(sampleUser));
+
+			// Load config file
+			UIClientConfig clientConfig = UIClientConfig.getInstance();
+			clientConfig.initialize();
+
+			RequestSender requestSender = new RequestSender();
+			requestSender.openConnection(this.textServerHostName.getText(), Integer.parseInt(this.textServerPort.getText()));
+			JityResponse response = requestSender.sendRequest(request);
+			requestSender.closeConnection();
+
+			if (!response.isInstructionResultOK()) {
+				SWTUtility.showErrorMessage(sShell, response.getExceptionName() + ": " + response.getExceptionMessage());
+			} else {
+
+				User user = (User) XMLUtil.XMLStringToObject(response.getXmlOutputData());
+
+				SWTUtility.showInformationMessage(sShell, "User " + user.getLogin() + " logged in");
+
+				sShell.close();
+
+			}
+		}
+	}
 }

@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Text;
 import org.jity.UIClient.UIClientConfig;
+import org.jity.common.protocol.InstructionException;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.Job;
 import org.jity.common.util.XMLUtil;
 import org.jity.server.Main;
-import org.jity.server.instructions.InstructionException;
 import org.jity.server.instructions.ListJobs;
 
 public class JobsCRUD {

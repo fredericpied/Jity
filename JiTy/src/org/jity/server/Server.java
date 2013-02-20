@@ -26,15 +26,27 @@ package org.jity.server;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.jity.common.protocol.RequestReceiver;
+import org.jity.common.referential.UserGroup;
+import org.jity.common.referential.User;
+import org.jity.common.util.StringCrypter;
+import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.HibernateSessionFactory;
 
 import java.io.*;
 import java.net.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Server {
 	private static final Logger logger = Logger.getLogger(Server.class);
@@ -49,7 +61,7 @@ public class Server {
 	
 	private Date execDate;
 	
-	private static org.h2.tools.Server H2DBServer = null;
+	private org.h2.tools.Server H2DBServer = null;
 	
 	public static Server getInstance() {
 		if (instance == null) {
@@ -88,12 +100,13 @@ public class Server {
 			System.exit(1);
 		}
 
+		// Start H2 Database server
 		try {
 			
 			this.H2DBServer = org.h2.tools.Server.createTcpServer().start();
 			logger.info(H2DBServer.getStatus());
 			
-			// Init database connection
+			// test database connection
 			logger.info("Init of DB connection...");
 			Session sess = HibernateSessionFactory.getInstance().getSession();
 			sess.close();
@@ -101,6 +114,17 @@ public class Server {
 
 		} catch (SQLException e) {
 			logger.fatal(e.getMessage());
+
+			this.H2DBServer.stop();
+			
+			System.exit(1);
+		}
+
+		// Initialize Administrator user if not exist
+		try {
+			createAdminUser();
+		} catch (ServerException e2) {
+			logger.fatal(e2.getMessage());
 
 			this.H2DBServer.stop();
 			
@@ -132,7 +156,8 @@ public class Server {
 			
 			System.exit(1);
 		}
-
+		
+		
 		try {
 			isRunning = true;
 			
@@ -217,6 +242,83 @@ public class Server {
 		}
 	}
 
+	/**
+	 * Create Admin User in DB if not exist
+	 * @throws ServerException 
+	 */
+	private void createAdminUser() throws ServerException  {
+
+		Session session = HibernateSessionFactory.getInstance().getSession();
+
+		String queryFindUser = "select user from org.jity.common.referential.User user" +
+		" where user.login='admjity'";
+		
+		List listUser = session.createQuery(queryFindUser).list();
+
+		
+		// If User does not existe whith this login, create
+		if (listUser.size() == 0) {
+			try {
+				
+				String queryFindGroup = "select usergroup from org.jity.common.referential.UserGroup usergroup" +
+				" where usergroup.name='administrators'";
+				
+				UserGroup groupAdm = null;
+				List listGroup = session.createQuery(queryFindGroup).list();
+				if (listGroup.size() == 0) {
+					
+					// If Group dos not exist, create
+					groupAdm = new UserGroup();
+					groupAdm.setName("administrators");
+					groupAdm.setDescription("Group for JiTy administrators");
+					Transaction transaction = session.beginTransaction();
+					session.save(groupAdm);
+					transaction.commit();
+
+				} else {
+					groupAdm = (UserGroup)listGroup.get(0);
+				}
+				
+				User admUser = new User();
+				admUser.setLogin("admjity");
+				String encryptedPassword = StringCrypter.encrypt("admjity", "JiTyCedricFred13");
+				admUser.setPassword(encryptedPassword);
+				admUser.setName("JiTy Administrator");
+				admUser.setGroup(groupAdm);
+				
+				Transaction transaction = session.beginTransaction();
+				session.save(admUser);
+				transaction.commit();
+				session.close();
+				logger.info("Default JiTy Administrator user \"admjity\" succesfully created");
+				
+			} catch (InvalidKeyException e) {
+				session.close();
+				throw new ServerException("Failed to create JiTy Administrator user in database ("
+						+ e.getMessage() + ").");
+			} catch (NoSuchAlgorithmException e) {
+				session.close();
+				throw new ServerException("Failed to create JiTy Administrator user in database ("
+						+ e.getMessage() + ").");
+			} catch (NoSuchPaddingException e) {
+				session.close();
+				throw new ServerException("Failed to create JiTy Administrator user in database ("
+						+ e.getMessage() + ").");
+			} catch (IllegalBlockSizeException e) {
+				session.close();
+				throw new ServerException("Failed to create JiTy Administrator user in database ("
+						+ e.getMessage() + ").");
+			} catch (BadPaddingException e) {
+				session.close();
+				throw new ServerException("Failed to create JiTy Administrator user in database ("
+						+ e.getMessage() + ").");
+			}
+
+		}
+
+
+	}
+	
 	private void initializeExecDate() {
 		Calendar cal = new GregorianCalendar();
 		this.execDate = cal.getTime();

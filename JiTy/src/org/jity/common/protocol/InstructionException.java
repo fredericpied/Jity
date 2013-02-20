@@ -22,7 +22,7 @@
  *  http://www.assembla.com/spaces/jity
  *
  */
-package org.jity.server.instructions;
+package org.jity.common.protocol;
 
 public class InstructionException extends Exception {
 

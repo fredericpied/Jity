@@ -53,6 +53,9 @@
 		<mapping resource="Job.hbm.xml" />
 		<mapping resource="ExecTask.hbm.xml" />
 		<mapping resource="DateConstraint.hbm.xml" />
+		<mapping resource="UserGroup.hbm.xml" />
+		<mapping resource="User.hbm.xml" />
+
 	</session-factory>
 
 </hibernate-configuration>

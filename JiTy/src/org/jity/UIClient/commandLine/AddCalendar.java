@@ -6,13 +6,13 @@ import org.jity.UIClient.UIClientConfig;
 import org.jity.UIClient.UIClientException;
 import org.jity.common.commandLine.BadArgCLException;
 import org.jity.common.commandLine.CommandLine;
+import org.jity.common.protocol.InstructionException;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
 import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.util.XMLUtil;
-import org.jity.server.instructions.InstructionException;
 
 /**
  * Command line for adding a new Calendar

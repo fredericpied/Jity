@@ -24,6 +24,7 @@ public class TestServer extends TestCase {
 					TimeUtil.waiting(10);
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		});
@@ -40,6 +41,7 @@ public class TestServer extends TestCase {
 					TimeUtil.waiting(2);
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		});

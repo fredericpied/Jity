@@ -29,8 +29,7 @@
 		<property name="login" not-null="true" column="LOGIN" />
 		<property name="password" not-null="true" column="PASSWORD" />
 		<property name="name" column="NAME" />
-		<many-to-one name="group" not-null="true" column="GROUP_ID"
-			cascade="all" />
+		<many-to-one name="group" not-null="true" column="GROUP_ID" cascade="all" />
 	</class>
 
 
