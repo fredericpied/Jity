@@ -31,7 +31,6 @@ import org.jity.common.protocol.RequestReceiver;
 import org.jity.common.referential.UserGroup;
 import org.jity.common.referential.User;
 import org.jity.common.util.StringCrypter;
-import org.jity.server.database.DataNotFoundDBException;
 import org.jity.server.database.HibernateSessionFactory;
 
 import java.io.*;
@@ -48,6 +47,20 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * Classe principale du serveur jity.
+ * 
+ * Cette classe créer un processus qui traite les requetes émise par les UIClient.
+ * 
+ * Elle démarre deux autres processus:
+ *  - Le "ServerTaskLauncher" qui scrute la base de données à la recherche de job a exécuter, créer les 
+ *  taches d'exécution sur les agents concernés
+ *  - Le "ServerTaskStatusManager" qui traite les requete de mise à jour du statut des taches
+ *  d'exécution dans la base. Ces requete sont envoyées par les agents.
+ * 
+ * @author Fred
+ *
+ */
 public class Server {
 	private static final Logger logger = Logger.getLogger(Server.class);
 
@@ -55,14 +68,26 @@ public class Server {
 
 	private ServerSocket listenSocket;
 
+	/**
+	 * True if server is currently running
+	 */
 	private boolean isRunning = false;
 	
+	/**
+	 * True if server is going to shutdown
+	 */
 	private boolean shutdowning = false;
 	
-	private Date execDate;
-	
+	/**
+	 * Current H2 Database server
+	 */
 	private org.h2.tools.Server H2DBServer = null;
 	
+	/**
+	 * Return current instance of Server, create one if none exist.
+	 * 
+	 * @return Server
+	 */
 	public static Server getInstance() {
 		if (instance == null) {
 			instance = new Server();
@@ -71,102 +96,93 @@ public class Server {
 	}
 
 	/**
-	 * Return true if JitY Server is running
+	 * Return true if JitY Server is running.
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isRunning() {
 		return isRunning;
 	}
 
 	/**
-	 * Start the server.
+	 * Start the JiTy Server process.
 	 */
 	public void start() {
 		Socket client = null;
 		
 		shutdowning = false;
 		
-		logger.info("JiTy Server starting process.");
-
-		// Loading config File
+		// Find hostname to display it (display generic message if can't found)
 		try {
-			this.loadConfigFile();
-		} catch (ServerException e1) {
-			logger.fatal(e1.getMessage());
-			try {
-				this.stop();
-			} catch (ServerException e) {}
-			System.exit(1);
+			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
+			logger.info("Starting Jity Server on "+localHostname+"...");
+		} catch (UnknownHostException e1) {
+			logger.warn(e1.getMessage());
+			logger.info("Starting Jity Server...");
 		}
 
+		// Loading ServerConfig.xml file
+		try {
+			ServerConfig serverConfig = ServerConfig.getInstance();
+			logger.info("Reading configuration file "+serverConfig.getXmlFileName()+"...");
+			serverConfig.initialize();
+			serverConfig.showConfig();
+		} catch (IOException e) {
+			logger.fatal("Failed to read configuration file: "+e.getMessage());
+			System.exit(1);
+		}
+		
 		// Start H2 Database server
 		try {
-			
+			logger.info("Starting H2 Database server...");
 			this.H2DBServer = org.h2.tools.Server.createTcpServer().start();
 			logger.info(H2DBServer.getStatus());
 			
 			// test database connection
-			logger.info("Init of DB connection...");
+			logger.info("Test database connection...");
 			Session sess = HibernateSessionFactory.getInstance().getSession();
 			sess.close();
-			logger.info("Connection to database: OK");
+			logger.info("Connection to database OK");
 
 		} catch (SQLException e) {
-			logger.fatal(e.getMessage());
-
+			logger.fatal("Failed to start database server: "+e.getMessage());
 			this.H2DBServer.stop();
-			
 			System.exit(1);
 		}
 
-		// Initialize Administrator user if not exist
+		// Initialize Jity Administrator user and group if not exist in database
 		try {
-			createAdminUser();
+			initializeJityAdministrator();
 		} catch (ServerException e2) {
 			logger.fatal(e2.getMessage());
-
 			this.H2DBServer.stop();
-			
 			System.exit(1);
 		}
 		
-		
-		try {
-			String localHostname = java.net.InetAddress.getLocalHost().getHostName();
-			
-			logger.info("Starting the server on "+localHostname+"...");
-			
-		} catch (UnknownHostException e1) {
-			logger.warn(e1.getMessage());
-			logger.info("Starting the server...");
-		}
-				
+		// Starting Server Task Status Manager process
 		ServerTaskStatutManagerDaemon.getInstance().startTaskStatusListener();	
 		
+		// Create listenning socket
 		int serverPort = ServerConfig.getInstance().getSERVER_UI_INPUT_PORT();
 		try {
 			listenSocket = new ServerSocket(serverPort);
-			logger.info("Server running on port : " + serverPort);
+			logger.info("Server running on port " + serverPort);
 			logger.info("JiTy Server successfully started.");
 		} catch (IOException e) {
 			logger.fatal(e.getMessage());
-			
 			this.H2DBServer.stop();
-			
 			System.exit(1);
 		}
-		
 		
 		try {
 			isRunning = true;
 			
+			// Waiting client connect
 			while (true) {
 				client = listenSocket.accept();
 				try {
-					logger.info("New connection from "
+					logger.debug("New connection from "
 							+ client.getInetAddress() + ".");
-					//new ServeOneUIClientRequest(client);
 					new RequestReceiver(client);
 				} catch (IOException e) {
 					client.close();
@@ -179,8 +195,7 @@ public class Server {
 		} finally {
 			isRunning = false;
 			try {
-				if (listenSocket != null)
-					listenSocket.close();
+				if (listenSocket != null) listenSocket.close();
 			} catch (IOException e) {
 				logger.warn("Failed to close client connection.");
 				logger.debug(e.getMessage());
@@ -196,7 +211,7 @@ public class Server {
 	 */
 	public void stop() throws ServerException {
 		if (this.isRunning) {
-			logger.info("Shutdown of server asked.");
+			logger.info("Shutdown of server asked...");
 			shutdowning = true;
 			
 			try {
@@ -224,74 +239,92 @@ public class Server {
 	}
 
 	/**
-	 * Loading the server config file
-	 * 
-	 * @throws ServerException
+	 * Return True if user exist in database
+	 * @param userName
+	 * @return boolean
 	 */
-	private void loadConfigFile() throws ServerException {
-		// Load config file
-		try {
-			ServerConfig serverConfig = ServerConfig.getInstance();
-			logger.info("Reading configuration file.");
-			serverConfig.initialize();
-			logger.info("Configuration File successfully loaded.");
-			serverConfig.showConfig();
-		} catch (IOException e) {
-			throw new ServerException("Failed to read configuration file ("
-					+ e.getMessage() + ").");
-		}
+	private boolean ifUserExist(String userName) {
+		Session session = HibernateSessionFactory.getInstance().getSession();
+		String queryFindUser = "select user from org.jity.common.referential.User user" +
+		" where user.login='"+userName+"'";
+		List listUser = session.createQuery(queryFindUser).list();
+		session.close();
+		
+		// If User does not existe whith this login, return false
+		if (listUser.size() == 0) return false;
+		else return true;
+		
 	}
-
+	
+	/**
+	 * Return True if group exist in database
+	 * @param groupName
+	 * @return boolean
+	 */
+	private boolean ifUserGroupExist(String groupName) {
+		Session session = HibernateSessionFactory.getInstance().getSession();
+		String queryFindGroup = "select usergroup from org.jity.common.referential.UserGroup usergroup" +
+		" where usergroup.name='"+groupName+"'";
+		List listGroup = session.createQuery(queryFindGroup).list();
+		session.close();
+		
+		// If Group does not existe, return false
+		if (listGroup.size() == 0) return false;
+		else return true;
+		
+	}
+	
+	
 	/**
 	 * Create Admin User in DB if not exist
 	 * @throws ServerException 
 	 */
-	private void createAdminUser() throws ServerException  {
+	private void initializeJityAdministrator() throws ServerException  {
 
-		Session session = HibernateSessionFactory.getInstance().getSession();
-
-		String queryFindUser = "select user from org.jity.common.referential.User user" +
-		" where user.login='admjity'";
-		
-		List listUser = session.createQuery(queryFindUser).list();
-
-		
-		// If User does not existe whith this login, create
-		if (listUser.size() == 0) {
-			try {
-				
+		// test if user admjity exist in database
+		if (! this.ifUserExist("admjity")) {
+			
+			// Create database session
+			Session session = HibernateSessionFactory.getInstance().getSession();
+			
+			UserGroup groupAdm = null;
+			
+			// if user non exist, test if admnistrators group exist in databse
+			if (! this.ifUserGroupExist("administrators")) {
+				// if administrators group does not exist, create default one
+				groupAdm = new UserGroup();
+				groupAdm.setName("administrators");
+				groupAdm.setDescription("Group for JiTy administrators");
+				Transaction transaction = session.beginTransaction();
+				session.save(groupAdm);
+				transaction.commit();
+			} else {
+				// if administrator group exist, read it
 				String queryFindGroup = "select usergroup from org.jity.common.referential.UserGroup usergroup" +
 				" where usergroup.name='administrators'";
-				
-				UserGroup groupAdm = null;
 				List listGroup = session.createQuery(queryFindGroup).list();
-				if (listGroup.size() == 0) {
-					
-					// If Group dos not exist, create
-					groupAdm = new UserGroup();
-					groupAdm.setName("administrators");
-					groupAdm.setDescription("Group for JiTy administrators");
-					Transaction transaction = session.beginTransaction();
-					session.save(groupAdm);
-					transaction.commit();
+				groupAdm = (UserGroup)listGroup.get(0);
+			}
 
-				} else {
-					groupAdm = (UserGroup)listGroup.get(0);
-				}
+			try {
+				logger.info("Create default Jity Administrator");
 				
+				// Create new User
 				User admUser = new User();
 				admUser.setLogin("admjity");
+				admUser.setName("JiTy Administrator");
+				
+				// Encrypt default password
 				String encryptedPassword = StringCrypter.encrypt("admjity", "JiTyCedricFred13");
 				admUser.setPassword(encryptedPassword);
-				admUser.setName("JiTy Administrator");
+				
+				// Set administrators group
 				admUser.setGroup(groupAdm);
 				
 				Transaction transaction = session.beginTransaction();
 				session.save(admUser);
 				transaction.commit();
-				session.close();
-				logger.info("Default JiTy Administrator user \"admjity\" succesfully created");
-				
+
 			} catch (InvalidKeyException e) {
 				session.close();
 				throw new ServerException("Failed to create JiTy Administrator user in database ("
@@ -313,25 +346,11 @@ public class Server {
 				throw new ServerException("Failed to create JiTy Administrator user in database ("
 						+ e.getMessage() + ").");
 			}
-
+			
+			session.close();
 		}
-
-
-	}
-	
-	private void initializeExecDate() {
-		Calendar cal = new GregorianCalendar();
-		this.execDate = cal.getTime();
-	}
-	
-	public Date getExecDate() {
-		return execDate;
+		
 	}
 
-	public void setExecDate(Date execDate) {
-		this.execDate = execDate;
-	}
-	
-	
 
 }
