@@ -54,8 +54,7 @@ public class ListExecTask implements Instruction {
 
 			List list = session.createQuery(queryFind).list();
 	        //if (list.size() == 0) throw new DataNotFoundDBException("DataNotFoundDBException :"+queryFind);
-			logger.info("Nb exetask lus: "+list.size());
-			
+						
 			response.setXmlOutputData(XMLUtil.objectToXMLString(list));
 			response.setInstructionResultOK(true);
 

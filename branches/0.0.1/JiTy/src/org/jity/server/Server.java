@@ -160,7 +160,7 @@ public class Server {
 		}
 		
 		// Starting Server Task Status Manager process
-		ServerTaskStatutManagerDaemon.getInstance().startTaskStatusListener();	
+		ServerTaskStatusManagerDaemon.getInstance().startTaskStatusListener();	
 		
 		// Create listenning socket
 		int serverPort = ServerConfig.getInstance().getSERVER_UI_INPUT_PORT();
@@ -218,7 +218,7 @@ public class Server {
 				
 				ServerTaskLauncherDaemon.getInstance().stop();
 				
-				ServerTaskStatutManagerDaemon.getInstance().stopTaskStatusListener();
+				ServerTaskStatusManagerDaemon.getInstance().stopTaskStatusListener();
 				
 				logger.info("Shutdowing H2 Database server.");
 				this.H2DBServer.stop();
