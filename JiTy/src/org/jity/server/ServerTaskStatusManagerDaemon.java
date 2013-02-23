@@ -47,10 +47,10 @@ import org.jity.server.database.HibernateSessionFactory;
  * Listen task status to update state in DB
  *
  */
-public class ServerTaskStatutManagerDaemon implements Runnable {
-	private static final Logger logger = Logger.getLogger(ServerTaskStatutManagerDaemon.class);
+public class ServerTaskStatusManagerDaemon implements Runnable {
+	private static final Logger logger = Logger.getLogger(ServerTaskStatusManagerDaemon.class);
 
-	private static ServerTaskStatutManagerDaemon instance = null;
+	private static ServerTaskStatusManagerDaemon instance = null;
 	
 	private ServerSocket listenSocket;
 	
@@ -66,9 +66,9 @@ public class ServerTaskStatutManagerDaemon implements Runnable {
      * Create one if none
      * @return ServerTaskStatusListener
      */
-	public static ServerTaskStatutManagerDaemon getInstance() {
+	public static ServerTaskStatusManagerDaemon getInstance() {
 		if (instance == null) {
-			instance = new ServerTaskStatutManagerDaemon();
+			instance = new ServerTaskStatusManagerDaemon();
 		}
 		return instance;
 	}

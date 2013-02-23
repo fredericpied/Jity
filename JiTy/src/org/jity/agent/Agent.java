@@ -110,6 +110,9 @@ public class Agent {
     	}
     }
     
+    /**
+     * Increment Return number of jobs currently executing
+     */
     public void incrementCurrentJobsExecution() {
     	this.currentJobsExection++;
     }
@@ -117,7 +120,11 @@ public class Agent {
     public void decrementCurrentJobsExecution() {
     	this.currentJobsExection--;
     }
-    
+
+    /**
+     * Return number of jobs currently executing
+     * @return int
+     */
     public int getCurrentJobsExecution() {
     	return this.currentJobsExection;
     }
