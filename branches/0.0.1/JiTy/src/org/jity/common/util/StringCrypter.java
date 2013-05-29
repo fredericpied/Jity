@@ -1,7 +1,5 @@
 package org.jity.common.util;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -9,7 +7,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
@@ -22,6 +19,18 @@ import org.apache.commons.codec.binary.Base64;
  */
 public abstract class StringCrypter {
 
+	/**
+	 * Encrypt input String
+	 * 
+	 * @param stringToCrypt
+	 * @param keyString
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	public static String encrypt(String stringToCrypt, String keyString) throws NoSuchAlgorithmException, NoSuchPaddingException,
 			InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
@@ -34,6 +43,18 @@ public abstract class StringCrypter {
 		return encryptedValue;
 	}
 
+	/**
+	 * Decrypt input String
+	 * 
+	 * @param encryptedString
+	 * @param keyString
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchPaddingException
+	 * @throws InvalidKeyException
+	 * @throws IllegalBlockSizeException
+	 * @throws BadPaddingException
+	 */
 	public static String decrypt(String encryptedString, String keyString) throws NoSuchAlgorithmException,
 			NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
@@ -50,7 +71,7 @@ public abstract class StringCrypter {
 	public static void main(String[] args) {
 		try {
 
-			String stringToCrypt = "J'AIME LE CHOCOLAT !!!";
+			String stringToCrypt = "<org.jity.common.protocol.JityRequest>  <instructionName>STARTEXECMANAGER</instructionName></org.jity.common.protocol.JityRequest>";
 			String keyString = "JiTyCedricFred13";
 
 			System.out.println("String To Crypt: " + stringToCrypt);

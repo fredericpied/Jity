@@ -24,14 +24,15 @@
  */
 package org.jity.common.protocol;
 
+import org.jity.common.util.StringCrypter;
 import org.jity.common.util.XMLUtil;
 
 public class Datagram {
-
+	
 	/**
 	 * Datagram format version
 	 */
-	private int formatVersion = 1;
+	private static int formatVersion = 1;
 		
 	public int getFormatVersion() {
 		return formatVersion;

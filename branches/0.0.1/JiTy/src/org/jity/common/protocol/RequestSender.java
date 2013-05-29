@@ -30,10 +30,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
+import org.jity.common.util.StringCompress;
+import org.jity.common.util.StringCrypter;
 import org.jity.common.util.XMLUtil;
 
 /**
@@ -49,6 +57,14 @@ public class RequestSender {
 	private BufferedReader sin;
 	private PrintWriter sout;
 
+
+	/**
+	 * Cryptage des communications
+	 */
+	private static boolean CRYPTED_MESSAGE = true;
+	private static String KEY_STRING = "JiTyCedricFred13";
+	
+	
 	/**
 	 * Open remote connection
 	 * @param host
@@ -85,20 +101,55 @@ public class RequestSender {
 		
 		try {
 	
-    		logger.trace("Request send: " + request.toXML());
+			String message = request.toXML();
 			
-			// Send request
-			this.sout.println(request.toXML());
+    		logger.trace("Request send: " + message);
+			
+    		if (CRYPTED_MESSAGE) {
+    			message = StringCrypter.encrypt(message, KEY_STRING);
+    			//message = StringCompress.compress(message);
+    		}
+    		
+    		// Send request
+			this.sout.println(message);
 			this.sout.flush();
 			
 			// Reading response
-			response = (JityResponse) XMLUtil.XMLStringToObject(this.sin.readLine());
+			String returnedMessage = this.sin.readLine();
 			
-            logger.trace("Response received: " + response.toXML());
+			if (CRYPTED_MESSAGE) {
+				//returnedMessage = StringCompress.decompress(returnedMessage);
+				returnedMessage = StringCrypter.decrypt(returnedMessage, KEY_STRING);
+			}
+
+			logger.trace("Response received: " + returnedMessage);
+			
+			response = (JityResponse) XMLUtil.XMLStringToObject(returnedMessage);
 			
 		} catch (IOException e) {
 			response = new JityResponse();
 			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+		} catch (InvalidKeyException e) {
+			response = new JityResponse();
+			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+		} catch (NoSuchAlgorithmException e) {
+			response = new JityResponse();
+			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+		} catch (NoSuchPaddingException e) {
+			response = new JityResponse();
+			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+		} catch (IllegalBlockSizeException e) {
+			response = new JityResponse();
+			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+		} catch (BadPaddingException e) {
+			response = new JityResponse();
+			response.setException(e);
+			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
 		}
 		
 		return response;
