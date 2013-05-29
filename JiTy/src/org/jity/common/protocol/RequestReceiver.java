@@ -26,12 +26,20 @@ package org.jity.common.protocol;
 
 import java.io.*;
 import java.net.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import org.apache.log4j.Logger;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.Protocol;
 import org.jity.common.protocol.ProtocolException;
+import org.jity.common.util.StringCompress;
+import org.jity.common.util.StringCrypter;
 
 /**
  * Receive a JiTy Request by network
@@ -42,6 +50,12 @@ public class RequestReceiver extends Thread {
     private Socket socket;
     private BufferedReader networkReader;
     private PrintWriter networkWriter;
+	
+    /**
+	 * Cryptage des communications
+	 */
+	private static boolean CRYPTED_MESSAGE = true;
+	private static String KEY_STRING = "JiTyCedricFred13";
 
     /**
      * Initialize requestReceiver
@@ -66,25 +80,53 @@ public class RequestReceiver extends Thread {
         
             	// Reading netword datagram
             	xmlInputData = networkReader.readLine();
-           		
+            	
             	try {
+            		
             		logger.trace("Request received: " + xmlInputData);
+            		
+            		if (CRYPTED_MESSAGE) {
+                		//xmlInputData = StringCompress.decompress(xmlInputData);
+            			xmlInputData = StringCrypter.decrypt(xmlInputData, KEY_STRING);
 
+            		}
+            		
             		// Identifing remote IP
             		String remoteIP = socket.getInetAddress().getHostAddress();
 
             		xmlOutputData = Protocol.executeRequest(xmlInputData, remoteIP);
-   
+            		
+                    logger.trace("Response send: " + xmlOutputData);
+                    
+            		if (CRYPTED_MESSAGE) {
+            			xmlOutputData = StringCrypter.encrypt(xmlOutputData, KEY_STRING);
+                		//xmlOutputData = StringCompress.compress(xmlOutputData);
+            		}
+            		            		
             		// Send the response to server
                 	networkWriter.println(xmlOutputData);
                     networkWriter.flush();
 
-                    logger.trace("Response send: " + xmlOutputData);
 
-            	 } catch (ProtocolException ex) {
+            	 } catch (ProtocolException e) {
                      logger.warn("Bad input data: " + xmlInputData);
-                     logger.debug(ex.getMessage());
-            	 }
+         			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+            	 } catch (InvalidKeyException e) {
+                    logger.warn("Bad input data: " + xmlInputData);
+         			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+				} catch (NoSuchAlgorithmException e) {
+                    logger.warn("Bad input data: " + xmlInputData);
+        			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+				} catch (NoSuchPaddingException e) {
+                    logger.warn("Bad input data: " + xmlInputData);
+        			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+				} catch (IllegalBlockSizeException e) {
+                    logger.warn("Bad input data: " + xmlInputData);
+        			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+				} catch (BadPaddingException e) {
+                    logger.warn("Bad input data: " + xmlInputData);
+        			logger.error("Exception: " + e.getClass().getSimpleName()+":"+e.getMessage());
+				}
 
         } catch (IOException ex) {
             logger.warn("Communication was ended abnormally");
