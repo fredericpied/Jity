@@ -86,9 +86,8 @@ public class RequestReceiver extends Thread {
             		logger.trace("Request received: " + xmlInputData);
             		
             		if (CRYPTED_MESSAGE) {
-                		//xmlInputData = StringCompress.decompress(xmlInputData);
-            			xmlInputData = StringCrypter.decrypt(xmlInputData, KEY_STRING);
-
+                		xmlInputData = StringCrypter.decrypt(xmlInputData, KEY_STRING);
+                		xmlInputData = StringCompress.decompress(xmlInputData);
             		}
             		
             		// Identifing remote IP
@@ -99,8 +98,8 @@ public class RequestReceiver extends Thread {
                     logger.trace("Response send: " + xmlOutputData);
                     
             		if (CRYPTED_MESSAGE) {
+                		xmlOutputData = StringCompress.compress(xmlOutputData);
             			xmlOutputData = StringCrypter.encrypt(xmlOutputData, KEY_STRING);
-                		//xmlOutputData = StringCompress.compress(xmlOutputData);
             		}
             		            		
             		// Send the response to server

@@ -242,8 +242,8 @@ public class DrawingWindows {
 							rectMoveStarted = true;
 							
 							
-							lineStartX = currentLink.getStartX();
-							lineStartY = currentLink.getStartY();
+							//lineStartX = currentLink.getStartX();
+							//lineStartY = currentLink.getStartY();
 							
 							GCLink gclink = new GCLink();
 							gclink.start(lineStartX, lineStartY);
