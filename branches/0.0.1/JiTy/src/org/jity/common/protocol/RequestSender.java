@@ -106,8 +106,8 @@ public class RequestSender {
     		logger.trace("Request send: " + message);
 			
     		if (CRYPTED_MESSAGE) {
+    			message = StringCompress.compress(message);
     			message = StringCrypter.encrypt(message, KEY_STRING);
-    			//message = StringCompress.compress(message);
     		}
     		
     		// Send request
@@ -118,8 +118,8 @@ public class RequestSender {
 			String returnedMessage = this.sin.readLine();
 			
 			if (CRYPTED_MESSAGE) {
-				//returnedMessage = StringCompress.decompress(returnedMessage);
 				returnedMessage = StringCrypter.decrypt(returnedMessage, KEY_STRING);
+				returnedMessage = StringCompress.decompress(returnedMessage);
 			}
 
 			logger.trace("Response received: " + returnedMessage);
