@@ -81,7 +81,7 @@ public abstract class ListUtil {
 		String string = "";
 		
 		for (int i=1;i<tab.length;i++) {
-			string = tab[i]+",";
+			string = string+tab[i]+",";
 		}
 		
 		// Last comma suppression

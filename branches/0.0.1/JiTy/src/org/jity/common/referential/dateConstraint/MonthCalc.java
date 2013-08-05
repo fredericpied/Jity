@@ -56,7 +56,7 @@ public abstract class MonthCalc {
 	 * Get month number in the year
 	 * @param monthName
 	 * @return
-	 * @throws DateException 
+	 * @throws DateConstraintException 
 	 */
 	public static int getMonthNumberByName(String monthName) throws DateConstraintException {
 		for (int i=0;i<tabMonthsNames.length;i++) {
@@ -123,7 +123,7 @@ public abstract class MonthCalc {
 	 * @throws PersonnalCalendarException 
 	 */
 	public static Date getNiemeMonthDay(Date dateToTest, PersonnalCalendar persCal, int nbDay, String dayType)
-			throws PersonnalCalendarException {
+			throws DateConstraintException {
 
 		Calendar calToTest = new GregorianCalendar();
 		calToTest.clear();
@@ -131,7 +131,7 @@ public abstract class MonthCalc {
 		if (! dayType.equals("close") &&
 				! dayType.equals("open") &&
 				! dayType.equals("calend"))
-			throw new PersonnalCalendarException("dayType must be \"calend\", \"open\" or \"close\"");
+			throw new DateConstraintException("dayType must be \"calend\", \"open\" or \"close\"");
 
 		int numberOfDaysInTheMonth = getDayNumberInMonth(getLastMonthDay(dateToTest));
 		
@@ -145,7 +145,7 @@ public abstract class MonthCalc {
 			Date lastMonthDay = getLastMonthDay(dateToTest);
 
 			if (nbDay > numberOfDaysInTheMonth)
-				throw new PersonnalCalendarException("nbDay must be < "+numberOfDaysInTheMonth);
+				throw new DateConstraintException("nbDay must be < "+numberOfDaysInTheMonth);
 
 			int dayCount = 0;
 
@@ -176,7 +176,7 @@ public abstract class MonthCalc {
 				
 				calToTest.add(Calendar.DAY_OF_MONTH, 1);
 
-			} while (lastMonthDay.compareTo(calToTest.getTime()) == 1);
+			} while (lastMonthDay.compareTo(calToTest.getTime()) != -1);
 
 			return null;
 
@@ -189,7 +189,7 @@ public abstract class MonthCalc {
 			Date firstMonthDay = getFirstMonthDay(dateToTest);
 
 			if (nbDay < -numberOfDaysInTheMonth)
-				throw new PersonnalCalendarException("nbDay must be > -"+numberOfDaysInTheMonth);
+				throw new DateConstraintException("nbDay must be > -"+numberOfDaysInTheMonth);
 
 			int dayCount = 0;
 
@@ -221,7 +221,7 @@ public abstract class MonthCalc {
 				
 				calToTest.add(Calendar.DAY_OF_MONTH, -1);
 
-			} while (firstMonthDay.compareTo(calToTest.getTime()) == -1);
+			} while (firstMonthDay.compareTo(calToTest.getTime()) != 1);
 
 			return null;
 		}

@@ -15,8 +15,9 @@ import org.jity.agent.Main;
 import org.jity.common.commandLine.BadArgCLException;
 import org.jity.common.referential.Job;
 import org.jity.common.referential.dateConstraint.DateConstraint;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.server.Server;
 
 import org.jity.server.database.HibernateSessionFactory;
@@ -24,7 +25,7 @@ import org.jity.server.database.HibernateSessionFactory;
 public class AddDBDataForTest {
 	private static final Logger logger = Logger.getLogger(AddDBDataForTest.class);
 	
-	public static void launch() throws PersonnalCalendarException {
+	public static void launch() throws DateConstraintException {
 
 //		try {
 			Session session = HibernateSessionFactory.getInstance().getSession();

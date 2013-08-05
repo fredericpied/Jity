@@ -6,47 +6,14 @@ import org.apache.log4j.Logger;
 import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
+import org.jity.common.referential.dateConstraint.YearCalc;
 import org.jity.common.util.TimeUtil;
 
 import junit.framework.TestCase;
 
 public class TestCalendar extends TestCase {
 	private static final Logger logger = Logger.getLogger(TestCalendar.class);
-		
-	public void testGetNumberOfDaysInTheYear() {
-		
-		PersonnalCalendar cal = new PersonnalCalendar();
-		cal.setName("calTest");
-
-		cal.setYear(2016);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 366);	
-
-		cal.setYear(2015);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);	
-		
-		cal.setYear(2014);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);	
-
-		cal.setYear(2013);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);	
-		
-		cal.setYear(2012);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 366);	
-
-		cal.setYear(2011);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);	
-
-		cal.setYear(2010);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);
-
-		cal.setYear(2009);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 365);	
-
-		cal.setYear(2008);
-		assertEquals(cal.getNumberOfDaysInTheYear(), 366);
-	}
-	
 	
 	public void testSetAllOpenDays(){
 		PersonnalCalendar cal = new PersonnalCalendar();
@@ -55,13 +22,13 @@ public class TestCalendar extends TestCase {
 		try {
 			cal.setYear(2010);
 			cal.initializeWithAllDaysOpen();
-			assertEquals(cal.getDays().length(), cal.getNumberOfDaysInTheYear());
+			assertEquals(cal.getDays().length(), YearCalc.getMaxNumberofDayInYear(2010)+14);
 		
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
-			assertEquals(cal.getDays().length(), cal.getNumberOfDaysInTheYear());
+			assertEquals(cal.getDays().length(), YearCalc.getMaxNumberofDayInYear(2012)+14);
 		
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -76,18 +43,18 @@ public class TestCalendar extends TestCase {
 			cal.initializeWithAllDaysOpen();
 			
 			String openDays1 = cal.getDays();
-			cal.setOneDayType(1, "C");
+			cal.setOneDayType(8, "C");
 
 			String openDays2 = cal.getDays();
 			
 			assertEquals(openDays1.length(), openDays2.length());
 			
-			cal.setOneDayType(cal.getNumberOfDaysInTheYear(), "C");
+			cal.setOneDayType(365, "C");
 			String openDays3 = cal.getDays();
 			
 			assertEquals(openDays1.length(), openDays3.length());
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -102,20 +69,20 @@ public class TestCalendar extends TestCase {
 			cal.setYear(2012);
 			cal.initializeWithAllDaysOpen();
 			
-			cal.setOneDayType(1, "C");
-			cal.setOneDayType(cal.getNumberOfDaysInTheYear(), "C");
+			cal.setOneDayType(8, "C");
+			cal.setOneDayType(365, "C");
 
-			assertEquals(cal.getOneDayType(1), "C");
+			assertEquals(cal.getOneDayType(8), "C");
 			
 			assertEquals(cal.getOneDayType(2), "O");
 
 			assertEquals(cal.getOneDayType(59), "O");
 			
-			assertEquals(cal.getOneDayType(cal.getNumberOfDaysInTheYear()), "C");
+			assertEquals(cal.getOneDayType(365), "C");
 
 			
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -136,11 +103,11 @@ public class TestCalendar extends TestCase {
 
 			cal.addFrenchHolydays();
 
-			assertEquals(cal.getNumberOfClosedDays(), 10);
+			assertEquals(cal.getNumberOfClosedDays(), 12);
 			
-			//cal.showClosedDays();
+			cal.showClosedDays();
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -160,14 +127,14 @@ public class TestCalendar extends TestCase {
 			// Adding Saturday closed
 			cal.addClosedDayOfWeek(6);
 			
-			assertEquals(cal.getNumberOfClosedDays(), 52);
+			assertEquals(cal.getNumberOfClosedDays(), 53);
 
 			// Adding Sunday closed
 			cal.addClosedDayOfWeek(7);
 			
-			assertEquals(cal.getNumberOfClosedDays(), 105);
+			assertEquals(cal.getNumberOfClosedDays(), 107);
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -228,7 +195,7 @@ public class TestCalendar extends TestCase {
 			assertEquals(cal2.isAnOpenDay(calToTest.getTime()), true);
 			assertEquals(cal3.isAnOpenDay(calToTest.getTime()), false);
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

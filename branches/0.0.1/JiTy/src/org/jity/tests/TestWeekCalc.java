@@ -10,7 +10,6 @@ import org.jity.agent.Agent;
 import org.jity.agent.AgentException;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
 import org.jity.common.referential.dateConstraint.WeekCalc;
 import org.jity.common.util.DateUtil;
 import org.jity.common.util.TimeUtil;
@@ -74,7 +73,7 @@ public class TestWeekCalc extends TestCase {
 			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
 			assertEquals(calculateDate1.compareTo(goodDate1), 0);
 
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ParseException e) {
@@ -112,7 +111,7 @@ public class TestWeekCalc extends TestCase {
 			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
 			assertEquals(calculateDate1.compareTo(goodDate1), 0);
 
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ParseException e) {
@@ -166,7 +165,7 @@ public class TestWeekCalc extends TestCase {
 			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
 			assertEquals(calculateDate1.compareTo(goodDate1), 0);
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ParseException e) {
@@ -218,7 +217,7 @@ public class TestWeekCalc extends TestCase {
 			logger.info("Calculate result: " + DateUtil.dateToString(calculateDate1));
 			assertEquals(calculateDate1.compareTo(goodDate1), 0);
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ParseException e) {
@@ -333,12 +332,12 @@ public class TestWeekCalc extends TestCase {
 			try {
 				calculateDate1 = WeekCalc.getNiemeWeekDay(dateToTest1, persCal, 8,"open");
 				logger.info("Calculate result: " + calculateDate1);
-			} catch (PersonnalCalendarException e) {
+			} catch (DateConstraintException e) {
 				assertTrue(true);
 			}			
 
 			
-		} catch (PersonnalCalendarException e) {
+		} catch (DateConstraintException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ParseException e) {
