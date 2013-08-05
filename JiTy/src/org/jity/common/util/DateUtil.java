@@ -61,7 +61,7 @@ public abstract class DateUtil {
 	 * Get Date objet whith a String ("EEE dd/MM/yy")
 	 * @param chaine
 	 * @return
-	 * @throws DateException 
+	 * @throws DateConstraintException 
 	 */
 	public static Date stringToDate(String chaine) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);

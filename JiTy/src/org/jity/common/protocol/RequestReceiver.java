@@ -28,14 +28,12 @@ import java.io.*;
 import java.net.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.apache.log4j.Logger;
-import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.Protocol;
 import org.jity.common.protocol.ProtocolException;
 import org.jity.common.util.StringCompress;

@@ -77,10 +77,10 @@ public abstract class YearCalc {
 	 * @param persCal
 	 * @param nbDay
 	 * @return Date
-	 * @throws PersonnalCalendarException 
+	 * @throws DateConstraintException 
 	 */
 	public static Date getNiemeYearDay(Date dateToTest, PersonnalCalendar persCal, int nbDay, String dayType)
-			throws PersonnalCalendarException {
+			throws DateConstraintException {
 
 		Calendar calToTest = new GregorianCalendar();
 		calToTest.clear();
@@ -88,7 +88,7 @@ public abstract class YearCalc {
 		if (! dayType.equals("close") &&
 				! dayType.equals("open") &&
 				! dayType.equals("calend"))
-			throw new PersonnalCalendarException("dayType must be \"calend\", \"open\" or \"close\"");
+			throw new DateConstraintException("dayType must be \"calend\", \"open\" or \"close\"");
 
 		int yearNum = getYearNumber(dateToTest);
 		int numberOfDaysInTheYear = getDayNumberInYear(getLastYearDay(yearNum));
@@ -102,7 +102,7 @@ public abstract class YearCalc {
 			Date lastYearDay = getLastYearDay(yearNum);
 			
 			if (nbDay > numberOfDaysInTheYear)
-				throw new PersonnalCalendarException("nbDay must be < "+numberOfDaysInTheYear);
+				throw new DateConstraintException("nbDay must be < "+numberOfDaysInTheYear);
 
 			int dayCount = 0;
 
@@ -133,7 +133,7 @@ public abstract class YearCalc {
 				
 				calToTest.add(Calendar.DAY_OF_YEAR, 1);
 
-			} while (lastYearDay.compareTo(calToTest.getTime()) == 1);
+			} while (lastYearDay.compareTo(calToTest.getTime()) != -1);
 
 			return null;
 
@@ -146,7 +146,7 @@ public abstract class YearCalc {
 			Date firstYearDay = getFirstYearDay(yearNum);
 
 			if (nbDay < -numberOfDaysInTheYear)
-				throw new PersonnalCalendarException("nbDay must be > -"+numberOfDaysInTheYear);
+				throw new DateConstraintException("nbDay must be > -"+numberOfDaysInTheYear);
 
 			int dayCount = 0;
 
@@ -178,7 +178,7 @@ public abstract class YearCalc {
 				
 				calToTest.add(Calendar.DAY_OF_YEAR, -1);
 
-			} while (firstYearDay.compareTo(calToTest.getTime()) == -1);
+			} while (firstYearDay.compareTo(calToTest.getTime()) != 1);
 
 			return null;
 		}
@@ -202,7 +202,7 @@ public abstract class YearCalc {
 	 * Return Easter Eggs sunday date for the year
 	 * @param year
 	 * @return
-	 * @throws DateException 
+	 * @throws DateConstraintException 
 	 */
 	public static Date getEasterEggsSyndayDate(int year) throws DateConstraintException {
 		//http://quincy.inria.fr/data/courses/ipa-java-99/td1.html
@@ -253,7 +253,7 @@ public abstract class YearCalc {
 	 * Get true if date is a french public holiday
 	 * @param date
 	 * @return boolean
-	 * @throws DateException 
+	 * @throws DateConstraintException 
 	 */
 	public static boolean isFrenchPublicHoliday(Date date) throws DateConstraintException  {
 		

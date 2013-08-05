@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.jity.common.referential.dateConstraint.DateConstraint;
 import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
+import org.jity.common.util.DateUtil;
 
 public class UITestDateCalc {
 	private static final Logger logger = Logger.getLogger(UITestDateCalc.class);  
@@ -227,6 +227,14 @@ public class UITestDateCalc {
 		label.setText("Planification rule:");
 		text = new Text(sShell, SWT.BORDER);
 		text.setLayoutData(gridData);
+		text.setToolTipText("<OPERATOR_KEYWORDS>_<DAY_NUM_KEYWORDS>_<DAY_TYPE_KEYWORDS>_<DAY_NAME_KEYWORDS>_<PERIOD_KEYWORDS>\n"+
+		"where:\n"+
+		"<OPERATOR_KEYWORDS> in {before,after,not,equal}\n"+
+		"<DAY_NUM_KEYWORDS> in {first,last} or is an integer between -31 and 31 excluding 0\n"+
+		"<DAY_TYPE_KEYWORDS> in {calend,open}\n"+
+		"<DAY_NAME_KEYWORDS> in {day,mon,tue,wed,thu,fri,sat,sun}\n"+
+		"<PERIOD_KEYWORDS> in {week,month,year,jan,feb,mar,apr,mai,jun,jul,aug,sep,oct,nov,dec}\n");
+		
 		button = new Button(sShell, SWT.NONE);
 		button.setText("Refresh");
 		button.setLayoutData(gridData1);
@@ -284,7 +292,6 @@ public class UITestDateCalc {
 		messageBox.setText("Error");
 		messageBox.open();
 	}
-
 	
 	public static void centerOnDisplay(Display display, Shell shell) {
 		Monitor primary = display.getPrimaryMonitor();
@@ -300,7 +307,7 @@ public class UITestDateCalc {
 		return cal.get(Calendar.YEAR);
 	}
 	
-	public void updateTabDays(DateConstraint dc) throws PersonnalCalendarException, DateConstraintException {
+	public void updateTabDays(DateConstraint dc) throws DateConstraintException {
 		
 		Calendar cal = new GregorianCalendar();
 		cal.clear();
@@ -322,25 +329,48 @@ public class UITestDateCalc {
 		
 		for (int month=0;month<=11;month++) {
 			cal.set(Calendar.MONTH, month);
+			
 			for (int dayOfMonth=1;dayOfMonth<=31;dayOfMonth++) {
 				cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-				// If same month
+				// If not the same month
 				if (month != cal.get(Calendar.MONTH)) {
 					TableItem line = tableDays.getItem(dayOfMonth-1);
 					line.setText(month, " ");
-				} else if (dc.isAValidDate(cal.getTime())) {
-					TableItem line = tableDays.getItem(dayOfMonth-1);
-					line.setText(month, dateFormat.format(cal.getTime()));
-					line.setBackground(month, green);
 				} else {
-					TableItem line = tableDays.getItem(dayOfMonth-1);
-					line.setText(month, dateFormat.format(cal.getTime()));
-					line.setBackground(month, red);
+					
+					if (dc.isAValidDate(cal.getTime())) {
+						TableItem line = tableDays.getItem(dayOfMonth-1);
+						line.setText(month, dateFormat.format(cal.getTime()));
+						line.setBackground(month, green);
+					} else {
+						TableItem line = tableDays.getItem(dayOfMonth-1);
+						line.setText(month, dateFormat.format(cal.getTime()));
+						line.setBackground(month, red);
+					}
 				}
+			
 			}
 		}
-
+//		
+//		for (int month=0;month<=11;month++) {
+//			cal.set(Calendar.MONTH, month);
+//			
+//			for (int dayOfMonth=1;dayOfMonth<=31;dayOfMonth++) {
+//				cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//				
+//				if (dc.isAValidDate(cal.getTime())) {
+//					TableItem line = tableDays.getItem(dayOfMonth-1);
+//					line.setText(month, dateFormat.format(cal.getTime()));
+//					line.setBackground(month, green);
+//				} else {
+//					TableItem line = tableDays.getItem(dayOfMonth-1);
+//					line.setText(month, dateFormat.format(cal.getTime()));
+//					line.setBackground(month, red);
+//				}
+//			}
+//		}
+		
 	}
 	
 	public void updateDisplay() {
@@ -356,7 +386,7 @@ public class UITestDateCalc {
 				persCalendar.setYear(year);
 				persCalendar.initializeWithAllDaysOpen();
 				
-				if (checkBoxHolidays.getSelection()) 
+				if (checkBoxHolidays.getSelection())  
 					persCalendar.addFrenchHolydays();
 				
 				if (checkBoxMonday.getSelection()) 

@@ -11,7 +11,7 @@ import org.jity.common.protocol.JityRequest;
 import org.jity.common.protocol.JityResponse;
 import org.jity.common.protocol.RequestSender;
 import org.jity.common.referential.dateConstraint.PersonnalCalendar;
-import org.jity.common.referential.dateConstraint.PersonnalCalendarException;
+import org.jity.common.referential.dateConstraint.DateConstraintException;
 import org.jity.common.util.XMLUtil;
 
 /**
@@ -35,7 +35,7 @@ public class AddCalendar extends CommandLine {
 		this.setMaxArgsNumber(6);
 	}
 	
-	private	int launch(String[] args) throws BadArgCLException, UIClientException, InstructionException, IOException, PersonnalCalendarException {
+	private	int launch(String[] args) throws BadArgCLException, UIClientException, InstructionException, IOException, DateConstraintException {
 		int returnCode = 1;
 		
 		this.loadArguments(args);

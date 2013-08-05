@@ -28,9 +28,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.log4j.Logger;
+import org.jity.common.util.DateUtil;
+
 
 public abstract class WeekCalc {
-
+	private static final Logger logger = Logger.getLogger(WeekCalc.class);  
 	/**
 	 * Days name tab
 	 */
@@ -82,10 +85,10 @@ public abstract class WeekCalc {
 	 * @param persCal
 	 * @param nbDay
 	 * @return Date
-	 * @throws PersonnalCalendarException 
+	 * @throws DateConstraintException 
 	 */
 	public static Date getNiemeWeekDay(Date dateToTest, PersonnalCalendar persCal, int nbDay, String dayType)
-			throws PersonnalCalendarException {
+			throws DateConstraintException {
 
 		Calendar calToTest = new GregorianCalendar();
 		calToTest.clear();
@@ -93,24 +96,26 @@ public abstract class WeekCalc {
 		if (! dayType.equals("close") &&
 				! dayType.equals("open") &&
 				! dayType.equals("calend"))
-			throw new PersonnalCalendarException("dayType must be \"calend\", \"open\" or \"close\"");
+			throw new DateConstraintException("dayType must be \"calend\", \"open\" or \"close\"");
 		
 		if (nbDay > 0) {
 
 			// Initialize a new calendar whith the first day of the week
 			calToTest.setTime(getFirstWeekDay(dateToTest));
-
+			logger.debug("Debut semaine: "+DateUtil.dateToString(calToTest.getTime()));
+			
 			// Last day of the week
 			Date lastWeekDay = getLastWeekDay(dateToTest);
-
+			logger.debug("Fin semaine: "+DateUtil.dateToString(lastWeekDay));
+			
 			if (nbDay > 7)
-				throw new PersonnalCalendarException("nbDay must be < 7");
+				throw new DateConstraintException("nbDay must be < 7");
 			
 			int dayCount = 0;
 
 			// While end of week not reached test each day of week
 			do {
-
+				
 				if (dayType.equals("close") && ! persCal.isAnOpenDay(calToTest.getTime())) {
 					// If it's an close day, count 1 day
 					dayCount++;
@@ -118,6 +123,7 @@ public abstract class WeekCalc {
 					// If nbDay reach, return actual cal value
 					if (dayCount == nbDay)
 						return calToTest.getTime();
+				
 				} else if (dayType.equals("open") && persCal.isAnOpenDay(calToTest.getTime())) {
 					// If it's an open day, count 1 day
 					dayCount++;
@@ -125,6 +131,7 @@ public abstract class WeekCalc {
 					// If nbDay reach, return actual cal value
 					if (dayCount == nbDay)
 						return calToTest.getTime();
+				
 				} else if (dayType.equals("calend")) {
 					dayCount++;
 
@@ -135,12 +142,10 @@ public abstract class WeekCalc {
 				
 				calToTest.add(Calendar.DAY_OF_WEEK, 1);
 
-			} while (lastWeekDay.compareTo(calToTest.getTime()) == 1);
-
-			return null;
+			} while (lastWeekDay.compareTo(calToTest.getTime()) != -1);
 
 		} else {
-
+			
 			// Initialize a new calendar this the first day of the week
 			calToTest.setTime(getLastWeekDay(dateToTest));
 
@@ -148,7 +153,7 @@ public abstract class WeekCalc {
 			Date firstWeekDay = getFirstWeekDay(dateToTest);
 
 			if (nbDay < -7)
-				throw new PersonnalCalendarException("nbDay must be > -7");
+				throw new DateConstraintException("nbDay must be > -7");
 
 			int dayCount = 0;
 
@@ -180,17 +185,19 @@ public abstract class WeekCalc {
 				
 				calToTest.add(Calendar.DAY_OF_WEEK, -1);
 
-			} while (firstWeekDay.compareTo(calToTest.getTime()) == -1);
+			} while (firstWeekDay.compareTo(calToTest.getTime()) != 1);
 
-			return null;
 		}
+		
+
+		throw new DateConstraintException("enable to getNiemeWeekDay");
 	}
 		
 	/**
 	 * Return day number in the week according to the day name
 	 * @param dayName
 	 * @return int
-	 * @throws DateException 
+	 * @throws DateConstraintException 
 	 */
 	public static int getDayNumberInWeekByName(String dayName) throws DateConstraintException {
 		for (int i=0;i<tabDaysNames.length;i++) {
@@ -204,7 +211,7 @@ public abstract class WeekCalc {
 	 * TODO gérer les numéros de jours en anglais
 	 * @param weekDayNumber
 	 * @return
-	 * @throws DateException
+	 * @throws DateConstraintException
 	 */
 	public static String getDayNameInWeekByNumber(int weekDayNumber) throws DateConstraintException {
 		if (weekDayNumber < 1 || weekDayNumber > 7 ) {
